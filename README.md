@@ -130,7 +130,9 @@ These Collections extends the 'native' Laravel 4 Collection class, so all method
 ## Example
 
 Below is a little example of how to list the cart content in a table:
-
+	
+	<?php
+	
 	// Controller
 
 	Cart::add('192ao12', 'Product 1', 1, 9.99);
