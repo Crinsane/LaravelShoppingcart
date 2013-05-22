@@ -85,7 +85,7 @@ class Cart {
      * Get a row of the cart by its ID
      * 
      * @param  string $rowId The ID of the row to fetch
-     * @return Array
+     * @return CartCollection
      */
     public function get($rowId)
     {
@@ -97,7 +97,7 @@ class Cart {
     /**
      * Get the cart content
      * 
-     * @return Array
+     * @return CartRowCollection
      */
     public function content()
     {
@@ -141,10 +141,11 @@ class Cart {
 
     /**
      * Get the number of items in the cart
-     * 
+     *
+     * @param  boolean $totalItems Get all the items (when false, will return the number of rows)
      * @return int
      */
-    public function count($totalItems = TRUE)
+    public function count($totalItems = true)
     {
         $cart = $this->getContent();
 
