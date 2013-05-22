@@ -1,0 +1,21 @@
+{
+    "name": "gloudemans/shoppingcart",
+    "description": "",
+    "authors": [
+        {
+            "name": "Rob Gloudemans",
+            "email": "Rob_Gloudemans@hotmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "illuminate/support": "4.0.x",
+        "mathiasverraes/money": "dev-zero-equality"
+    },
+    "autoload": {
+        "psr-0": {
+            "Gloudemans\\Shoppingcart": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
