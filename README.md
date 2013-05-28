@@ -127,6 +127,35 @@ As you might have seen, the `Cart::content()` and `Cart::get()` methods both ret
 
 These Collections extends the 'native' Laravel 4 Collection class, so all methods you know from this class can also be used on your shopping cart. With some addition to easily work with your carts content.
 
+## Instances
+
+Now the packages also supports multiple instances of the cart. The way this works is like this:
+
+You can set the current instance of the cart with `Cart::instance('newInstance')`, at that moment, the active instance of the cart is `newInstance`, so when you add, remove or get the content of the cart, you work with the `newInstance` instance of the cart.
+If you want to switch instances, you just call `Cart::instance('otherInstance')` again, and you're working with the `otherInstance` again.
+
+So a little example:
+
+    Cart::instance('shopping')->add('192ao12', 'Product 1', 1, 9.99);
+
+    // Get the content of the 'shopping' cart
+    Cart::content();
+
+    Cart::instance('wishlist')->add('sdjk922', 'Product 2', 1, 19.95, array('size' => 'medium'));
+
+    // Get the content of the 'wishlist' cart
+    Cart::content();
+
+    // If you want to get the content of the 'shopping' cart again...
+    Cart::instance('shopping')->content();
+
+    // And the count of the 'wishlist' cart again
+    Cart::instance('wishlist')->count();
+    
+N.B. Keep in mind that the cart stays in the last set instance for as long as you don't set a different one during script execution.
+
+N.B.2 The default cart instance is called `main`, so when you're not using instances,`Cart::content();` is the same as `Cart::instance('main')->content()`.
+
 ## Example
 
 Below is a little example of how to list the cart content in a table:
