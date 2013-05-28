@@ -51,6 +51,7 @@ class Cart {
 
     /**
      * Update the quantity of one row of the cart
+     * 
      * @param  string  $rowId The rowid of the item you want to update
      * @param  integer $qty   New quantity of the item
      * @return boolean
@@ -177,6 +178,7 @@ class Cart {
 
     /**
      * Update the cart
+     * 
      * @param  Array   $cart The new cart content
      * @return void
      */
@@ -210,8 +212,8 @@ class Cart {
 
         $row = $cart->get($rowId);
 
-        $row->qty = $qty;
-        $row->subtotal = $row->qty * $row->price;
+        $row->put('qty', $qty);
+        $row->put('subtotal', $row->qty * $row->price);
 
         $cart->put($rowId, $row);
 
