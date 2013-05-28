@@ -1,7 +1,6 @@
 <?php namespace Gloudemans\Shoppingcart;
 
 use Illuminate\Support\Collection;
-use Money\Money;
 
 class Cart {
 
