@@ -12,6 +12,13 @@ class Cart {
     protected $session;
 
     /**
+     * Current cart instance
+     * 
+     * @var string
+     */
+    protected $instance;
+
+    /**
      * Constructor
      * 
      * @param Session $session Session class instance
@@ -19,6 +26,22 @@ class Cart {
     public function __construct($session)
     {
         $this->session = $session;
+
+        $this->instance = 'main';
+    }
+
+    /**
+     * Set the current cart instance
+     *    
+     * @param  string $instance Cart instance name
+     * @return Cart
+     */
+    public function instance($instance)
+    {
+        $this->instance = $instance;
+
+        // Return self so the method is chainable
+        return $this;
     }
 
     /**
@@ -184,7 +207,7 @@ class Cart {
      */
     protected function updateCart($cart)
     {
-        return $this->session->put('cart', $cart);
+        return $this->session->put($this->getInstance(), $cart);
     }
 
     /**
@@ -194,9 +217,19 @@ class Cart {
      */
     protected function getContent()
     {
-        $content = ($this->session->has('cart')) ? $this->session->get('cart') : new CartCollection;
+        $content = ($this->session->has($this->getInstance())) ? $this->session->get($this->getInstance()) : new CartCollection;
 
         return $content;
+    }
+
+    /**
+     * Get the current cart instance
+     *     
+     * @return string
+     */
+    protected function getInstance()
+    {
+        return 'cart.' . $this->instance;
     }
 
     /**

@@ -123,4 +123,34 @@ class CartTest extends TestCase {
         $this->assertEquals($count, 3);
     }
 
+    public function testCartCanHaveMultipleInstances()
+    {
+        Cart::instance('test_1')->add(1, 'test_1', 1, 10.00, ['size' => 'L']);
+        Cart::instance('test_2')->add(2, 'test_2', 2, 10.00, ['size' => 'L']);
+
+        $name = Cart::instance('test_1')->content()->first()->name;
+
+        $this->assertEquals($name, 'test_1');
+
+        $name = Cart::instance('test_2')->content()->first()->name;
+
+        $this->assertEquals($name, 'test_2');
+
+        $count = Cart::count();
+
+        $this->assertEquals($count, 2);
+
+        Cart::add(3, 'test_3', 3, 10.00);
+
+        $count = Cart::count();
+
+        $this->assertEquals($count, 5);
+
+        Cart::instance('test_1')->add(1, 'test_1', 1, 10.00, ['size' => 'L']);
+
+        $count = Cart::count();
+
+        $this->assertEquals($count, 2);
+    }
+
 }
