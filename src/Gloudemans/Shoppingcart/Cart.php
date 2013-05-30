@@ -53,7 +53,7 @@ class Cart {
      * @param float  $price   Price of one item
      * @param Array  $options Array of additional options, such as 'size' or 'color'
      */
-    public function add($id, $name, $qty, $price, $options = array())
+    public function add($id, $name, $qty, $price, Array $options = array())
     {
         $cart = $this->getContent();
 
@@ -62,7 +62,7 @@ class Cart {
         if($cart->has($rowId))
         {
             $row = $cart->get($rowId);
-            $cart = $this->updateRow($rowId, $row->qty + $qty); 
+            $cart = $this->updateRow($rowId, array('qty' => $row->qty + $qty)); 
         }
         else
         {
@@ -73,20 +73,37 @@ class Cart {
     }
 
     /**
-     * Update the quantity of one row of the cart
+     * Add multiple rows to the cart
      * 
-     * @param  string  $rowId The rowid of the item you want to update
-     * @param  integer $qty   New quantity of the item
-     * @return boolean
+     * @param Array $items An array of items to add, use array keys corresponding to the 'add' method's parameters
      */
-    public function update($rowId, $qty)
+    public function addBatch(Array $items)
     {
-        if($qty == 0)
+        foreach($items as $item)
         {
-            return $this->remove($rowId);
+            $options = (isset($item['options'])) ? $item['options'] : array();
+
+            $this->add($item['id'], $item['name'], $item['qty'], $item['price'], $options);
         }
 
-        return $this->updateRow($rowId, $qty);
+        return;
+    }
+
+    /**
+     * Update the quantity of one row of the cart
+     * 
+     * @param  string        $rowId The rowid of the item you want to update
+     * @param  integer|Array $qty   New quantity of the item|Array of attributes to update
+     * @return boolean
+     */
+    public function update($rowId, $attribute)
+    {
+        if(is_array($attribute))
+        {
+            return $this->updateAttribute($rowId, $attribute);
+        }
+
+        return $this->updateQty($rowId, $attribute);        
     }
 
     /**
@@ -202,7 +219,7 @@ class Cart {
     /**
      * Update the cart
      * 
-     * @param  Array   $cart The new cart content
+     * @param  CartCollection  $cart The new cart content
      * @return void
      */
     protected function updateCart($cart)
@@ -239,14 +256,21 @@ class Cart {
      * @param  integer $qty   The quantity to add to the row
      * @return Collection
      */
-    protected function updateRow($rowId, $qty)
+    protected function updateRow($rowId, $attributes)
     {
         $cart = $this->getContent();
 
         $row = $cart->get($rowId);
+                         
+        foreach($attributes as $key => $value)
+        {
+            $row->put($key, $value);
+        }
 
-        $row->put('qty', $qty);
-        $row->put('subtotal', $row->qty * $row->price);
+        if( ! is_null(array_keys($attributes, array('qty', 'price'))))
+        {
+            $row->put('subtotal', $row->qty * $row->price);
+        }
 
         $cart->put($rowId, $row);
 
@@ -268,7 +292,7 @@ class Cart {
     {
         $cart = $this->getContent();
 
-        $newRow = new CartRowCollection([
+        $newRow = new CartRowCollection(array(
             'rowid' => $rowId,
             'id' => $id,
             'name' => $name,
@@ -276,11 +300,40 @@ class Cart {
             'price' => $price,
             'options' => new CartRowOptionsCollection($options),
             'subtotal' => $qty * $price
-        ]);
+        ));
 
         $cart->put($rowId, $newRow);
 
         return $cart;
+    }
+
+    /**
+     * Update the quantity of a row
+     * 
+     * @param  string $rowId The ID of the row
+     * @param  int    $qty   The qty to add
+     * @return CartCollection        
+     */
+    protected function updateQty($rowId, $qty)
+    {
+        if($qty == 0)
+        {
+            return $this->remove($rowId);
+        }
+
+        return $this->updateRow($rowId, array('qty' => $qty));
+    }
+
+    /**
+     * Update an attribute of the row
+     * 
+     * @param  string $rowId      The ID of the row
+     * @param  Array  $attributes An array of attributes to update
+     * @return CartCollection
+     */
+    protected function updateAttribute($rowId, $attributes)
+    {
+        return $this->updateRow($rowId, $attributes);
     }
 
 }
