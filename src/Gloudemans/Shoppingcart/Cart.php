@@ -92,8 +92,8 @@ class Cart {
     /**
      * Update the quantity of one row of the cart
      * 
-     * @param  string        $rowId The rowid of the item you want to update
-     * @param  integer|Array $qty   New quantity of the item|Array of attributes to update
+     * @param  string        $rowId       The rowid of the item you want to update
+     * @param  integer|Array $attribute   New quantity of the item|Array of attributes to update
      * @return boolean
      */
     public function update($rowId, $attribute)
