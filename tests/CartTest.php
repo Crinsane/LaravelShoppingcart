@@ -10,6 +10,17 @@ class CartTest extends TestCase {
         $this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
     }
 
+    public function testCartCanAddBatch()
+    {
+        Cart::addBatch([
+            ['id' => 1, 'name' => 'test_1', 'qty' => 1, 'price' => 10.00],
+            ['id' => 2, 'name' => 'test_2', 'qty' => 1, 'price' => 10.00, 'options' => ['size' => 'large']]
+        ]);
+
+        $this->assertEquals(Cart::count(), 2);
+        $this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
+    }
+
     public function testCartCanAddToExisting()
     {
         Cart::add(1, 'test', 1, 10.00, ['size' => 'L']);
@@ -30,6 +41,19 @@ class CartTest extends TestCase {
         Cart::update($rowId, 2);
 
         $this->assertEquals(Cart::get($rowId)->qty, 2);
+        $this->assertEquals(Cart::get($rowId)->subtotal, 20.00);
+        $this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
+    }
+
+    public function testCartCanUpdateAttribute()
+    {
+        Cart::add(1, 'test', 1, 10.00, ['size' => 'L']);
+
+        $rowId = Cart::content()->first()->rowid;
+
+        Cart::update($rowId, ['name' => 'test_2']);
+
+        $this->assertEquals(Cart::get($rowId)->name, 'test_2');
         $this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
     }
 
