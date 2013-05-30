@@ -29,29 +29,49 @@ The shoppingcart gives you the following methods to use:
 
 **Cart::add()**
 
+```php
+/**
+ * Add a row to the cart
+ * 
+ * @param string $id      Unique ID of the item
+ * @param string $name    Name of the item
+ * @param int    $qty     Item qty to add to the cart
+ * @param float  $price   Price of one item
+ * @param Array  $options Array of additional options, such as 'size' or 'color'
+ */
+
+Cart::add('293ad', 'Product 1', 1, 9.99, array('size' => 'large'));
+```
+     
+**Cart::addBatch()**
+
 	/**
-     * Add a row to the cart
+     * Add multiple rows to the cart
      * 
-     * @param string $id      Unique ID of the item
-     * @param string $name    Name of the item
-     * @param int    $qty     Item qty to add to the cart
-     * @param float  $price   Price of one item
-     * @param Array  $options Array of additional options, such as 'size' or 'color'
+     * @param Array $items An array of items to add, use array keys corresponding to the 'add' method's parameters
      */
      
-     Cart::add('293ad', 'Product 1', 1, 9.99, array('size' => 'large'));
+     Cart::addBatch(array(
+		array('id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 10.00),
+		array('id' => '4832k', 'name' => 'Product 2', 'qty' => 1, 'price' => 10.00, 'options' => array('size' => 'large'))     
+     ));
 
 **Cart::update()**
 
 	/**
      * Update the quantity of one row of the cart
-     * @param  string  $rowId The rowid of the item you want to update
-     * @param  integer $qty   New quantity of the item
+     * 
+     * @param  string        $rowId       The rowid of the item you want to update
+     * @param  integer|Array $attribute   New quantity of the item|Array of attributes to update
      * @return boolean
      */
      $rowId = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
      
      Cart::update($rowId, 2);
+     
+     OR
+     
+     Cart::update($rowId, array('name' => 'Product 1'));
 
 **Cart::remove()**
 	
