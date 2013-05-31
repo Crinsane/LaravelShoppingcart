@@ -158,6 +158,19 @@ Cart::total();
  Cart::count();      // Total items
  Cart::count(false); // Total rows
 ```
+
+**Cart::search()**
+
+```php
+/**
+ * Search if the cart has a item
+ * 
+ * @param  Array  $search An array with the item ID and optional options
+ * @return boolean
+ */
+ 
+ Cart::search(array('id' => 1, 'options' => array('size' => 'L')));
+```
      
 ## Collections
 

@@ -205,13 +205,31 @@ class Cart {
     }
 
     /**
+     * Search if the cart has a item
+     * 
+     * @param  Array  $search An array with the item ID and optional options
+     * @return boolean
+     */
+    public function search($search)
+    {
+        foreach($this->getContent() as $item)
+        {
+            $rowId = $this->generateRowId($search['id'], $search['options']);
+
+            if($rowId === $item->rowid) return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Generate a unique id for the new row
      * 
      * @param  string  $id      Unique ID of the item
      * @param  Array   $options Array of additional options, such as 'size' or 'color'
      * @return boolean
      */
-    public function generateRowId($id, $options)
+    protected function generateRowId($id, $options)
     {
         return md5($id . serialize($options));
     }
@@ -342,18 +360,6 @@ class Cart {
     protected function updateAttribute($rowId, $attributes)
     {
         return $this->updateRow($rowId, $attributes);
-    }
-
-    public function search($search)
-    {
-        foreach($this->getContent() as $item)
-        {
-            $rowId = $this->generateRowId($search['id'], $search['options']);
-
-            if($rowId === $item->rowid) return true;
-        }
-
-        return false;
     }
 
 }
