@@ -189,4 +189,18 @@ class CartTest extends TestCase {
         $this->assertEquals($count, 2);
     }
 
+    public function testCartCanSearch()
+    {
+        Cart::add(1, 'test', 1, 10.00, ['size' => 'L']);
+        Cart::add(2, 'test', 2, 10.00, ['size' => 'L']);
+
+        $search = Cart::search(['id' => 1, 'options' => ['size' => 'L']]);
+
+        $this->assertTrue($search);
+
+        $search = Cart::search(['id' => 3, 'options' => ['size' => 'L']]);
+
+        $this->assertFalse($search);
+    }
+
 }

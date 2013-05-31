@@ -211,7 +211,7 @@ class Cart {
      * @param  Array   $options Array of additional options, such as 'size' or 'color'
      * @return boolean
      */
-    protected function generateRowId($id, $options)
+    public function generateRowId($id, $options)
     {
         return md5($id . serialize($options));
     }
@@ -342,6 +342,18 @@ class Cart {
     protected function updateAttribute($rowId, $attributes)
     {
         return $this->updateRow($rowId, $attributes);
+    }
+
+    public function search($search)
+    {
+        foreach($this->getContent() as $item)
+        {
+            $rowId = $this->generateRowId($search['id'], $search['options']);
+
+            if($rowId === $item->rowid) return true;
+        }
+
+        return false;
     }
 
 }
