@@ -264,7 +264,15 @@ class Cart {
                          
         foreach($attributes as $key => $value)
         {
-            $row->put($key, $value);
+            if($key == 'options')
+            {
+                $options = $row->options->merge($value);
+                $row->put($key, $options);
+            }
+            else
+            {
+                $row->put($key, $value);
+            }
         }
 
         if( ! is_null(array_keys($attributes, array('qty', 'price'))))

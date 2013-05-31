@@ -57,6 +57,18 @@ class CartTest extends TestCase {
         $this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
     }
 
+    public function testCartCanUpdateOptionsAttribute()
+    {
+        Cart::add(1, 'test', 1, 10.00, ['size' => 'L']);
+
+        $rowId = Cart::content()->first()->rowid;
+
+        Cart::update($rowId, ['options' => ['color' => 'yellow']]);
+
+        $this->assertEquals(Cart::get($rowId)->options, new Gloudemans\Shoppingcart\CartRowOptionsCollection(['size' => 'L', 'color' => 'yellow']));
+        $this->assertInstanceOf('Gloudemans\Shoppingcart\CartRowOptionsCollection', Cart::get($rowId)->options);
+    }
+
     public function testCartCanRemove()
     {
         Cart::add(1, 'test', 1, 10.00, ['size' => 'L']);
