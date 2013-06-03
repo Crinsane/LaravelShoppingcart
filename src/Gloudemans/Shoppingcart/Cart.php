@@ -210,7 +210,7 @@ class Cart {
      * @param  Array  $search An array with the item ID and optional options
      * @return Array|boolean
      */
-    public function search($search)
+    public function search(Array $search)
     {
         foreach($this->getContent() as $item)
         {
