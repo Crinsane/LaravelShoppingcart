@@ -19,4 +19,16 @@ class CartRowOptionsCollection extends Collection {
         return NULL;
     }
 
+    public function search(Array $search)
+    {
+        foreach($search as $key => $value)
+        {
+            $found = ($this->{$key} === $value) ? true : false;
+
+            if( ! $found) return false;
+        }
+
+        return $found;
+    }
+
 }

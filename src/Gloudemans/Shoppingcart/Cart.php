@@ -214,12 +214,15 @@ class Cart {
     {
         foreach($this->getContent() as $item)
         {
-            $rowId = $this->generateRowId($search['id'], $search['options']);
+            $found = $item->search($search);
 
-            if($rowId === $item->rowid) return true;
+            if($found)
+            {
+                $rows[] = $item->rowid;
+            }
         }
 
-        return false;
+        return (empty($rows)) ? false : $rows;
     }
 
     /**

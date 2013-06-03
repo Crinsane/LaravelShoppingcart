@@ -191,16 +191,35 @@ class CartTest extends TestCase {
 
     public function testCartCanSearch()
     {
-        Cart::add(1, 'test', 1, 10.00, ['size' => 'L']);
-        Cart::add(2, 'test', 2, 10.00, ['size' => 'L']);
+        Cart::add(1, 'Product 1', 1, 10.00, ['size' => 'large', 'color' => 'red']);
+        Cart::add(2, 'Product 2', 1, 10.00, ['size' => 'large']);
 
-        $search = Cart::search(['id' => 1, 'options' => ['size' => 'L']]);
+        $search = Cart::search(['id' => 1, 'name' => 'Product 1']);
+        $this->assertEquals($search, ['a308327de59a3e249baabc24a6c29928']);
 
-        $this->assertTrue($search);
-
-        $search = Cart::search(['id' => 3, 'options' => ['size' => 'L']]);
-
+        $search = Cart::search(['id' => 2, 'name' => 'Product 1']);
         $this->assertFalse($search);
+
+        $search = Cart::search(['id' => 2, 'name' => 'Product 2']);
+        $this->assertEquals($search, ['bb0042610e1c6e8bfd7293bfa1807f82']);
+
+        $search = Cart::search(['id' => 1, 'price' => 10.00]);
+        $this->assertEquals($search, ['a308327de59a3e249baabc24a6c29928']);
+
+        $search = Cart::search(['qty' => 1, 'price' => 10.00]);
+        $this->assertEquals($search, ['a308327de59a3e249baabc24a6c29928', 'bb0042610e1c6e8bfd7293bfa1807f82']);
+
+        $search = Cart::search(['id' => 2, 'kaas' => 'Product 2']);
+        $this->assertFalse($search);
+
+        $search = Cart::search(['id' => 2, 'options' => ['size' => 'large']]);
+        $this->assertEquals($search, ['bb0042610e1c6e8bfd7293bfa1807f82']);
+
+        $search = Cart::search(['options' => ['size' => 'large']]);
+        $this->assertEquals($search, ['a308327de59a3e249baabc24a6c29928', 'bb0042610e1c6e8bfd7293bfa1807f82']);
+
+        $search = Cart::search(['id' => 1, 'options' => ['color' => 'red']]);
+        $this->assertEquals($search, ['a308327de59a3e249baabc24a6c29928']);
     }
 
 }
