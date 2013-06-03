@@ -166,10 +166,10 @@ Cart::total();
  * Search if the cart has a item
  * 
  * @param  Array  $search An array with the item ID and optional options
- * @return boolean
+ * @return Array|boolean
  */
  
- Cart::search(array('id' => 1, 'options' => array('size' => 'L')));
+ Cart::search(array('id' => 1, 'options' => array('size' => 'L'))); // Returns an array of rowid(s) of found item(s) or false on failure 
 ```
      
 ## Collections

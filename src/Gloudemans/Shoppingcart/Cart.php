@@ -208,7 +208,7 @@ class Cart {
      * Search if the cart has a item
      * 
      * @param  Array  $search An array with the item ID and optional options
-     * @return boolean
+     * @return Array|boolean
      */
     public function search($search)
     {
