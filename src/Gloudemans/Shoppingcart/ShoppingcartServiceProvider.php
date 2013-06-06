@@ -14,7 +14,7 @@ class ShoppingcartServiceProvider extends ServiceProvider {
 
         $this->app['cart'] = $this->app->share(function($app)
         {
-            $session = $this->app['session'];
+            $session = $app['session'];
             return new Cart($session);
         });
     }
