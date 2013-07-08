@@ -65,31 +65,17 @@ class Cart {
 				foreach($id as $item)
 				{
 					$options = isset($item['options']) ? $item['options'] : array();
-					$this->add($item['id'], $item['name'], $item['qty'], $item['price'], $options);
+					$this->addRow($item['id'], $item['name'], $item['qty'], $item['price'], $options);
 				}
 
 				return;
 			}
 
 			$options = isset($id['options']) ? $id['options'] : array();
-			return $this->add($id['id'], $id['name'], $id['qty'], $id['price'], $options);
+			return $this->addRow($id['id'], $id['name'], $id['qty'], $id['price'], $options);
 		}
 
-		$cart = $this->getContent();
-
-		$rowId = $this->generateRowId($id, $options);
-
-		if($cart->has($rowId))
-		{
-			$row = $cart->get($rowId);
-			$cart = $this->updateRow($rowId, array('qty' => $row->qty + $qty));
-		}
-		else
-		{
-			$cart = $this->createRow($rowId, $id, $name, $qty, $price, $options);
-		}
-
-		return $this->updateCart($cart);
+		return $this->addRow($id, $name, $qty, $price, $options);
 	}
 
 	/**
@@ -238,6 +224,34 @@ class Cart {
 		}
 
 		return (empty($rows)) ? false : $rows;
+	}
+
+	/**
+	 * Add row to the cart
+	 *
+	 * @param string $id      Unique ID of the item
+	 * @param string $name    Name of the item
+	 * @param int    $qty     Item qty to add to the cart
+	 * @param float  $price   Price of one item
+	 * @param Array  $options Array of additional options, such as 'size' or 'color'
+	 */
+	protected function addRow($id, $name, $qty, $price, Array $options = array())
+	{
+		$cart = $this->getContent();
+
+		$rowId = $this->generateRowId($id, $options);
+
+		if($cart->has($rowId))
+		{
+			$row = $cart->get($rowId);
+			$cart = $this->updateRow($rowId, array('qty' => $row->qty + $qty));
+		}
+		else
+		{
+			$cart = $this->createRow($rowId, $id, $name, $qty, $price, $options);
+		}
+
+		return $this->updateCart($cart);
 	}
 
 	/**
