@@ -10,9 +10,17 @@ class CartTest extends TestCase {
 		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
 	}
 
+	public function testCartCanAddArray()
+	{
+		Cart::add(['id' => 1, 'name' => 'test', 'qty' => 1, 'price' => 10.00, 'options' => ['size' => 'L']]);
+
+		$this->assertEquals(Cart::count(), 1);
+		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
+	}
+
 	public function testCartCanAddBatch()
 	{
-		Cart::addBatch([
+		Cart::add([
 			['id' => 1, 'name' => 'test_1', 'qty' => 1, 'price' => 10.00],
 			['id' => 2, 'name' => 'test_2', 'qty' => 1, 'price' => 10.00, 'options' => ['size' => 'large']]
 		]);
