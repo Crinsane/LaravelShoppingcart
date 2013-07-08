@@ -47,14 +47,34 @@ class Cart {
 	/**
 	 * Add a row to the cart
 	 *
-	 * @param string $id      Unique ID of the item
-	 * @param string $name    Name of the item
-	 * @param int    $qty     Item qty to add to the cart
-	 * @param float  $price   Price of one item
-	 * @param Array  $options Array of additional options, such as 'size' or 'color'
+	 * @param string|Array $id      Unique ID of the item|Item formated as array|Array of items
+	 * @param string 	   $name    Name of the item
+	 * @param int    	   $qty     Item qty to add to the cart
+	 * @param float  	   $price   Price of one item
+	 * @param Array  	   $options Array of additional options, such as 'size' or 'color'
 	 */
-	public function add($id, $name, $qty, $price, Array $options = array())
+	public function add($id, $name = null, $qty = null, $price = null, Array $options = array())
 	{
+		// If the first parameter is an array we need to call the add() function again
+		if(is_array($id))
+		{
+			// And if it's not only an array, but a multidimensional array, we need to
+			// recursively call the add function
+			if($this->is_multi($id))
+			{
+				foreach($id as $item)
+				{
+					$options = isset($item['options']) ? $item['options'] : array();
+					$this->add($item['id'], $item['name'], $item['qty'], $item['price'], $options);
+				}
+
+				return;
+			}
+
+			$options = isset($id['options']) ? $id['options'] : array();
+			return $this->add($id['id'], $id['name'], $id['qty'], $id['price'], $options);
+		}
+
 		$cart = $this->getContent();
 
 		$rowId = $this->generateRowId($id, $options);
@@ -74,19 +94,14 @@ class Cart {
 
 	/**
 	 * Add multiple rows to the cart
+	 * Maps to add() function
+	 * Will probably be removed in future versions
 	 *
 	 * @param Array $items An array of items to add, use array keys corresponding to the 'add' method's parameters
 	 */
 	public function addBatch(Array $items)
 	{
-		foreach($items as $item)
-		{
-			$options = (isset($item['options'])) ? $item['options'] : array();
-
-			$this->add($item['id'], $item['name'], $item['qty'], $item['price'], $options);
-		}
-
-		return;
+		return $this->add($items);
 	}
 
 	/**
@@ -363,6 +378,19 @@ class Cart {
 	protected function updateAttribute($rowId, $attributes)
 	{
 		return $this->updateRow($rowId, $attributes);
+	}
+
+	/**
+	 * Check if the array is a multidimensional array
+	 *
+	 * @param  Array   $array The array to check
+	 * @return boolean
+	 */
+	protected function is_multi(Array $array)
+	{
+	    $first = array_shift($array);
+
+	    return is_array($first);
 	}
 
 }
