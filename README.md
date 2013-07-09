@@ -12,17 +12,17 @@ Install the package through [Composer](http://getcomposer.org/). Edit your proje
 Next, run the Composer update command from the Terminal:
 
     composer update
-    
+
 Now all you have to do is add the service provider of the package and alias the package. To do this open your `app/config/app.php` file.
 
 Add a new line to the `service providers` array:
 
 	'\Gloudemans\Shoppingcart\ShoppingcartServiceProvider'
-	
+
 And finally add a new line to the `aliases` array:
 
 	'Cart'            => 'Gloudemans\Shoppingcart\Facades\Cart',
-	
+
 Now you're ready to start using the shoppingcart in your application.
 
 ## Usage
@@ -34,29 +34,41 @@ The shoppingcart gives you the following methods to use:
 ```php
 /**
  * Add a row to the cart
- * 
- * @param string $id      Unique ID of the item
- * @param string $name    Name of the item
- * @param int    $qty     Item qty to add to the cart
- * @param float  $price   Price of one item
- * @param Array  $options Array of additional options, such as 'size' or 'color'
+ *
+ * @param string|Array $id      Unique ID of the item|Item formated as array|Array of items
+ * @param string       $name    Name of the item
+ * @param int          $qty     Item qty to add to the cart
+ * @param float        $price   Price of one item
+ * @param Array        $options Array of additional options, such as 'size' or 'color'
  */
 
+// Basic form
 Cart::add('293ad', 'Product 1', 1, 9.99, array('size' => 'large'));
+
+// Array form
+Cart::add(array('id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 9.99, 'options' => array('size' => 'large')));
+
+// Batch method
+Cart::add(array(
+  array('id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 10.00),
+  array('id' => '4832k', 'name' => 'Product 2', 'qty' => 1, 'price' => 10.00, 'options' => array('size' => 'large'))
+));
 ```
-     
+
 **Cart::addBatch()**
+
+Don't use this anymore, just pass a multidimensional array to the `Cart::add()` method
 
 ```php
 /**
  * Add multiple rows to the cart
- * 
+ *
  * @param Array $items An array of items to add, use array keys corresponding to the 'add' method's parameters
  */
- 
+
 Cart::addBatch(array(
 	array('id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 10.00),
-	array('id' => '4832k', 'name' => 'Product 2', 'qty' => 1, 'price' => 10.00, 'options' => array('size' => 'large'))     
+	array('id' => '4832k', 'name' => 'Product 2', 'qty' => 1, 'price' => 10.00, 'options' => array('size' => 'large'))
 ));
 ```
 
@@ -65,17 +77,17 @@ Cart::addBatch(array(
 ```php
 /**
  * Update the quantity of one row of the cart
- * 
+ *
  * @param  string        $rowId       The rowid of the item you want to update
  * @param  integer|Array $attribute   New quantity of the item|Array of attributes to update
  * @return boolean
  */
  $rowId = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
- 
+
 Cart::update($rowId, 2);
- 
+
 OR
- 
+
 Cart::update($rowId, array('name' => 'Product 1'));
 ```
 
@@ -84,31 +96,31 @@ Cart::update($rowId, array('name' => 'Product 1'));
 ```php
 /**
  * Remove a row from the cart
- * 
+ *
  * @param  string  $rowId The rowid of the item
- * @return boolean   
+ * @return boolean
  */
- 
+
  $rowId = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
- 
+
 Cart::remove($rowId);
 ```
-     
+
 **Cart::get()**
 
 ```php
 /**
  * Get a row of the cart by its ID
- * 
+ *
  * @param  string $rowId The ID of the row to fetch
  * @return CartRowCollection
  */
- 
+
 $rowId = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
- 
+
 Cart::get($rowId);
 ```
-     
+
 **Cart::content()**
 
 ```php
@@ -119,8 +131,8 @@ Cart::get($rowId);
  */
 
 Cart::content();
-```	 
-	 
+```
+
 **Cart::destroy()**
 
 ```php
@@ -129,22 +141,22 @@ Cart::content();
  *
  * @return boolean
  */
- 
+
 Cart::destroy();
 ```
-	 
+
 **Cart::total()**
 
 ```php
 /**
  * Get the price total
- * 
+ *
  * @return float
  */
-  
+
 Cart::total();
 ```
-     
+
 **Cart::count()**
 
 ```php
@@ -154,7 +166,7 @@ Cart::total();
  * @param  boolean $totalItems Get all the items (when false, will return the number of rows)
  * @return int
  */
- 
+
  Cart::count();      // Total items
  Cart::count(false); // Total rows
 ```
@@ -164,14 +176,14 @@ Cart::total();
 ```php
 /**
  * Search if the cart has a item
- * 
+ *
  * @param  Array  $search An array with the item ID and optional options
  * @return Array|boolean
  */
- 
- Cart::search(array('id' => 1, 'options' => array('size' => 'L'))); // Returns an array of rowid(s) of found item(s) or false on failure 
+
+ Cart::search(array('id' => 1, 'options' => array('size' => 'L'))); // Returns an array of rowid(s) of found item(s) or false on failure
 ```
-     
+
 ## Collections
 
 As you might have seen, the `Cart::content()` and `Cart::get()` methods both return a Collection, a `CartCollection` and a `CartRowCollection`.
@@ -204,7 +216,7 @@ Cart::instance('shopping')->content();
 // And the count of the 'wishlist' cart again
 Cart::instance('wishlist')->count();
 ```
-    
+
 N.B. Keep in mind that the cart stays in the last set instance for as long as you don't set a different one during script execution.
 
 N.B.2 The default cart instance is called `main`, so when you're not using instances,`Cart::content();` is the same as `Cart::instance('main')->content()`.
