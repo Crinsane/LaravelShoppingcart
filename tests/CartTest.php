@@ -4,7 +4,7 @@ class CartTest extends TestCase {
 
 	public function testCartCanAdd()
 	{
-		Cart::add(1, 'test', 1, 10.00, ['size' => 'L']);
+		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
 
 		$this->assertEquals(Cart::count(), 1);
 		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
@@ -12,7 +12,7 @@ class CartTest extends TestCase {
 
 	public function testCartCanAddArray()
 	{
-		Cart::add(['id' => 1, 'name' => 'test', 'qty' => 1, 'price' => 10.00, 'options' => ['size' => 'L']]);
+		Cart::add(array('id' => 1, 'name' => 'test', 'qty' => 1, 'price' => 10.00, 'options' => array('size' => 'L')));
 
 		$this->assertEquals(Cart::count(), 1);
 		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
@@ -20,10 +20,10 @@ class CartTest extends TestCase {
 
 	public function testCartCanAddBatch()
 	{
-		Cart::add([
-			['id' => 1, 'name' => 'test_1', 'qty' => 1, 'price' => 10.00],
-			['id' => 2, 'name' => 'test_2', 'qty' => 1, 'price' => 10.00, 'options' => ['size' => 'large']]
-		]);
+		Cart::add(array(
+			array('id' => 1, 'name' => 'test_1', 'qty' => 1, 'price' => 10.00),
+			array('id' => 2, 'name' => 'test_2', 'qty' => 1, 'price' => 10.00, 'options' => array('size' => 'large'))
+		));
 
 		$this->assertEquals(Cart::count(), 2);
 		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
@@ -31,8 +31,8 @@ class CartTest extends TestCase {
 
 	public function testCartCanAddToExisting()
 	{
-		Cart::add(1, 'test', 1, 10.00, ['size' => 'L']);
-		Cart::add(1, 'test', 1, 10.00, ['size' => 'L']);
+		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
+		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
 
 		$rowId = Cart::content()->first()->rowid;
 
@@ -42,7 +42,7 @@ class CartTest extends TestCase {
 
 	public function testCartCanUpdate()
 	{
-		Cart::add(1, 'test', 1, 10.00, ['size' => 'L']);
+		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
 
 		$rowId = Cart::content()->first()->rowid;
 
@@ -55,11 +55,11 @@ class CartTest extends TestCase {
 
 	public function testCartCanUpdateAttribute()
 	{
-		Cart::add(1, 'test', 1, 10.00, ['size' => 'L']);
+		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
 
 		$rowId = Cart::content()->first()->rowid;
 
-		Cart::update($rowId, ['name' => 'test_2']);
+		Cart::update($rowId, array('name' => 'test_2'));
 
 		$this->assertEquals(Cart::get($rowId)->name, 'test_2');
 		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
@@ -67,20 +67,20 @@ class CartTest extends TestCase {
 
 	public function testCartCanUpdateOptionsAttribute()
 	{
-		Cart::add(1, 'test', 1, 10.00, ['size' => 'L']);
+		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
 
 		$rowId = Cart::content()->first()->rowid;
 
-		Cart::update($rowId, ['options' => ['color' => 'yellow']]);
+		Cart::update($rowId, array('options' => array('color' => 'yellow')));
 
-		$this->assertEquals(Cart::get($rowId)->options, new Gloudemans\Shoppingcart\CartRowOptionsCollection(['size' => 'L', 'color' => 'yellow']));
+		$this->assertEquals(Cart::get($rowId)->options, new Gloudemans\Shoppingcart\CartRowOptionsCollection(array('size' => 'L', 'color' => 'yellow')));
 		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartRowOptionsCollection', Cart::get($rowId)->options);
 	}
 
 	public function testCartCanRemove()
 	{
-		Cart::add(1, 'test', 1, 10.00, ['size' => 'L']);
-		Cart::add(2, 'test', 1, 10.00, ['size' => 'L']);
+		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
+		Cart::add(2, 'test', 1, 10.00, array('size' => 'L'));
 
 		$rowId = Cart::content()->first()->rowid;
 
@@ -93,7 +93,7 @@ class CartTest extends TestCase {
 
 	public function testCartCanRemoveOnUpdate()
 	{
-		Cart::add(1, 'test', 1, 10.00, ['size' => 'L']);
+		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
 
 		$rowId = Cart::content()->first()->rowid;
 
@@ -106,7 +106,7 @@ class CartTest extends TestCase {
 
 	public function testCartCanGet()
 	{
-		Cart::add(1, 'test', 1, 10.00, ['size' => 'L']);
+		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
 
 		$rowId = Cart::content()->first()->rowid;
 
@@ -124,7 +124,7 @@ class CartTest extends TestCase {
 
 	public function testCartCanGetContent()
 	{
-		Cart::add(1, 'test', 1, 10.00, ['size' => 'L']);
+		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
 
 		$this->assertEquals(Cart::content()->count(), 1);
 		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
@@ -132,7 +132,7 @@ class CartTest extends TestCase {
 
 	public function testCartCanDestroy()
 	{
-		Cart::add(1, 'test', 1, 10.00, ['size' => 'L']);
+		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
 
 		Cart::destroy();
 
@@ -142,8 +142,8 @@ class CartTest extends TestCase {
 
 	public function testCartCanGetTotal()
 	{
-		Cart::add(1, 'test', 1, 10.00, ['size' => 'L']);
-		Cart::add(2, 'test', 1, 10.00, ['size' => 'L']);
+		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
+		Cart::add(2, 'test', 1, 10.00, array('size' => 'L'));
 
 		$total = Cart::total();
 
@@ -153,8 +153,8 @@ class CartTest extends TestCase {
 
 	public function testCartCanGetCount()
 	{
-		Cart::add(1, 'test', 1, 10.00, ['size' => 'L']);
-		Cart::add(2, 'test', 2, 10.00, ['size' => 'L']);
+		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
+		Cart::add(2, 'test', 2, 10.00, array('size' => 'L'));
 
 		$count = Cart::count(false);
 
@@ -169,8 +169,8 @@ class CartTest extends TestCase {
 
 	public function testCartCanHaveMultipleInstances()
 	{
-		Cart::instance('test_1')->add(1, 'test_1', 1, 10.00, ['size' => 'L']);
-		Cart::instance('test_2')->add(2, 'test_2', 2, 10.00, ['size' => 'L']);
+		Cart::instance('test_1')->add(1, 'test_1', 1, 10.00, array('size' => 'L'));
+		Cart::instance('test_2')->add(2, 'test_2', 2, 10.00, array('size' => 'L'));
 
 		$name = Cart::instance('test_1')->content()->first()->name;
 
@@ -190,7 +190,7 @@ class CartTest extends TestCase {
 
 		$this->assertEquals($count, 5);
 
-		Cart::instance('test_1')->add(1, 'test_1', 1, 10.00, ['size' => 'L']);
+		Cart::instance('test_1')->add(1, 'test_1', 1, 10.00, array('size' => 'L'));
 
 		$count = Cart::count();
 
@@ -199,35 +199,35 @@ class CartTest extends TestCase {
 
 	public function testCartCanSearch()
 	{
-		Cart::add(1, 'Product 1', 1, 10.00, ['size' => 'large', 'color' => 'red']);
-		Cart::add(2, 'Product 2', 1, 10.00, ['size' => 'large']);
+		Cart::add(1, 'Product 1', 1, 10.00, array('size' => 'large', 'color' => 'red'));
+		Cart::add(2, 'Product 2', 1, 10.00, array('size' => 'large'));
 
-		$search = Cart::search(['id' => 1, 'name' => 'Product 1']);
-		$this->assertEquals($search, ['a308327de59a3e249baabc24a6c29928']);
+		$search = Cart::search(array('id' => 1, 'name' => 'Product 1'));
+		$this->assertEquals($search, array('a308327de59a3e249baabc24a6c29928'));
 
-		$search = Cart::search(['id' => 2, 'name' => 'Product 1']);
+		$search = Cart::search(array('id' => 2, 'name' => 'Product 1'));
 		$this->assertFalse($search);
 
-		$search = Cart::search(['id' => 2, 'name' => 'Product 2']);
-		$this->assertEquals($search, ['bb0042610e1c6e8bfd7293bfa1807f82']);
+		$search = Cart::search(array('id' => 2, 'name' => 'Product 2'));
+		$this->assertEquals($search, array('bb0042610e1c6e8bfd7293bfa1807f82'));
 
-		$search = Cart::search(['id' => 1, 'price' => 10.00]);
-		$this->assertEquals($search, ['a308327de59a3e249baabc24a6c29928']);
+		$search = Cart::search(array('id' => 1, 'price' => 10.00));
+		$this->assertEquals($search, array('a308327de59a3e249baabc24a6c29928'));
 
-		$search = Cart::search(['qty' => 1, 'price' => 10.00]);
-		$this->assertEquals($search, ['a308327de59a3e249baabc24a6c29928', 'bb0042610e1c6e8bfd7293bfa1807f82']);
+		$search = Cart::search(array('qty' => 1, 'price' => 10.00));
+		$this->assertEquals($search, array('a308327de59a3e249baabc24a6c29928', 'bb0042610e1c6e8bfd7293bfa1807f82'));
 
-		$search = Cart::search(['id' => 2, 'kaas' => 'Product 2']);
+		$search = Cart::search(array('id' => 2, 'kaas' => 'Product 2'));
 		$this->assertFalse($search);
 
-		$search = Cart::search(['id' => 2, 'options' => ['size' => 'large']]);
-		$this->assertEquals($search, ['bb0042610e1c6e8bfd7293bfa1807f82']);
+		$search = Cart::search(array('id' => 2, 'options' => array('size' => 'large')));
+		$this->assertEquals($search, array('bb0042610e1c6e8bfd7293bfa1807f82'));
 
-		$search = Cart::search(['options' => ['size' => 'large']]);
-		$this->assertEquals($search, ['a308327de59a3e249baabc24a6c29928', 'bb0042610e1c6e8bfd7293bfa1807f82']);
+		$search = Cart::search(array('options' => array('size' => 'large')));
+		$this->assertEquals($search, array('a308327de59a3e249baabc24a6c29928', 'bb0042610e1c6e8bfd7293bfa1807f82'));
 
-		$search = Cart::search(['id' => 1, 'options' => ['color' => 'red']]);
-		$this->assertEquals($search, ['a308327de59a3e249baabc24a6c29928']);
+		$search = Cart::search(array('id' => 1, 'options' => array('color' => 'red')));
+		$this->assertEquals($search, array('a308327de59a3e249baabc24a6c29928'));
 	}
 
 }
