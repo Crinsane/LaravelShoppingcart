@@ -263,7 +263,9 @@ class Cart {
 	 */
 	protected function generateRowId($id, $options)
 	{
-		return md5($id . serialize(ksort($options)));
+		ksort($options);
+
+		return md5($id . serialize($options));
 	}
 
 	/**

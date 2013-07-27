@@ -202,32 +202,35 @@ class CartTest extends TestCase {
 		Cart::add(1, 'Product 1', 1, 10.00, array('size' => 'large', 'color' => 'red'));
 		Cart::add(2, 'Product 2', 1, 10.00, array('size' => 'large'));
 
+		$row1 = '17351068ba2f30bac8d3ccb1ad94dfe6';
+		$row2 = '5b9865a287421917623bdcf99f7de904';
+
 		$search = Cart::search(array('id' => 1, 'name' => 'Product 1'));
-		$this->assertEquals($search, array('a308327de59a3e249baabc24a6c29928'));
+		$this->assertEquals($search, array($row1));
 
 		$search = Cart::search(array('id' => 2, 'name' => 'Product 1'));
 		$this->assertFalse($search);
 
 		$search = Cart::search(array('id' => 2, 'name' => 'Product 2'));
-		$this->assertEquals($search, array('bb0042610e1c6e8bfd7293bfa1807f82'));
+		$this->assertEquals($search, array($row2));
 
 		$search = Cart::search(array('id' => 1, 'price' => 10.00));
-		$this->assertEquals($search, array('a308327de59a3e249baabc24a6c29928'));
+		$this->assertEquals($search, array($row1));
 
 		$search = Cart::search(array('qty' => 1, 'price' => 10.00));
-		$this->assertEquals($search, array('a308327de59a3e249baabc24a6c29928', 'bb0042610e1c6e8bfd7293bfa1807f82'));
+		$this->assertEquals($search, array($row1, $row2));
 
 		$search = Cart::search(array('id' => 2, 'kaas' => 'Product 2'));
 		$this->assertFalse($search);
 
 		$search = Cart::search(array('id' => 2, 'options' => array('size' => 'large')));
-		$this->assertEquals($search, array('bb0042610e1c6e8bfd7293bfa1807f82'));
+		$this->assertEquals($search, array($row2));
 
 		$search = Cart::search(array('options' => array('size' => 'large')));
-		$this->assertEquals($search, array('a308327de59a3e249baabc24a6c29928', 'bb0042610e1c6e8bfd7293bfa1807f82'));
+		$this->assertEquals($search, array($row1, $row2));
 
 		$search = Cart::search(array('id' => 1, 'options' => array('color' => 'red')));
-		$this->assertEquals($search, array('a308327de59a3e249baabc24a6c29928'));
+		$this->assertEquals($search, array($row1));
 	}
 
 }
