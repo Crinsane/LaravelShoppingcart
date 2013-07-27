@@ -36,8 +36,10 @@ class Cart {
 	 * @param  string $instance Cart instance name
 	 * @return Cart
 	 */
-	public function instance($instance)
+	public function instance($instance = null)
 	{
+		if(empty($instance)) throw new Exceptions\ShoppingcartInstanceException;
+
 		$this->instance = $instance;
 
 		// Return self so the method is chainable
@@ -99,6 +101,8 @@ class Cart {
 	 */
 	public function update($rowId, $attribute)
 	{
+		if( ! $this->hasRowId($rowId)) throw new Exceptions\ShoppingcartInvalidRowIDException;
+
 		if(is_array($attribute))
 		{
 			return $this->updateAttribute($rowId, $attribute);
@@ -115,6 +119,8 @@ class Cart {
 	 */
 	public function remove($rowId)
 	{
+		if( ! $this->hasRowId($rowId)) throw new Exceptions\ShoppingcartInvalidRowIDException;
+
 		$cart = $this->getContent();
 
 		$cart->forget($rowId);
@@ -237,6 +243,21 @@ class Cart {
 	 */
 	protected function addRow($id, $name, $qty, $price, Array $options = array())
 	{
+		if(empty($id) || empty($name) || empty($qty) || empty($price))
+		{
+			throw new Exceptions\ShoppingcartInvalidItemException;
+		}
+
+		if( ! is_numeric($qty))
+		{
+			throw new Exceptions\ShoppingcartInvalidQtyException;
+		}
+
+		if( ! is_numeric($price))
+		{
+			throw new Exceptions\ShoppingcartInvalidPriceException;
+		}
+
 		$cart = $this->getContent();
 
 		$rowId = $this->generateRowId($id, $options);
@@ -266,6 +287,17 @@ class Cart {
 		ksort($options);
 
 		return md5($id . serialize($options));
+	}
+
+	/**
+	 * Check if a rowid exists in the current cart instance
+	 *
+	 * @param  string  $id  Unique ID of the item
+	 * @return boolean
+	 */
+	protected function hasRowId($rowId)
+	{
+		return $this->getContent()->has($rowId);
 	}
 
 	/**

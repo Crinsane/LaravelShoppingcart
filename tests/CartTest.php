@@ -233,4 +233,46 @@ class CartTest extends TestCase {
 		$this->assertEquals($search, array($row1));
 	}
 
+	/**
+     * @expectedException Gloudemans\Shoppingcart\Exceptions\ShoppingcartInstanceException
+     */
+	public function testShoppingcartInstanceException()
+	{
+		Cart::instance();
+	}
+
+	/**
+     * @expectedException Gloudemans\Shoppingcart\Exceptions\ShoppingcartInvalidItemException
+     */
+	public function testShoppingcartInvalidItemException()
+	{
+		Cart::add(1);
+	}
+
+	/**
+     * @expectedException Gloudemans\Shoppingcart\Exceptions\ShoppingcartInvalidQtyException
+     */
+	public function testShoppingcartInvalidQtyException()
+	{
+		Cart::add(1, 'Product 1', 'nonnumeric', 10.00);
+	}
+
+	/**
+     * @expectedException Gloudemans\Shoppingcart\Exceptions\ShoppingcartInvalidPriceException
+     */
+	public function testShoppingcartInvalidPriceException()
+	{
+		Cart::add(1, 'Product 1', 1, 'nonnumeric');
+	}
+
+	/**
+     * @expectedException Gloudemans\Shoppingcart\Exceptions\ShoppingcartInvalidRowIDException
+     */
+	public function testShoppingcartInvalidRowIDException()
+	{
+		Cart::add(1, 'Product 1', 1, 10.00);
+
+		Cart::update('nonexistingrowid', 2);
+	}
+
 }

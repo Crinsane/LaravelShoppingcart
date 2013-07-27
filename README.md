@@ -17,7 +17,7 @@ Now all you have to do is add the service provider of the package and alias the 
 
 Add a new line to the `service providers` array:
 
-	'\Gloudemans\Shoppingcart\ShoppingcartServiceProvider'
+	'Gloudemans\Shoppingcart\ShoppingcartServiceProvider'
 
 And finally add a new line to the `aliases` array:
 
@@ -220,6 +220,18 @@ Cart::instance('wishlist')->count();
 N.B. Keep in mind that the cart stays in the last set instance for as long as you don't set a different one during script execution.
 
 N.B.2 The default cart instance is called `main`, so when you're not using instances,`Cart::content();` is the same as `Cart::instance('main')->content()`.
+
+## Exceptions
+The Cart package will throw exceptions if something goes wrong. This way it's easier to debug your code using the Cart package or to handle the error based on the type of exceptions. The Cart packages can throw the following exceptions:
+
+| Exception                             | Reason                                                                   |
+| ------------------------------------- | ------------------------------------------------------------------------ |
+| *ShoppingcartInstanceException*       | When no instance is passed to the instance() method                      |
+| *ShoppingcartInvalidItemException*    | When a new product misses one of it's arguments (id, name, qty, price)   |
+| *ShoppingcartInvalidPriceException*   | When a not numeric price is passed                                       |
+| *ShoppingcartInvalidQtyException*     | When a not numeric quantity is passed                                    |
+| *ShoppingcartInvalidRowIDException*   | When the rowId that got passed doesn't exists in the current cart        |
+
 
 ## Example
 
