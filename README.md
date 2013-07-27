@@ -25,6 +25,15 @@ And finally add a new line to the `aliases` array:
 
 Now you're ready to start using the shoppingcart in your application.
 
+## Overview
+Look at one of the following topics to learn more about LaravelShoppingcart
+
+* [Usage](#usage)
+* [Collections](#collections)
+* [Instances](#instances)
+* [Exceptions](#exceptions)
+* [Example](#example)
+
 ## Usage
 
 The shoppingcart gives you the following methods to use:
