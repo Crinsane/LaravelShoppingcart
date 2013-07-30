@@ -231,6 +231,9 @@ class CartTest extends TestCase {
 
 		$search = Cart::search(array('id' => 1, 'options' => array('color' => 'red')));
 		$this->assertEquals($search, array($row1));
+
+		$search = Cart::search(array('options' => array('color' => 'red', 'size' => 'large')));
+		$this->assertEquals($search, array($row1));
 	}
 
 	/**
