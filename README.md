@@ -4,7 +4,7 @@ Install the package through [Composer](http://getcomposer.org/). Edit your proje
 
 ```php
 "require": {
-	"laravel/framework": "4.0.*",
+	"laravel/framework": "4.1.*",
 	"gloudemans/shoppingcart": "dev-master"
 }
 ```
