@@ -32,6 +32,7 @@ Look at one of the following topics to learn more about LaravelShoppingcart
 * [Collections](#collections)
 * [Instances](#instances)
 * [Exceptions](#exceptions)
+* [Events](#events)
 * [Example](#example)
 
 ## Usage
@@ -241,6 +242,17 @@ The Cart package will throw exceptions if something goes wrong. This way it's ea
 | *ShoppingcartInvalidQtyException*     | When a not numeric quantity is passed                                    |
 | *ShoppingcartInvalidRowIDException*   | When the rowId that got passed doesn't exists in the current cart        |
 
+## Events
+
+The cart also has events build in. There are five events available for you to listen for.
+
+| Event                | Fired                                   |
+|----------------------------------------------------------------|
+| cart.add($item)      | When a single item is added             |
+| cart.batch($items)   | When a batch if items is added          |
+| cart.update($rowId)  | When an item in the cart is updated     |
+| cart.remove($rowId)  | When an item is removed from the cart   |
+| cart.destroy()       | When the cart is destroyed              |
 
 ## Example
 

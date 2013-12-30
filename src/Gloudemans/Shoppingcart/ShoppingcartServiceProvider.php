@@ -11,11 +11,11 @@ class ShoppingcartServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-
 		$this->app['cart'] = $this->app->share(function($app)
 		{
 			$session = $app['session'];
-			return new Cart($session);
+			$event = $app['events'];
+			return new Cart($session, $event);
 		});
 	}
 }

@@ -12,6 +12,13 @@ class Cart {
 	protected $session;
 
 	/**
+	 * Event class instance
+	 *
+	 * @var Event
+	 */
+	protected $event;
+
+	/**
 	 * Current cart instance
 	 *
 	 * @var string
@@ -22,10 +29,12 @@ class Cart {
 	 * Constructor
 	 *
 	 * @param Session $session Session class instance
+	 * @param Event   $event   Event class instance
 	 */
-	public function __construct($session)
+	public function __construct($session, $event)
 	{
 		$this->session = $session;
+		$this->event = $event;
 
 		$this->instance = 'main';
 	}
@@ -64,6 +73,9 @@ class Cart {
 			// recursively call the add function
 			if($this->is_multi($id))
 			{
+				// Fire the cart.batch event
+				$this->event->fire('cart.batch', $id);
+
 				foreach($id as $item)
 				{
 					$options = isset($item['options']) ? $item['options'] : array();
@@ -74,22 +86,17 @@ class Cart {
 			}
 
 			$options = isset($id['options']) ? $id['options'] : array();
+
+			// Fire the cart.add event
+			$this->event->fire('cart.add', array_merge($id, array('options' => $options)));
+
 			return $this->addRow($id['id'], $id['name'], $id['qty'], $id['price'], $options);
 		}
 
-		return $this->addRow($id, $name, $qty, $price, $options);
-	}
+		// Fire the cart.add event
+		$this->event->fire('cart.add', compact('id', 'name', 'qty', 'price', 'options'));
 
-	/**
-	 * Add multiple rows to the cart
-	 * Maps to add() function
-	 * Will probably be removed in future versions
-	 *
-	 * @param Array $items An array of items to add, use array keys corresponding to the 'add' method's parameters
-	 */
-	public function addBatch(Array $items)
-	{
-		return $this->add($items);
+		return $this->addRow($id, $name, $qty, $price, $options);
 	}
 
 	/**
@@ -105,8 +112,14 @@ class Cart {
 
 		if(is_array($attribute))
 		{
+			// Fire the cart.update event
+			$this->event->fire('cart.update', $rowId);
+
 			return $this->updateAttribute($rowId, $attribute);
 		}
+
+		// Fire the cart.update event
+		$this->event->fire('cart.update', $rowId);
 
 		return $this->updateQty($rowId, $attribute);
 	}
@@ -122,6 +135,9 @@ class Cart {
 		if( ! $this->hasRowId($rowId)) throw new Exceptions\ShoppingcartInvalidRowIDException;
 
 		$cart = $this->getContent();
+
+		// Fire the cart.remove event
+		$this->event->fire('cart.remove', $rowId);
 
 		$cart->forget($rowId);
 
@@ -160,6 +176,9 @@ class Cart {
 	 */
 	public function destroy()
 	{
+		// Fire the cart.destroy event
+		$this->event->fire('cart.destroy');
+
 		return $this->updateCart(NULL);
 	}
 
