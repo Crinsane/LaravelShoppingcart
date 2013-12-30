@@ -65,23 +65,6 @@ Cart::add(array(
 ));
 ```
 
-**Cart::addBatch()**
-
-Don't use this anymore, just pass a multidimensional array to the `Cart::add()` method
-
-```php
-/**
- * Add multiple rows to the cart
- *
- * @param Array $items An array of items to add, use array keys corresponding to the 'add' method's parameters
- */
-
-Cart::addBatch(array(
-	array('id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 10.00),
-	array('id' => '4832k', 'name' => 'Product 2', 'qty' => 1, 'price' => 10.00, 'options' => array('size' => 'large'))
-));
-```
-
 **Cart::update()**
 
 ```php
