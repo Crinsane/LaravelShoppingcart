@@ -107,7 +107,7 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		$this->events->shouldReceive('fire')->once()->with('cart.update', m::type('string'));
 
 		$this->cart->add('293ad', 'Product 1', 1, 9.99);
-		$this->cart->update('8cbf215baa3b757e910e5305ab981172', ['name' => 'Product 2']);
+		$this->cart->update('8cbf215baa3b757e910e5305ab981172', array('name' => 'Product 2'));
 
 		$this->assertEquals('Product 2', $this->cart->content()->first()->name);
 	}
@@ -117,8 +117,8 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
 		$this->events->shouldReceive('fire')->once()->with('cart.update', m::type('string'));
 
-		$this->cart->add('293ad', 'Product 1', 1, 9.99, ['size' => 'S']);
-		$this->cart->update('9be7e69d236ca2d09d2e0838d2c59aeb', ['options' => ['size' => 'L']]);
+		$this->cart->add('293ad', 'Product 1', 1, 9.99, array('size' => 'S'));
+		$this->cart->update('9be7e69d236ca2d09d2e0838d2c59aeb', array('options' => array('size' => 'L')));
 
 		$this->assertEquals('L', $this->cart->content()->first()->options->size);
 	}
