@@ -10,16 +10,15 @@ require_once 'SessionMock.php';
 
 class CartTest extends PHPUnit_Framework_TestCase {
 
-	protected $session;
 	protected $events;
 	protected $cart;
 
 	public function setUp()
 	{
-		$this->session = new SessionMock;
+		$session= new SessionMock;
 		$this->events = m::mock('Illuminate\Events\Dispatcher');
 
-		$this->cart = new Cart($this->session, $this->events);
+		$this->cart = new Cart($session, $this->events);
 	}
 
 	public function tearDown()
