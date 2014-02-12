@@ -1,3 +1,8 @@
+## LaravelShoppingcart
+[![Build Status](https://travis-ci.org/Crinsane/LaravelShoppingcart.png?branch=master)](https://travis-ci.org/Crinsane/LaravelShoppingcart)
+
+A simple shoppingcart implementation for Laravel 4.
+
 ## Installation
 
 Install the package through [Composer](http://getcomposer.org/). Edit your project's `composer.json` file by adding:
