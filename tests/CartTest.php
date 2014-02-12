@@ -222,7 +222,8 @@ class CartTest extends PHPUnit_Framework_TestCase {
 
 		$this->cart->add('293ad', 'Product 1', 1, 9.99);
 
-		$this->assertEquals('8cbf215baa3b757e910e5305ab981172', $this->cart->search(array('id' => '293ad'))[0]);
+		$searchResult = $this->cart->search(array('id' => '293ad'));
+		$this->assertEquals('8cbf215baa3b757e910e5305ab981172', $searchResult[0]);
 	}
 
 	public function testCartCanHaveMultipleInstances()
