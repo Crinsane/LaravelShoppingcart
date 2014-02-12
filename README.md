@@ -1,5 +1,6 @@
 ## LaravelShoppingcart
 [![Build Status](https://travis-ci.org/Crinsane/LaravelShoppingcart.png?branch=master)](https://travis-ci.org/Crinsane/LaravelShoppingcart)
+[![Total Downloads](https://poser.pugx.org/gloudemans/shoppingcart/downloads.png)](https://packagist.org/packages/gloudemans/shoppingcart)
 
 A simple shoppingcart implementation for Laravel 4.
 
