@@ -2,6 +2,7 @@
     "name": "gloudemans/shoppingcart",
     "description": "Laravel 4 Shoppingcart",
     "keywords": ["laravel", "shoppingcart"],
+    "license": "MIT",
     "authors": [
         {
             "name": "Rob Gloudemans",
