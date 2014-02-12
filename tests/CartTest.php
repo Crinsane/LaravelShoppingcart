@@ -1,281 +1,277 @@
 <?php
 
-class CartTest extends TestCase {
+use Gloudemans\Shoppingcart\Cart;
+use Gloudemans\Shoppingcart\CartCollection;
+use Gloudemans\Shoppingcart\CartRowCollection;
+use Gloudemans\Shoppingcart\CartRowOptionsCollection;
+use Mockery as m;
+
+require_once 'SessionMock.php';
+
+class CartTest extends PHPUnit_Framework_TestCase {
+
+	protected $session;
+	protected $events;
+	protected $cart;
+
+	public function setUp()
+	{
+		$this->session = new SessionMock;
+		$this->events = m::mock('Illuminate\Events\Dispatcher');
+
+		$this->cart = new Cart($this->session, $this->events);
+	}
+
+	public function tearDown()
+	{
+		m::close();
+	}
 
 	public function testCartCanAdd()
 	{
-		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
 
-		$this->assertEquals(Cart::count(), 1);
-		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
+		$this->cart->add('293ad', 'Product 1', 1, 9.99, array('size' => 'large'));
 	}
 
 	public function testCartCanAddArray()
 	{
-		Cart::add(array('id' => 1, 'name' => 'test', 'qty' => 1, 'price' => 10.00, 'options' => array('size' => 'L')));
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
 
-		$this->assertEquals(Cart::count(), 1);
-		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
+		$this->cart->add(array('id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 9.99, 'options' => array('size' => 'large')));
 	}
 
 	public function testCartCanAddBatch()
 	{
-		Cart::add(array(
-			array('id' => 1, 'name' => 'test_1', 'qty' => 1, 'price' => 10.00),
-			array('id' => 2, 'name' => 'test_2', 'qty' => 1, 'price' => 10.00, 'options' => array('size' => 'large'))
+		$this->events->shouldReceive('fire')->once()->with('cart.batch', m::type('array'));
+
+		$this->cart->add(array(
+			array('id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 10.00),
+			array('id' => '4832k', 'name' => 'Product 2', 'qty' => 1, 'price' => 10.00, 'options' => array('size' => 'large'))
 		));
-
-		$this->assertEquals(Cart::count(), 2);
-		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
 	}
 
-	public function testCartCanAddToExisting()
+	/**
+	 * @expectedException Gloudemans\Shoppingcart\Exceptions\ShoppingcartInvalidItemException
+	 */
+	public function testCartThrowsExceptionOnEmptyItem()
 	{
-		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
-		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::any());
 
-		$rowId = Cart::content()->first()->rowid;
-
-		$this->assertEquals(Cart::get($rowId)->qty, 2);
-		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
+		$this->cart->add('', '', '', '');
 	}
 
-	public function testCartCanUpdate()
+	/**
+	 * @expectedException Gloudemans\Shoppingcart\Exceptions\ShoppingcartInvalidQtyException
+	 */
+	public function testCartThrowsExceptionOnNoneNumericQty()
 	{
-		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::any());
 
-		$rowId = Cart::content()->first()->rowid;
-
-		Cart::update($rowId, 2);
-
-		$this->assertEquals(Cart::get($rowId)->qty, 2);
-		$this->assertEquals(Cart::get($rowId)->subtotal, 20.00);
-		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
+		$this->cart->add('293ad', 'Product 1', 'none-numeric', 9.99);
 	}
 
-	public function testCartCanUpdateAttribute()
+	/**
+	 * @expectedException Gloudemans\Shoppingcart\Exceptions\ShoppingcartInvalidPriceException
+	 */
+	public function testCartThrowsExceptionOnNoneNumericPrice()
 	{
-		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::any());
 
-		$rowId = Cart::content()->first()->rowid;
-
-		Cart::update($rowId, array('name' => 'test_2'));
-
-		$this->assertEquals(Cart::get($rowId)->name, 'test_2');
-		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
+		$this->cart->add('293ad', 'Product 1', 1, 'none-numeric');
 	}
 
-	public function testCartCanUpdateOptionsAttribute()
+	public function testCartCanUpdateExistingItem()
 	{
-		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
+		$this->events->shouldReceive('fire')->twice()->with('cart.add', m::type('array'));
 
-		$rowId = Cart::content()->first()->rowid;
+		$this->cart->add('293ad', 'Product 1', 1, 9.99);
+		$this->cart->add('293ad', 'Product 1', 1, 9.99);
 
-		Cart::update($rowId, array('options' => array('color' => 'yellow')));
+		$this->assertEquals(2, $this->cart->content()->first()->qty);
+	}
 
-		$this->assertEquals(Cart::get($rowId)->options, new Gloudemans\Shoppingcart\CartRowOptionsCollection(array('size' => 'L', 'color' => 'yellow')));
-		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartRowOptionsCollection', Cart::get($rowId)->options);
+	public function testCartCanUpdateQty()
+	{
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
+		$this->events->shouldReceive('fire')->once()->with('cart.update', m::type('string'));
+
+		$this->cart->add('293ad', 'Product 1', 1, 9.99);
+		$this->cart->update('8cbf215baa3b757e910e5305ab981172', 2);
+
+		$this->assertEquals(2, $this->cart->content()->first()->qty);
+	}
+
+	public function testCartCanUpdateItem()
+	{
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
+		$this->events->shouldReceive('fire')->once()->with('cart.update', m::type('string'));
+
+		$this->cart->add('293ad', 'Product 1', 1, 9.99);
+		$this->cart->update('8cbf215baa3b757e910e5305ab981172', ['name' => 'Product 2']);
+
+		$this->assertEquals('Product 2', $this->cart->content()->first()->name);
+	}
+
+	public function testCartCanUpdateOptions()
+	{
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
+		$this->events->shouldReceive('fire')->once()->with('cart.update', m::type('string'));
+
+		$this->cart->add('293ad', 'Product 1', 1, 9.99, ['size' => 'S']);
+		$this->cart->update('9be7e69d236ca2d09d2e0838d2c59aeb', ['options' => ['size' => 'L']]);
+
+		$this->assertEquals('L', $this->cart->content()->first()->options->size);
+	}
+
+	/**
+	 * @expectedException Gloudemans\Shoppingcart\Exceptions\ShoppingcartInvalidRowIDException
+	 */
+	public function testCartThrowsExceptionOnInvalidRowId()
+	{
+		$this->cart->update('invalidRowId', 1);
 	}
 
 	public function testCartCanRemove()
 	{
-		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
-		Cart::add(2, 'test', 1, 10.00, array('size' => 'L'));
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
+		$this->events->shouldReceive('fire')->once()->with('cart.remove', m::type('string'));
 
-		$rowId = Cart::content()->first()->rowid;
+		$this->cart->add('293ad', 'Product 1', 1, 9.99);
+		$this->cart->remove('8cbf215baa3b757e910e5305ab981172');
 
-		Cart::remove($rowId);
-
-		$this->assertEquals(Cart::count(), 1);
-		$this->assertNull(Cart::get($rowId));
-		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
+		$this->assertTrue($this->cart->content()->isEmpty());
 	}
 
 	public function testCartCanRemoveOnUpdate()
 	{
-		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
+		$this->events->shouldReceive('fire')->once()->with('cart.update', m::type('string'));
+		$this->events->shouldReceive('fire')->once()->with('cart.remove', m::type('string'));
 
-		$rowId = Cart::content()->first()->rowid;
+		$this->cart->add('293ad', 'Product 1', 1, 9.99);
+		$this->cart->update('8cbf215baa3b757e910e5305ab981172', 0);
 
-		Cart::update($rowId, 0);
-
-		$this->assertEquals(Cart::count(), 0);
-		$this->assertNull(Cart::get($rowId));
-		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
+		$this->assertTrue($this->cart->content()->isEmpty());
 	}
 
 	public function testCartCanGet()
 	{
-		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
 
-		$rowId = Cart::content()->first()->rowid;
+		$this->cart->add('293ad', 'Product 1', 1, 9.99);
+		$item = $this->cart->get('8cbf215baa3b757e910e5305ab981172');
 
-		$row = Cart::get($rowId);
-
-		$this->assertEquals($row->id, 1);
-		$this->assertEquals($row->name, 'test');
-		$this->assertEquals($row->qty, 1);
-		$this->assertEquals($row->price, 10.00);
-		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartRowCollection', $row);
-		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartRowOptionsCollection', $row->options);
-		$this->assertEquals($row, Cart::content()->first());
-		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
+		$this->assertEquals('293ad', $item->id);
 	}
 
 	public function testCartCanGetContent()
 	{
-		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
 
-		$this->assertEquals(Cart::content()->count(), 1);
-		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
+		$this->cart->add('293ad', 'Product 1', 1, 9.99);
+
+		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', $this->cart->content());
+		$this->assertFalse($this->cart->content()->isEmpty());
 	}
 
 	public function testCartCanDestroy()
 	{
-		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
+		$this->events->shouldReceive('fire')->once()->with('cart.destroy');
 
-		Cart::destroy();
+		$this->cart->add('293ad', 'Product 1', 1, 9.99);
+		$this->cart->destroy();
 
-		$this->assertEquals(Cart::count(), 0);
-		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', Cart::content());
+		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', $this->cart->content());
+		$this->assertTrue($this->cart->content()->isEmpty());
 	}
 
 	public function testCartCanGetTotal()
 	{
-		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
-		Cart::add(2, 'test', 1, 10.00, array('size' => 'L'));
+		$this->events->shouldReceive('fire')->twice()->with('cart.add', m::type('array'));
 
-		$total = Cart::total();
+		$this->cart->add('293ad', 'Product 1', 1, 9.99);
+		$this->cart->add('986se', 'Product 2', 1, 19.99);
 
-		$this->assertTrue(is_float($total));
-		$this->assertEquals($total, 20.00);
+		$this->assertEquals(29.98, $this->cart->total());
 	}
 
-	public function testCartCanGetCount()
+	public function testCartCanGetItemCount()
 	{
-		Cart::add(1, 'test', 1, 10.00, array('size' => 'L'));
-		Cart::add(2, 'test', 2, 10.00, array('size' => 'L'));
+		$this->events->shouldReceive('fire')->twice()->with('cart.add', m::type('array'));
 
-		$count = Cart::count(false);
+		$this->cart->add('293ad', 'Product 1', 1, 9.99);
+		$this->cart->add('986se', 'Product 2', 2, 19.99);
 
-		$this->assertTrue(is_integer($count));
-		$this->assertEquals($count, 2);
-
-		$count = Cart::count();
-
-		$this->assertTrue(is_integer($count));
-		$this->assertEquals($count, 3);
+		$this->assertEquals(3, $this->cart->count());
 	}
 
-	public function testCartCanHaveMultipleInstances()
+	public function testCartCanGetRowCount()
 	{
-		Cart::instance('test_1')->add(1, 'test_1', 1, 10.00, array('size' => 'L'));
-		Cart::instance('test_2')->add(2, 'test_2', 2, 10.00, array('size' => 'L'));
+		$this->events->shouldReceive('fire')->twice()->with('cart.add', m::type('array'));
 
-		$name = Cart::instance('test_1')->content()->first()->name;
+		$this->cart->add('293ad', 'Product 1', 1, 9.99);
+		$this->cart->add('986se', 'Product 2', 2, 19.99);
 
-		$this->assertEquals($name, 'test_1');
-
-		$name = Cart::instance('test_2')->content()->first()->name;
-
-		$this->assertEquals($name, 'test_2');
-
-		$count = Cart::count();
-
-		$this->assertEquals($count, 2);
-
-		Cart::add(3, 'test_3', 3, 10.00);
-
-		$count = Cart::count();
-
-		$this->assertEquals($count, 5);
-
-		Cart::instance('test_1')->add(1, 'test_1', 1, 10.00, array('size' => 'L'));
-
-		$count = Cart::count();
-
-		$this->assertEquals($count, 2);
+		$this->assertEquals(2, $this->cart->count(false));
 	}
 
 	public function testCartCanSearch()
 	{
-		Cart::add(1, 'Product 1', 1, 10.00, array('size' => 'large', 'color' => 'red'));
-		Cart::add(2, 'Product 2', 1, 10.00, array('size' => 'large'));
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
 
-		$row1 = '17351068ba2f30bac8d3ccb1ad94dfe6';
-		$row2 = '5b9865a287421917623bdcf99f7de904';
+		$this->cart->add('293ad', 'Product 1', 1, 9.99);
 
-		$search = Cart::search(array('id' => 1, 'name' => 'Product 1'));
-		$this->assertEquals($search, array($row1));
+		$this->assertEquals('8cbf215baa3b757e910e5305ab981172', $this->cart->search(array('id' => '293ad'))[0]);
+	}
 
-		$search = Cart::search(array('id' => 2, 'name' => 'Product 1'));
-		$this->assertFalse($search);
+	public function testCartCanHaveMultipleInstances()
+	{
+		$this->events->shouldReceive('fire')->twice()->with('cart.add', m::type('array'));
 
-		$search = Cart::search(array('id' => 2, 'name' => 'Product 2'));
-		$this->assertEquals($search, array($row2));
+		$this->cart->instance('firstInstance')->add('293ad', 'Product 1', 1, 9.99);
+		$this->cart->instance('secondInstance')->add('986se', 'Product 2', 1, 19.99);
 
-		$search = Cart::search(array('id' => 1, 'price' => 10.00));
-		$this->assertEquals($search, array($row1));
-
-		$search = Cart::search(array('qty' => 1, 'price' => 10.00));
-		$this->assertEquals($search, array($row1, $row2));
-
-		$search = Cart::search(array('id' => 2, 'kaas' => 'Product 2'));
-		$this->assertFalse($search);
-
-		$search = Cart::search(array('id' => 2, 'options' => array('size' => 'large')));
-		$this->assertEquals($search, array($row2));
-
-		$search = Cart::search(array('options' => array('size' => 'large')));
-		$this->assertEquals($search, array($row1, $row2));
-
-		$search = Cart::search(array('id' => 1, 'options' => array('color' => 'red')));
-		$this->assertEquals($search, array($row1));
-
-		$search = Cart::search(array('options' => array('color' => 'red', 'size' => 'large')));
-		$this->assertEquals($search, array($row1));
+		$this->assertTrue($this->cart->instance('firstInstance')->content()->has('8cbf215baa3b757e910e5305ab981172'));
+		$this->assertFalse($this->cart->instance('firstInstance')->content()->has('22eae2b9c10083d6631aaa023106871a'));
+		$this->assertTrue($this->cart->instance('secondInstance')->content()->has('22eae2b9c10083d6631aaa023106871a'));
+		$this->assertFalse($this->cart->instance('secondInstance')->content()->has('8cbf215baa3b757e910e5305ab981172'));
 	}
 
 	/**
-     * @expectedException Gloudemans\Shoppingcart\Exceptions\ShoppingcartInstanceException
-     */
-	public function testShoppingcartInstanceException()
+	 * @expectedException Gloudemans\Shoppingcart\Exceptions\ShoppingcartInstanceException
+	 */
+	public function testCartThrowsExceptionOnEmptyInstance()
 	{
-		Cart::instance();
+		$this->cart->instance();
 	}
 
-	/**
-     * @expectedException Gloudemans\Shoppingcart\Exceptions\ShoppingcartInvalidItemException
-     */
-	public function testShoppingcartInvalidItemException()
+	public function testCartReturnsCartCollection()
 	{
-		Cart::add(1);
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
+
+		$this->cart->add('293ad', 'Product 1', 1, 9.99);
+
+		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartCollection', $this->cart->content());
 	}
 
-	/**
-     * @expectedException Gloudemans\Shoppingcart\Exceptions\ShoppingcartInvalidQtyException
-     */
-	public function testShoppingcartInvalidQtyException()
+	public function testCartCollectionHasCartRowCollection()
 	{
-		Cart::add(1, 'Product 1', 'nonnumeric', 10.00);
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
+
+		$this->cart->add('293ad', 'Product 1', 1, 9.99);
+
+		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartRowCollection', $this->cart->content()->first());
 	}
 
-	/**
-     * @expectedException Gloudemans\Shoppingcart\Exceptions\ShoppingcartInvalidPriceException
-     */
-	public function testShoppingcartInvalidPriceException()
+	public function testCartRowCollectionHasCartRowOptionsCollection()
 	{
-		Cart::add(1, 'Product 1', 1, 'nonnumeric');
-	}
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
 
-	/**
-     * @expectedException Gloudemans\Shoppingcart\Exceptions\ShoppingcartInvalidRowIDException
-     */
-	public function testShoppingcartInvalidRowIDException()
-	{
-		Cart::add(1, 'Product 1', 1, 10.00);
+		$this->cart->add('293ad', 'Product 1', 1, 9.99);
 
-		Cart::update('nonexistingrowid', 2);
+		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartRowOptionsCollection', $this->cart->content()->first()->options);
 	}
 
 }
