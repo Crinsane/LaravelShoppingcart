@@ -230,7 +230,7 @@ The Cart package will throw exceptions if something goes wrong. This way it's ea
 The cart also has events build in. There are five events available for you to listen for.
 
 | Event                | Fired                                   |
-|----------------------------------------------------------------|
+| -------------------- | --------------------------------------- |
 | cart.add($item)      | When a single item is added             |
 | cart.batch($items)   | When a batch if items is added          |
 | cart.update($rowId)  | When an item in the cart is updated     |
