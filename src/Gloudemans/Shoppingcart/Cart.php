@@ -60,6 +60,7 @@ class Cart {
 	 *
 	 * @param string|Array $id      Unique ID of the item|Item formated as array|Array of items
 	 * @param string 	   $name    Name of the item
+	 * @param float  	   $weight  Weight of one item
 	 * @param int    	   $qty     Item qty to add to the cart
 	 * @param float  	   $price   Price of one item
 	 * @param Array  	   $options Array of additional options, such as 'size' or 'color'
@@ -274,6 +275,7 @@ class Cart {
 	 *
 	 * @param string $id      Unique ID of the item
 	 * @param string $name    Name of the item
+	 * @param float  $weight  Weight of one item
 	 * @param int    $qty     Item qty to add to the cart
 	 * @param float  $price   Price of one item
 	 * @param Array  $options Array of additional options, such as 'size' or 'color'
@@ -283,6 +285,11 @@ class Cart {
 		if(empty($id) || empty($name) || empty($weight) || empty($qty) || empty($price))
 		{
 			throw new Exceptions\ShoppingcartInvalidItemException;
+		}
+
+		if( ! is_numeric($weight))
+		{
+			throw new Exceptions\ShoppingcartInvalidWeightException;
 		}
 
 		if( ! is_numeric($qty))
@@ -413,6 +420,7 @@ class Cart {
 	 * @param  string $rowId   The ID of the new row
 	 * @param  string $id      Unique ID of the item
 	 * @param  string $name    Name of the item
+	 * @param  float  $weight  Weight of the item
 	 * @param  int    $qty     Item qty to add to the cart
 	 * @param  float  $price   Price of one item
 	 * @param  Array  $options Array of additional options, such as 'size' or 'color'
