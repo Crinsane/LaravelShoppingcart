@@ -430,7 +430,8 @@ class Cart {
 			'qty' => $qty,
 			'price' => $price,
 			'options' => new CartRowOptionsCollection($options),
-			'subtotal' => $qty * $price
+			'subtotal' => $qty * $price,
+			'subtotal_weight' => $qty * $weight
 		));
 
 		$cart->put($rowId, $newRow);
