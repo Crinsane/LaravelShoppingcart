@@ -428,7 +428,6 @@ class Cart {
 	protected function updateQty($rowId, $qty)
 	{
 		if($qty <= 0)
-		if($qty == 0)
 		{
 			return $this->remove($rowId);
 		}
