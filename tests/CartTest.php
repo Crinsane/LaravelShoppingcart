@@ -50,6 +50,19 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		));
 	}
 
+	public function testCartCanAddMultipleOptions()
+	{
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
+
+		$this->cart->add('293ad', 'Product 1', 1, 9.99, array('size' => 'large', 'color' => 'red'));
+
+		$cartRow = $this->cart->get('c5417b5761c7fb837e4227a38870dd4d');
+
+		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartRowOptionsCollection', $cartRow->options);
+		$this->assertEquals('large', $cartRow->options->size);
+		$this->assertEquals('red', $cartRow->options->color);
+	}
+
 	/**
 	 * @expectedException Gloudemans\Shoppingcart\Exceptions\ShoppingcartInvalidItemException
 	 */
@@ -150,6 +163,18 @@ class CartTest extends PHPUnit_Framework_TestCase {
 
 		$this->cart->add('293ad', 'Product 1', 1, 9.99);
 		$this->cart->update('8cbf215baa3b757e910e5305ab981172', 0);
+
+		$this->assertTrue($this->cart->content()->isEmpty());
+	}
+
+	public function testCartCanRemoveOnNegativeUpdate()
+	{
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
+		$this->events->shouldReceive('fire')->once()->with('cart.update', m::type('string'));
+		$this->events->shouldReceive('fire')->once()->with('cart.remove', m::type('string'));
+
+		$this->cart->add('293ad', 'Product 1', 1, 9.99);
+		$this->cart->update('8cbf215baa3b757e910e5305ab981172', -1);
 
 		$this->assertTrue($this->cart->content()->isEmpty());
 	}
