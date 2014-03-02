@@ -183,7 +183,7 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		$this->events->shouldReceive('fire')->once()->with('cart.update', m::type('string'));
 		$this->events->shouldReceive('fire')->once()->with('cart.remove', m::type('string'));
 
-		$this->cart->add('293ad', 'Product 1', 1, 9.99);
+		$this->cart->add('293ad', 'Product 1', 1.0, 1, 9.99);
 		$this->cart->update('8cbf215baa3b757e910e5305ab981172', -1);
 
 		$this->assertTrue($this->cart->content()->isEmpty());
