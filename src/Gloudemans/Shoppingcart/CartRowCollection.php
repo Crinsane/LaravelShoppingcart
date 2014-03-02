@@ -4,9 +4,33 @@ use Illuminate\Support\Collection;
 
 class CartRowCollection extends Collection {
 
-	public function __construct($items)
+	/**
+	 * The Eloquent model a cart is associated with
+	 *
+	 * @var string
+	 */
+	protected $associatedModel;
+
+	/**
+	 * An optional namespace for the associated model
+	 *
+	 * @var string
+	 */
+	protected $associatedModelNamespace;
+
+	/**
+	 * Constructor for the CartRowCollection
+	 *
+	 * @param array    $items
+	 * @param string   $associatedModel
+	 * @param string   $associatedModelNamespace
+	 */
+	public function __construct($items, $associatedModel, $associatedModelNamespace)
 	{
 		parent::__construct($items);
+
+		$this->associatedModel = $associatedModel;
+		$this->associatedModelNamespace = $associatedModelNamespace;
 	}
 
 	public function __get($arg)
@@ -16,10 +40,18 @@ class CartRowCollection extends Collection {
 			return $this->get($arg);
 		}
 
-		return NULL;
+		if($arg == strtolower($this->associatedModel))
+		{
+			$modelInstance = $this->associatedModelNamespace ? $this->associatedModelNamespace . '\\' .$this->associatedModel : $this->associatedModel;
+			$model = new $modelInstance;
+
+			return $model->find($this->id);
+		}
+
+		return null;
 	}
 
-	public function search(Array $search)
+	public function search(array $search)
 	{
 		foreach($search as $key => $value)
 		{

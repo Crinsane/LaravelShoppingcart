@@ -37,6 +37,7 @@ Look at one of the following topics to learn more about LaravelShoppingcart
 * [Usage](#usage)
 * [Collections](#collections)
 * [Instances](#instances)
+* [Associate a model](#models)
 * [Exceptions](#exceptions)
 * [Events](#events)
 * [Example](#example)
@@ -220,6 +221,35 @@ N.B. Keep in mind that the cart stays in the last set instance for as long as yo
 
 N.B.2 The default cart instance is called `main`, so when you're not using instances,`Cart::content();` is the same as `Cart::instance('main')->content()`.
 
+## Associate a model
+A new feature is associating a model with the items in the cart. Let's say you have a `Product` model in your application. With the new `associate()` method, you can tell the cart that an item in the cart, is associated to the `Product` model. 
+
+That way you can access your model right from the `CartRowCollection`!
+
+Here is an example:
+
+```php
+<?php 
+
+/**
+ * Let say we have a Product model that has a name and description.
+ */
+
+Cart::associate('Product')->add('293ad', 'Product 1', 1, 9.99, array('size' => 'large'));
+
+
+$content = Cart::content();
+
+
+foreach($content as $row)
+{
+	echo 'You have ' . $row->qty . ' items of ' . $row->product->name . ' with description: "' . $row->product->description . '" in your cart.';
+}
+```
+
+The key to access the model is the same as the model name you associated (lowercase).
+The `associate()` method has a second optional parameter for specifying the model namespace.
+
 ## Exceptions
 The Cart package will throw exceptions if something goes wrong. This way it's easier to debug your code using the Cart package or to handle the error based on the type of exceptions. The Cart packages can throw the following exceptions:
 
@@ -230,6 +260,7 @@ The Cart package will throw exceptions if something goes wrong. This way it's ea
 | *ShoppingcartInvalidPriceException*   | When a not numeric price is passed                                       |
 | *ShoppingcartInvalidQtyException*     | When a not numeric quantity is passed                                    |
 | *ShoppingcartInvalidRowIDException*   | When the rowId that got passed doesn't exists in the current cart        |
+| *ShoppingcartUnknownModelException*   | When an unknown model is associated to a cart row                        |
 
 ## Events
 

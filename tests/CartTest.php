@@ -6,7 +6,9 @@ use Gloudemans\Shoppingcart\CartRowCollection;
 use Gloudemans\Shoppingcart\CartRowOptionsCollection;
 use Mockery as m;
 
-require_once 'SessionMock.php';
+require_once __DIR__.'/helpers/SessionMock.php';
+require_once __DIR__.'/helpers/ProductModelStub.php';
+require_once __DIR__.'/helpers/NamespacedProductModelStub.php';
 
 class CartTest extends PHPUnit_Framework_TestCase {
 
@@ -299,4 +301,46 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartRowOptionsCollection', $this->cart->content()->first()->options);
 	}
 
+	public function testCartCanAssociateWithModel()
+	{
+		$this->cart->associate('TestProduct');
+
+		$this->assertEquals('TestProduct', PHPUnit_Framework_Assert::readAttribute($this->cart, 'associatedModel'));
+	}
+
+	public function testCartCanAssociateWithNamespacedModel()
+	{
+		$this->cart->associate('TestProduct', 'Acme\Test\Models');
+
+		$this->assertEquals('TestProduct', PHPUnit_Framework_Assert::readAttribute($this->cart, 'associatedModel'));
+		$this->assertEquals('Acme\Test\Models', PHPUnit_Framework_Assert::readAttribute($this->cart, 'associatedModelNamespace'));
+	}
+
+	public function testCartCanReturnModelProperties()
+	{
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
+
+		$this->cart->associate('TestProduct')->add('293ad', 'Product 1', 1, 9.99);
+
+		$this->assertEquals('This is the description of the test model', $this->cart->get('8cbf215baa3b757e910e5305ab981172')->testproduct->description);
+	}
+
+	public function testCartCanReturnNamespadedModelProperties()
+	{
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
+
+		$this->cart->associate('TestProduct', 'Acme\Test\Models')->add('293ad', 'Product 1', 1, 9.99);
+
+		$this->assertEquals('This is the description of the namespaced test model', $this->cart->get('8cbf215baa3b757e910e5305ab981172')->testproduct->description);
+	}
+
+	/**
+	 * @expectedException Gloudemans\Shoppingcart\Exceptions\ShoppingcartUnknownModelException
+	 */
+	public function testCartThrowsExceptionOnUnknownModel()
+	{
+		$this->cart->associate('NoneExistingModel');
+	}
+
 }
+

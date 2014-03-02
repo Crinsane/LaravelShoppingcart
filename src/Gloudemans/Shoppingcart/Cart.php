@@ -26,6 +26,20 @@ class Cart {
 	protected $instance;
 
 	/**
+	 * The Eloquent model a cart is associated with
+	 *
+	 * @var string
+	 */
+	protected $associatedModel;
+
+	/**
+	 * An optional namespace for the associated model
+	 *
+	 * @var string
+	 */
+	protected $associatedModelNamespace;
+
+	/**
 	 * Constructor
 	 *
 	 * @param Session $session Session class instance
@@ -50,6 +64,24 @@ class Cart {
 		if(empty($instance)) throw new Exceptions\ShoppingcartInstanceException;
 
 		$this->instance = $instance;
+
+		// Return self so the method is chainable
+		return $this;
+	}
+
+	/**
+	 * Set the associated model
+	 *
+	 * @param  string    $modelName        The name of the model
+	 * @param  string    $modelNamespace   The namespace of the model
+	 * @return void
+	 */
+	public function associate($modelName, $modelNamespace = null)
+	{
+		$this->associatedModel = $modelName;
+		$this->associatedModelNamespace = $modelNamespace;
+
+		if( ! class_exists($modelNamespace . '\\' . $modelName)) throw new Exceptions\ShoppingcartUnknownModelException;
 
 		// Return self so the method is chainable
 		return $this;
@@ -411,7 +443,7 @@ class Cart {
 			'price' => $price,
 			'options' => new CartRowOptionsCollection($options),
 			'subtotal' => $qty * $price
-		));
+		), $this->associatedModel, $this->associatedModelNamespace);
 
 		$cart->put($rowId, $newRow);
 
@@ -428,7 +460,6 @@ class Cart {
 	protected function updateQty($rowId, $qty)
 	{
 		if($qty <= 0)
-		if($qty == 0)
 		{
 			return $this->remove($rowId);
 		}
