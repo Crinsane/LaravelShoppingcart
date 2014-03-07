@@ -253,14 +253,14 @@ The `associate()` method has a second optional parameter for specifying the mode
 ## Exceptions
 The Cart package will throw exceptions if something goes wrong. This way it's easier to debug your code using the Cart package or to handle the error based on the type of exceptions. The Cart packages can throw the following exceptions:
 
-| Exception                             | Reason                                                                   |
-| ------------------------------------- | ------------------------------------------------------------------------ |
-| *ShoppingcartInstanceException*       | When no instance is passed to the instance() method                      |
-| *ShoppingcartInvalidItemException*    | When a new product misses one of it's arguments (id, name, qty, price)   |
-| *ShoppingcartInvalidPriceException*   | When a not numeric price is passed                                       |
-| *ShoppingcartInvalidQtyException*     | When a not numeric quantity is passed                                    |
-| *ShoppingcartInvalidRowIDException*   | When the rowId that got passed doesn't exists in the current cart        |
-| *ShoppingcartUnknownModelException*   | When an unknown model is associated to a cart row                        |
+| Exception                             | Reason                                                                           |
+| ------------------------------------- | --------------------------------------------------------------------------------- |
+| *ShoppingcartInstanceException*       | When no instance is passed to the instance() method                              |
+| *ShoppingcartInvalidItemException*    | When a new product misses one of it's arguments (`id`, `name`, `qty`, `price`)   |
+| *ShoppingcartInvalidPriceException*   | When a non-numeric price is passed                                               |
+| *ShoppingcartInvalidQtyException*     | When a non-numeric quantity is passed                                            |
+| *ShoppingcartInvalidRowIDException*   | When the `$rowId` that got passed doesn't exists in the current cart             |
+| *ShoppingcartUnknownModelException*   | When an unknown model is associated to a cart row                                |
 
 ## Events
 
@@ -269,7 +269,7 @@ The cart also has events build in. There are five events available for you to li
 | Event                | Fired                                   |
 | -------------------- | --------------------------------------- |
 | cart.add($item)      | When a single item is added             |
-| cart.batch($items)   | When a batch if items is added          |
+| cart.batch($items)   | When a batch of items is added          |
 | cart.update($rowId)  | When an item in the cart is updated     |
 | cart.remove($rowId)  | When an item is removed from the cart   |
 | cart.destroy()       | When the cart is destroyed              |
