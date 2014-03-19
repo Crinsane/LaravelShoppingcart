@@ -294,7 +294,7 @@ class Cart {
 	 */
 	protected function addRow($id, $name, $qty, $price, Array $options = array())
 	{
-		if(empty($id) || empty($name) || empty($qty) || empty($price))
+		if(empty($id) || empty($name) || empty($qty) || ! isset($price))
 		{
 			throw new Exceptions\ShoppingcartInvalidItemException;
 		}
