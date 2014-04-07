@@ -21,6 +21,9 @@ class CartRowOptionsCollection extends Collection {
 
 	public function search(Array $search)
 	{
+
+		$found = false;
+		
 		foreach($search as $key => $value)
 		{
 			$found = ($this->{$key} === $value) ? true : false;
