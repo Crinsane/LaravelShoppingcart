@@ -371,7 +371,14 @@ class Cart {
 	 */
 	protected function updateCart($cart)
 	{
-		$this->session->put($this->getInstance(), $cart);
+		if( ! is_null($cart))
+		{
+			$this->session->put($this->getInstance(), $cart);
+		}
+		else
+		{
+			$this->session->remove($this->getInstance());
+		}
 	}
 
 	/**
