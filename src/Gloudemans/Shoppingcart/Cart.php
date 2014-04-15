@@ -1,9 +1,6 @@
 <?php namespace Gloudemans\Shoppingcart;
 
-use Illuminate\Support\Collection;
-
-class Cart
-{
+class Cart {
 
 	/**
 	 * Session class instance
@@ -44,12 +41,12 @@ class Cart
 	 * Constructor
 	 *
 	 * @param \Session $session Session class instance
-	 * @param \Event $event     Event class instance
+	 * @param \Event   $event   Event class instance
 	 */
 	public function __construct($session, $event)
 	{
 		$this->session = $session;
-		$this->event   = $event;
+		$this->event = $event;
 
 		$this->instance = 'main';
 	}
@@ -64,7 +61,7 @@ class Cart
 	 */
 	public function instance($instance = null)
 	{
-		if( empty( $instance ) ) throw new Exceptions\ShoppingcartInstanceException;
+		if(empty($instance)) throw new Exceptions\ShoppingcartInstanceException;
 
 		$this->instance = $instance;
 
@@ -83,10 +80,10 @@ class Cart
 	 */
 	public function associate($modelName, $modelNamespace = null)
 	{
-		$this->associatedModel          = $modelName;
+		$this->associatedModel = $modelName;
 		$this->associatedModelNamespace = $modelNamespace;
 
-		if( !class_exists($modelNamespace . '\\' . $modelName) ) throw new Exceptions\ShoppingcartUnknownModelException;
+		if( ! class_exists($modelNamespace . '\\' . $modelName)) throw new Exceptions\ShoppingcartUnknownModelException;
 
 		// Return self so the method is chainable
 		return $this;
@@ -95,39 +92,37 @@ class Cart
 	/**
 	 * Add a row to the cart
 	 *
-	 * @param string|Array $id Unique ID of the item|Item formated as array|Array of items
-	 * @param string $name     Name of the item
-	 * @param int $qty         Item qty to add to the cart
-	 * @param float $price     Price of one item
-	 * @param Array $options   Array of additional options, such as 'size' or 'color'
-	 *
-	 * @return bool|void
+	 * @param string|Array $id      Unique ID of the item|Item formated as array|Array of items
+	 * @param string 	   $name    Name of the item
+	 * @param int    	   $qty     Item qty to add to the cart
+	 * @param float  	   $price   Price of one item
+	 * @param Array  	   $options Array of additional options, such as 'size' or 'color'
 	 */
 	public function add($id, $name = null, $qty = null, $price = null, Array $options = array())
 	{
 		// If the first parameter is an array we need to call the add() function again
-		if( is_array($id) )
+		if(is_array($id))
 		{
 			// And if it's not only an array, but a multidimensional array, we need to
 			// recursively call the add function
-			if( $this->is_multi($id) )
+			if($this->is_multi($id))
 			{
 				// Fire the cart.batch event
 				$this->event->fire('cart.batch', $id);
 
-				foreach( $id as $item )
+				foreach($id as $item)
 				{
-					$options = isset( $item['options'] ) ? $item['options'] : array();
+					$options = isset($item['options']) ? $item['options'] : array();
 					$this->addRow($item['id'], $item['name'], $item['qty'], $item['price'], $options);
 				}
 
-				return false;
+				return;
 			}
 
-			$options = isset( $id['options'] ) ? $id['options'] : array();
+			$options = isset($id['options']) ? $id['options'] : array();
 
 			// Fire the cart.add event
-			$this->event->fire('cart.add', array_merge($id, array( 'options' => $options )));
+			$this->event->fire('cart.add', array_merge($id, array('options' => $options)));
 
 			$this->addRow($id['id'], $id['name'], $id['qty'], $id['price'], $options);
 		}
@@ -136,8 +131,6 @@ class Cart
 		$this->event->fire('cart.add', compact('id', 'name', 'qty', 'price', 'options'));
 
 		$this->addRow($id, $name, $qty, $price, $options);
-
-		return $this;
 	}
 
 	/**
@@ -151,9 +144,9 @@ class Cart
 	 */
 	public function update($rowId, $attribute)
 	{
-		if( !$this->hasRowId($rowId) ) throw new Exceptions\ShoppingcartInvalidRowIDException;
+		if( ! $this->hasRowId($rowId)) throw new Exceptions\ShoppingcartInvalidRowIDException;
 
-		if( is_array($attribute) )
+		if(is_array($attribute))
 		{
 			// Fire the cart.update event
 			$this->event->fire('cart.update', $rowId);
@@ -177,7 +170,7 @@ class Cart
 	 */
 	public function remove($rowId)
 	{
-		if( !$this->hasRowId($rowId) ) throw new Exceptions\ShoppingcartInvalidRowIDException;
+		if( ! $this->hasRowId($rowId)) throw new Exceptions\ShoppingcartInvalidRowIDException;
 
 		$cart = $this->getContent();
 
@@ -187,22 +180,19 @@ class Cart
 		$cart->forget($rowId);
 
 		$this->updateCart($cart);
-
-		return $this;
 	}
 
 	/**
 	 * Get a row of the cart by its ID
 	 *
 	 * @param  string $rowId The ID of the row to fetch
-	 *
 	 * @return CartCollection
 	 */
 	public function get($rowId)
 	{
 		$cart = $this->getContent();
 
-		return ( $cart->has($rowId) ) ? $cart->get($rowId) : null;
+		return ($cart->has($rowId)) ? $cart->get($rowId) : NULL;
 	}
 
 	/**
@@ -214,7 +204,7 @@ class Cart
 	{
 		$cart = $this->getContent();
 
-		return ( empty( $cart ) ) ? null : $cart;
+		return (empty($cart)) ? NULL : $cart;
 	}
 
 	/**
@@ -227,9 +217,7 @@ class Cart
 		// Fire the cart.destroy event
 		$this->event->fire('cart.destroy');
 
-		$this->updateCart(null);
-
-		return $this;
+		$this->updateCart(NULL);
 	}
 
 	/**
@@ -240,14 +228,14 @@ class Cart
 	public function total()
 	{
 		$total = 0;
-		$cart  = $this->getContent();
+		$cart = $this->getContent();
 
-		if( empty( $cart ) )
+		if(empty($cart))
 		{
 			return $total;
 		}
 
-		foreach( $cart AS $row )
+		foreach($cart AS $row)
 		{
 			$total += $row->subtotal;
 		}
@@ -259,21 +247,20 @@ class Cart
 	 * Get the number of items in the cart
 	 *
 	 * @param  boolean $totalItems Get all the items (when false, will return the number of rows)
-	 *
 	 * @return int
 	 */
 	public function count($totalItems = true)
 	{
 		$cart = $this->getContent();
 
-		if( !$totalItems )
+		if( ! $totalItems)
 		{
 			return $cart->count();
 		}
 
 		$count = 0;
 
-		foreach( $cart AS $row )
+		foreach($cart AS $row)
 		{
 			$count += $row->qty;
 		}
@@ -284,23 +271,22 @@ class Cart
 	/**
 	 * Search if the cart has a item
 	 *
-	 * @param  Array $search An array with the item ID and optional options
-	 *
+	 * @param  Array  $search An array with the item ID and optional options
 	 * @return Array|boolean
 	 */
 	public function search(Array $search)
 	{
-		foreach( $this->getContent() as $item )
+		foreach($this->getContent() as $item)
 		{
 			$found = $item->search($search);
 
-			if( $found )
+			if($found)
 			{
 				$rows[] = $item->rowid;
 			}
 		}
 
-		return ( empty( $rows ) ) ? false : $rows;
+		return (empty($rows)) ? false : $rows;
 	}
 
 	/**
@@ -318,17 +304,17 @@ class Cart
 	 */
 	protected function addRow($id, $name, $qty, $price, Array $options = array())
 	{
-		if( empty( $id ) || empty( $name ) || empty( $qty ) || !isset( $price ) )
+		if(empty($id) || empty($name) || empty($qty) || ! isset($price))
 		{
 			throw new Exceptions\ShoppingcartInvalidItemException;
 		}
 
-		if( !is_numeric($qty) )
+		if( ! is_numeric($qty))
 		{
 			throw new Exceptions\ShoppingcartInvalidQtyException;
 		}
 
-		if( !is_numeric($price) )
+		if( ! is_numeric($price))
 		{
 			throw new Exceptions\ShoppingcartInvalidPriceException;
 		}
@@ -337,10 +323,10 @@ class Cart
 
 		$rowId = $this->generateRowId($id, $options);
 
-		if( $cart->has($rowId) )
+		if($cart->has($rowId))
 		{
-			$row  = $cart->get($rowId);
-			$cart = $this->updateRow($rowId, array( 'qty' => $row->qty + $qty ));
+			$row = $cart->get($rowId);
+			$cart = $this->updateRow($rowId, array('qty' => $row->qty + $qty));
 		}
 		else
 		{
@@ -353,9 +339,8 @@ class Cart
 	/**
 	 * Generate a unique id for the new row
 	 *
-	 * @param  string $id     Unique ID of the item
-	 * @param  Array $options Array of additional options, such as 'size' or 'color'
-	 *
+	 * @param  string  $id      Unique ID of the item
+	 * @param  Array   $options Array of additional options, such as 'size' or 'color'
 	 * @return boolean
 	 */
 	protected function generateRowId($id, $options)
@@ -381,30 +366,22 @@ class Cart
 	/**
 	 * Update the cart
 	 *
-	 * @param  CartCollection $cart The new cart content
-	 *
+	 * @param  CartCollection  $cart The new cart content
 	 * @return void
 	 */
 	protected function updateCart($cart)
 	{
-		if( !is_null($cart) )
-		{
-			$this->session->put($this->getInstance(), $cart);
-		}
-		else
-		{
-			$this->session->remove($this->getInstance());
-		}
+		$this->session->put($this->getInstance(), $cart);
 	}
 
 	/**
 	 * Get the carts content, if there is no cart content set yet, return a new empty Collection
 	 *
-	 * @return \Illuminate\Support\Collection
+	 * @return CartCollection
 	 */
 	protected function getContent()
 	{
-		$content = ( $this->session->has($this->getInstance()) ) ? $this->session->get($this->getInstance()) : new CartCollection;
+		$content = ($this->session->has($this->getInstance())) ? $this->session->get($this->getInstance()) : new CartCollection;
 
 		return $content;
 	}
@@ -426,7 +403,7 @@ class Cart
 	 * @param $attributes
 	 *
 	 * @internal param int $qty The quantity to add to the row
-	 * @return Collection
+	 * @return CartCollection
 	 */
 	protected function updateRow($rowId, $attributes)
 	{
@@ -434,9 +411,9 @@ class Cart
 
 		$row = $cart->get($rowId);
 
-		foreach( $attributes as $key => $value )
+		foreach($attributes as $key => $value)
 		{
-			if( $key == 'options' )
+			if($key == 'options')
 			{
 				$options = $row->options->merge($value);
 				$row->put($key, $options);
@@ -447,7 +424,7 @@ class Cart
 			}
 		}
 
-		if( !is_null(array_keys($attributes, array( 'qty', 'price' ))) )
+		if( ! is_null(array_keys($attributes, array('qty', 'price'))))
 		{
 			$row->put('subtotal', $row->qty * $row->price);
 		}
@@ -460,28 +437,27 @@ class Cart
 	/**
 	 * Create a new row Object
 	 *
-	 * @param  string $rowId  The ID of the new row
-	 * @param  string $id     Unique ID of the item
-	 * @param  string $name   Name of the item
-	 * @param  int $qty       Item qty to add to the cart
-	 * @param  float $price   Price of one item
-	 * @param  Array $options Array of additional options, such as 'size' or 'color'
-	 *
-	 * @return Collection
+	 * @param  string $rowId   The ID of the new row
+	 * @param  string $id      Unique ID of the item
+	 * @param  string $name    Name of the item
+	 * @param  int    $qty     Item qty to add to the cart
+	 * @param  float  $price   Price of one item
+	 * @param  Array  $options Array of additional options, such as 'size' or 'color'
+	 * @return CartCollection
 	 */
 	protected function createRow($rowId, $id, $name, $qty, $price, $options)
 	{
 		$cart = $this->getContent();
 
-		$newRow = new CartRowCollection( array(
-			'rowid'    => $rowId,
-			'id'       => $id,
-			'name'     => $name,
-			'qty'      => $qty,
-			'price'    => $price,
-			'options'  => new CartRowOptionsCollection( $options ),
+		$newRow = new CartRowCollection(array(
+			'rowid' => $rowId,
+			'id' => $id,
+			'name' => $name,
+			'qty' => $qty,
+			'price' => $price,
+			'options' => new CartRowOptionsCollection($options),
 			'subtotal' => $qty * $price
-		), $this->associatedModel, $this->associatedModelNamespace );
+		), $this->associatedModel, $this->associatedModelNamespace);
 
 		$cart->put($rowId, $newRow);
 
@@ -492,26 +468,24 @@ class Cart
 	 * Update the quantity of a row
 	 *
 	 * @param  string $rowId The ID of the row
-	 * @param  int $qty      The qty to add
-	 *
+	 * @param  int    $qty   The qty to add
 	 * @return CartCollection
 	 */
 	protected function updateQty($rowId, $qty)
 	{
-		if( $qty <= 0 )
+		if($qty <= 0)
 		{
 			return $this->remove($rowId);
 		}
 
-		return $this->updateRow($rowId, array( 'qty' => $qty ));
+		return $this->updateRow($rowId, array('qty' => $qty));
 	}
 
 	/**
 	 * Update an attribute of the row
 	 *
-	 * @param  string $rowId     The ID of the row
-	 * @param  Array $attributes An array of attributes to update
-	 *
+	 * @param  string $rowId      The ID of the row
+	 * @param  Array  $attributes An array of attributes to update
 	 * @return CartCollection
 	 */
 	protected function updateAttribute($rowId, $attributes)
@@ -522,8 +496,7 @@ class Cart
 	/**
 	 * Check if the array is a multidimensional array
 	 *
-	 * @param  Array $array The array to check
-	 *
+	 * @param  Array   $array The array to check
 	 * @return boolean
 	 */
 	protected function is_multi(Array $array)
@@ -532,5 +505,4 @@ class Cart
 
 		return is_array($first);
 	}
-
 }
