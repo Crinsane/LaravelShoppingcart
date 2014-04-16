@@ -14,4 +14,8 @@ class SessionMock {
 	{
 		$this->session[$key] = $value;
 	}
+	public function remove($key)
+	{
+		unset($this->session[$key]);
+	}
 }
