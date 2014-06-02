@@ -51,7 +51,7 @@ class CartRowCollection extends Collection {
 		return null;
 	}
 
-	public function search(array $search)
+	public function search($search, $strict = false)
 	{
 		foreach($search as $key => $value)
 		{
