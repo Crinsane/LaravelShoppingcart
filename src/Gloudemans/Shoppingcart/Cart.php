@@ -110,14 +110,14 @@ class Cart {
 
 				foreach($id as $item)
 				{
-					$options = isset($item['options']) ? $item['options'] : array();
+					$options = array_get($item, 'options', array());
 					$this->addRow($item['id'], $item['name'], $item['qty'], $item['price'], $options);
 				}
 
 				return;
 			}
 
-			$options = isset($id['options']) ? $id['options'] : array();
+			$options = array_get($id, 'options', array());
 
 			// Fire the cart.add event
 			$this->event->fire('cart.add', array_merge($id, array('options' => $options)));
@@ -294,7 +294,7 @@ class Cart {
 	 */
 	protected function addRow($id, $name, $qty, $price, Array $options = array())
 	{
-		if(empty($id) || empty($name) || empty($qty) || ! isset($price))
+		if(empty($id) or empty($name) or empty($qty) or ! isset($price))
 		{
 			throw new Exceptions\ShoppingcartInvalidItemException;
 		}
@@ -487,9 +487,7 @@ class Cart {
 	 */
 	protected function is_multi(Array $array)
 	{
-	    $first = array_shift($array);
-
-	    return is_array($first);
+		return is_array(head($array));
 	}
 
 }
