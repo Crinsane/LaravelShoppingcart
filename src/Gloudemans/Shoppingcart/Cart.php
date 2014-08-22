@@ -7,14 +7,14 @@ class Cart {
 	/**
 	 * Session class instance
 	 *
-	 * @var Session
+	 * @var Illuminate\Session\SessionManager
 	 */
 	protected $session;
 
 	/**
 	 * Event class instance
 	 *
-	 * @var Event
+	 * @var Illuminate\Events\Dispatcher
 	 */
 	protected $event;
 
@@ -42,8 +42,8 @@ class Cart {
 	/**
 	 * Constructor
 	 *
-	 * @param Session $session Session class instance
-	 * @param Event   $event   Event class instance
+	 * @param Illuminate\Session\SessionManager  $session  Session class instance
+	 * @param Illuminate\Events\Dispatcher       $event    Event class instance
 	 */
 	public function __construct($session, $event)
 	{
@@ -56,8 +56,8 @@ class Cart {
 	/**
 	 * Set the current cart instance
 	 *
-	 * @param  string $instance Cart instance name
-	 * @return Cart
+	 * @param  string  $instance  Cart instance name
+	 * @return Gloudemans\Shoppingcart\Cart
 	 */
 	public function instance($instance = null)
 	{
@@ -90,13 +90,13 @@ class Cart {
 	/**
 	 * Add a row to the cart
 	 *
-	 * @param string|Array $id      Unique ID of the item|Item formated as array|Array of items
-	 * @param string 	   $name    Name of the item
-	 * @param int    	   $qty     Item qty to add to the cart
-	 * @param float  	   $price   Price of one item
-	 * @param Array  	   $options Array of additional options, such as 'size' or 'color'
+	 * @param string|array  $id       Unique ID of the item|Item formated as array|Array of items
+	 * @param string 	    $name     Name of the item
+	 * @param int    	    $qty      Item qty to add to the cart
+	 * @param float  	    $price    Price of one item
+	 * @param array  	    $options  Array of additional options, such as 'size' or 'color'
 	 */
-	public function add($id, $name = null, $qty = null, $price = null, Array $options = array())
+	public function add($id, $name = null, $qty = null, $price = null, array $options = array())
 	{
 		// If the first parameter is an array we need to call the add() function again
 		if(is_array($id))
@@ -110,32 +110,45 @@ class Cart {
 
 				foreach($id as $item)
 				{
-					$options = isset($item['options']) ? $item['options'] : array();
+					$options = array_get($item, 'options', array());
 					$this->addRow($item['id'], $item['name'], $item['qty'], $item['price'], $options);
 				}
+
+				// Fire the cart.batched event
+				$this->event->fire('cart.batched', $id);
 
 				return;
 			}
 
-			$options = isset($id['options']) ? $id['options'] : array();
+			$options = array_get($id, 'options', array());
 
 			// Fire the cart.add event
 			$this->event->fire('cart.add', array_merge($id, array('options' => $options)));
 
-			return $this->addRow($id['id'], $id['name'], $id['qty'], $id['price'], $options);
+			$result = $this->addRow($id['id'], $id['name'], $id['qty'], $id['price'], $options);
+
+			// Fire the cart.added event
+			$this->event->fire('cart.added', array_merge($id, array('options' => $options)));
+
+			return $result;
 		}
 
 		// Fire the cart.add event
 		$this->event->fire('cart.add', compact('id', 'name', 'qty', 'price', 'options'));
 
-		return $this->addRow($id, $name, $qty, $price, $options);
+		$result = $this->addRow($id, $name, $qty, $price, $options);
+
+		// Fire the cart.added event
+		$this->event->fire('cart.added', compact('id', 'name', 'qty', 'price', 'options'));
+
+		return $result;
 	}
 
 	/**
 	 * Update the quantity of one row of the cart
 	 *
-	 * @param  string        $rowId       The rowid of the item you want to update
-	 * @param  integer|Array $attribute   New quantity of the item|Array of attributes to update
+	 * @param  string         $rowId       The rowid of the item you want to update
+	 * @param  integer|array  $attribute   New quantity of the item|Array of attributes to update
 	 * @return boolean
 	 */
 	public function update($rowId, $attribute)
@@ -147,19 +160,29 @@ class Cart {
 			// Fire the cart.update event
 			$this->event->fire('cart.update', $rowId);
 
-			return $this->updateAttribute($rowId, $attribute);
+			$result = $this->updateAttribute($rowId, $attribute);
+
+			// Fire the cart.updated event
+			$this->event->fire('cart.updated', $rowId);
+
+			return $result;
 		}
 
 		// Fire the cart.update event
 		$this->event->fire('cart.update', $rowId);
 
-		return $this->updateQty($rowId, $attribute);
+		$result = $this->updateQty($rowId, $attribute);
+
+		// Fire the cart.updated event
+		$this->event->fire('cart.updated', $rowId);
+
+		return $result;
 	}
 
 	/**
 	 * Remove a row from the cart
 	 *
-	 * @param  string  $rowId The rowid of the item
+	 * @param  string  $rowId  The rowid of the item
 	 * @return boolean
 	 */
 	public function remove($rowId)
@@ -173,14 +196,17 @@ class Cart {
 
 		$cart->forget($rowId);
 
+		// Fire the cart.removed event
+		$this->event->fire('cart.removed', $rowId);
+
 		return $this->updateCart($cart);
 	}
 
 	/**
 	 * Get a row of the cart by its ID
 	 *
-	 * @param  string $rowId The ID of the row to fetch
-	 * @return CartCollection
+	 * @param  string  $rowId  The ID of the row to fetch
+	 * @return Gloudemans\Shoppingcart\CartCollection
 	 */
 	public function get($rowId)
 	{
@@ -192,7 +218,7 @@ class Cart {
 	/**
 	 * Get the cart content
 	 *
-	 * @return CartRowCollection
+	 * @return Gloudemans\Shoppingcart\CartRowCollection
 	 */
 	public function content()
 	{
@@ -211,7 +237,12 @@ class Cart {
 		// Fire the cart.destroy event
 		$this->event->fire('cart.destroy');
 
-		return $this->updateCart(NULL);
+		$result = $this->updateCart(NULL);
+
+		// Fire the cart.destroyed event
+		$this->event->fire('cart.destroyed');
+
+		return $result;
 	}
 
 	/**
@@ -240,7 +271,7 @@ class Cart {
 	/**
 	 * Get the number of items in the cart
 	 *
-	 * @param  boolean $totalItems Get all the items (when false, will return the number of rows)
+	 * @param  boolean  $totalItems  Get all the items (when false, will return the number of rows)
 	 * @return int
 	 */
 	public function count($totalItems = true)
@@ -265,11 +296,13 @@ class Cart {
 	/**
 	 * Search if the cart has a item
 	 *
-	 * @param  Array  $search An array with the item ID and optional options
-	 * @return Array|boolean
+	 * @param  array  $search  An array with the item ID and optional options
+	 * @return array|boolean
 	 */
-	public function search(Array $search)
+	public function search(array $search)
 	{
+		if(empty($search)) return false;
+
 		foreach($this->getContent() as $item)
 		{
 			$found = $item->search($search);
@@ -286,13 +319,13 @@ class Cart {
 	/**
 	 * Add row to the cart
 	 *
-	 * @param string $id      Unique ID of the item
-	 * @param string $name    Name of the item
-	 * @param int    $qty     Item qty to add to the cart
-	 * @param float  $price   Price of one item
-	 * @param Array  $options Array of additional options, such as 'size' or 'color'
+	 * @param string  $id       Unique ID of the item
+	 * @param string  $name     Name of the item
+	 * @param int     $qty      Item qty to add to the cart
+	 * @param float   $price    Price of one item
+	 * @param array   $options  Array of additional options, such as 'size' or 'color'
 	 */
-	protected function addRow($id, $name, $qty, $price, Array $options = array())
+	protected function addRow($id, $name, $qty, $price, array $options = array())
 	{
 		if(empty($id) || empty($name) || empty($qty) || ! isset($price))
 		{
@@ -329,8 +362,8 @@ class Cart {
 	/**
 	 * Generate a unique id for the new row
 	 *
-	 * @param  string  $id      Unique ID of the item
-	 * @param  Array   $options Array of additional options, such as 'size' or 'color'
+	 * @param  string  $id       Unique ID of the item
+	 * @param  array   $options  Array of additional options, such as 'size' or 'color'
 	 * @return boolean
 	 */
 	protected function generateRowId($id, $options)
@@ -354,7 +387,7 @@ class Cart {
 	/**
 	 * Update the cart
 	 *
-	 * @param  CartCollection  $cart The new cart content
+	 * @param  Gloudemans\Shoppingcart\CartCollection  $cart  The new cart content
 	 * @return void
 	 */
 	protected function updateCart($cart)
@@ -365,7 +398,7 @@ class Cart {
 	/**
 	 * Get the carts content, if there is no cart content set yet, return a new empty Collection
 	 *
-	 * @return Illuminate\Support\Collection
+	 * @return Gloudemans\Shoppingcart\CartCollection
 	 */
 	protected function getContent()
 	{
@@ -387,9 +420,9 @@ class Cart {
 	/**
 	 * Update a row if the rowId already exists
 	 *
-	 * @param  string  $rowId The ID of the row to update
-	 * @param  integer $qty   The quantity to add to the row
-	 * @return Collection
+	 * @param  string   $rowId  The ID of the row to update
+	 * @param  integer  $qty    The quantity to add to the row
+	 * @return Gloudemans\Shoppingcart\CartCollection
 	 */
 	protected function updateRow($rowId, $attributes)
 	{
@@ -423,13 +456,13 @@ class Cart {
 	/**
 	 * Create a new row Object
 	 *
-	 * @param  string $rowId   The ID of the new row
-	 * @param  string $id      Unique ID of the item
-	 * @param  string $name    Name of the item
-	 * @param  int    $qty     Item qty to add to the cart
-	 * @param  float  $price   Price of one item
-	 * @param  Array  $options Array of additional options, such as 'size' or 'color'
-	 * @return Collection
+	 * @param  string  $rowId    The ID of the new row
+	 * @param  string  $id       Unique ID of the item
+	 * @param  string  $name     Name of the item
+	 * @param  int     $qty      Item qty to add to the cart
+	 * @param  float   $price    Price of one item
+	 * @param  array   $options  Array of additional options, such as 'size' or 'color'
+	 * @return Gloudemans\Shoppingcart\CartCollection
 	 */
 	protected function createRow($rowId, $id, $name, $qty, $price, $options)
 	{
@@ -453,9 +486,9 @@ class Cart {
 	/**
 	 * Update the quantity of a row
 	 *
-	 * @param  string $rowId The ID of the row
-	 * @param  int    $qty   The qty to add
-	 * @return CartCollection
+	 * @param  string  $rowId  The ID of the row
+	 * @param  int     $qty    The qty to add
+	 * @return Gloudemans\Shoppingcart\CartCollection
 	 */
 	protected function updateQty($rowId, $qty)
 	{
@@ -470,9 +503,9 @@ class Cart {
 	/**
 	 * Update an attribute of the row
 	 *
-	 * @param  string $rowId      The ID of the row
-	 * @param  Array  $attributes An array of attributes to update
-	 * @return CartCollection
+	 * @param  string  $rowId       The ID of the row
+	 * @param  array   $attributes  An array of attributes to update
+	 * @return Gloudemans\Shoppingcart\CartCollection
 	 */
 	protected function updateAttribute($rowId, $attributes)
 	{
@@ -482,14 +515,12 @@ class Cart {
 	/**
 	 * Check if the array is a multidimensional array
 	 *
-	 * @param  Array   $array The array to check
+	 * @param  array   $array  The array to check
 	 * @return boolean
 	 */
-	protected function is_multi(Array $array)
+	protected function is_multi(array $array)
 	{
-	    $first = array_shift($array);
-
-	    return is_array($first);
+		return is_array(head($array));
 	}
 
 }
