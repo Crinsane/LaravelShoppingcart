@@ -302,8 +302,8 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		$this->cart->instance('firstInstance')->add('293ad', 'Product 1', 1, 9.99);
 		$this->cart->instance('secondInstance')->add('986se', 'Product 2', 1, 19.99);
 
-		$this->assertEquals($this->cart->instance('firstInstance')->search(array('id' => '293ad')), ['8cbf215baa3b757e910e5305ab981172']);
-		$this->assertEquals($this->cart->instance('secondInstance')->search(array('id' => '986se')), ['22eae2b9c10083d6631aaa023106871a']);
+		$this->assertEquals($this->cart->instance('firstInstance')->search(array('id' => '293ad')), array('8cbf215baa3b757e910e5305ab981172'));
+		$this->assertEquals($this->cart->instance('secondInstance')->search(array('id' => '986se')), array('22eae2b9c10083d6631aaa023106871a'));
 	}
 
 	/**
