@@ -8,9 +8,20 @@ A simple shoppingcart implementation for Laravel 4.
 
 Install the package through [Composer](http://getcomposer.org/). Edit your project's `composer.json` file by adding:
 
+### Laravel 4.2 and below
+
 ```php
 "require": {
-	"laravel/framework": "4.1.*",
+	"laravel/framework": "4.2.*",
+	"gloudemans/shoppingcart": "~1.2"
+}
+```
+
+### Laravel 5
+
+```php
+"require": {
+	"laravel/framework": "5.0.*",
 	"gloudemans/shoppingcart": "dev-master"
 }
 ```
