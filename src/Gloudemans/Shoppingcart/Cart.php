@@ -1,5 +1,6 @@
 <?php namespace Gloudemans\Shoppingcart;
 
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Collection;
 
 class Cart {
@@ -42,10 +43,10 @@ class Cart {
 	/**
 	 * Constructor
 	 *
-	 * @param Illuminate\Session\SessionManager  $session  Session class instance
-	 * @param Illuminate\Events\Dispatcher       $event    Event class instance
+	 * @param Illuminate\Session\SessionManager                                                             $session Session class instance
+	 * @param \Illuminate\Contracts\Events\Dispatcher $event Event class instance
 	 */
-	public function __construct($session, $event)
+	public function __construct($session, Dispatcher $event)
 	{
 		$this->session = $session;
 		$this->event = $event;
@@ -96,7 +97,7 @@ class Cart {
 	 * @param float  	    $price    Price of one item
 	 * @param array  	    $options  Array of additional options, such as 'size' or 'color'
 	 */
-	public function add($id, $name = null, $qty = null, $price = null, array $options = array())
+	public function add($id, $name = null, $qty = null, $price = null, array $options = [])
 	{
 		// If the first parameter is an array we need to call the add() function again
 		if(is_array($id))
@@ -110,7 +111,7 @@ class Cart {
 
 				foreach($id as $item)
 				{
-					$options = array_get($item, 'options', array());
+					$options = array_get($item, 'options', []);
 					$this->addRow($item['id'], $item['name'], $item['qty'], $item['price'], $options);
 				}
 
@@ -120,15 +121,15 @@ class Cart {
 				return;
 			}
 
-			$options = array_get($id, 'options', array());
+			$options = array_get($id, 'options', []);
 
 			// Fire the cart.add event
-			$this->event->fire('cart.add', array_merge($id, array('options' => $options)));
+			$this->event->fire('cart.add', array_merge($id, ['options' => $options]));
 
 			$result = $this->addRow($id['id'], $id['name'], $id['qty'], $id['price'], $options);
 
 			// Fire the cart.added event
-			$this->event->fire('cart.added', array_merge($id, array('options' => $options)));
+			$this->event->fire('cart.added', array_merge($id, ['options' => $options]));
 
 			return $result;
 		}
@@ -325,7 +326,7 @@ class Cart {
 	 * @param float   $price    Price of one item
 	 * @param array   $options  Array of additional options, such as 'size' or 'color'
 	 */
-	protected function addRow($id, $name, $qty, $price, array $options = array())
+	protected function addRow($id, $name, $qty, $price, array $options = [])
 	{
 		if(empty($id) || empty($name) || empty($qty) || ! isset($price))
 		{
@@ -349,7 +350,7 @@ class Cart {
 		if($cart->has($rowId))
 		{
 			$row = $cart->get($rowId);
-			$cart = $this->updateRow($rowId, array('qty' => $row->qty + $qty));
+			$cart = $this->updateRow($rowId, ['qty' => $row->qty + $qty]);
 		}
 		else
 		{
@@ -443,7 +444,7 @@ class Cart {
 			}
 		}
 
-		if( ! is_null(array_keys($attributes, array('qty', 'price'))))
+		if( ! is_null(array_keys($attributes, ['qty', 'price'])))
 		{
 			$row->put('subtotal', $row->qty * $row->price);
 		}
@@ -468,7 +469,7 @@ class Cart {
 	{
 		$cart = $this->getContent();
 
-		$newRow = new CartRowCollection(array(
+		$newRow = new CartRowCollection([
 			'rowid' => $rowId,
 			'id' => $id,
 			'name' => $name,
@@ -476,7 +477,7 @@ class Cart {
 			'price' => $price,
 			'options' => new CartRowOptionsCollection($options),
 			'subtotal' => $qty * $price
-		), $this->associatedModel, $this->associatedModelNamespace);
+		], $this->associatedModel, $this->associatedModelNamespace);
 
 		$cart->put($rowId, $newRow);
 
@@ -497,7 +498,7 @@ class Cart {
 			return $this->remove($rowId);
 		}
 
-		return $this->updateRow($rowId, array('qty' => $qty));
+		return $this->updateRow($rowId, ['qty' => $qty]);
 	}
 
 	/**
