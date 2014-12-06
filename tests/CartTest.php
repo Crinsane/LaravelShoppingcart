@@ -36,6 +36,14 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		$this->cart->add('293ad', 'Product 1', 1, 9.99, array('size' => 'large'));
 	}
 
+	public function testCartCanAddWithNumericId()
+	{
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
+		$this->events->shouldReceive('fire')->once()->with('cart.added', m::type('array'));
+
+		$this->cart->add(12345, 'Product 1', 1, 9.99, array('size' => 'large'));
+	}
+
 	public function testCartCanAddArray()
 	{
 		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
@@ -134,6 +142,19 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		$this->cart->update('8cbf215baa3b757e910e5305ab981172', array('name' => 'Product 2'));
 
 		$this->assertEquals('Product 2', $this->cart->content()->first()->name);
+	}
+
+	public function testCartCanUpdateItemToNumericId()
+	{
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
+		$this->events->shouldReceive('fire')->once()->with('cart.added', m::type('array'));
+		$this->events->shouldReceive('fire')->once()->with('cart.update', m::type('string'));
+		$this->events->shouldReceive('fire')->once()->with('cart.updated', m::type('string'));
+
+		$this->cart->add('293ad', 'Product 1', 1, 9.99);
+		$this->cart->update('8cbf215baa3b757e910e5305ab981172', array('id' => 12345));
+
+		$this->assertEquals(12345, $this->cart->content()->first()->id);
 	}
 
 	public function testCartCanUpdateOptions()
