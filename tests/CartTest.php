@@ -36,6 +36,19 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		$this->cart->add('293ad', 'Product 1', 1, 9.99, array('size' => 'large'));
 	}
 
+    public function testCartCanAddMultiple()
+    {
+        $this->events->shouldReceive('fire')->times(5)->with('cart.add', m::type('array'));
+        $this->events->shouldReceive('fire')->times(5)->with('cart.added', m::type('array'));
+
+        for($i = 1; $i <= 5; $i++)
+        {
+            $this->cart->add('293ad' . $i, 'Product ' . $i, 1, 9.99);
+        }
+
+        $this->assertEquals(5, $this->cart->count());
+    }
+
 	public function testCartCanAddWithNumericId()
 	{
 		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
