@@ -523,5 +523,17 @@ class Cart {
 	{
 		return is_array(head($array));
 	}
+	
+	public function getRowIdByProductId($product_id)
+	function getRowIdByProductId($product_id)
+        {
+            foreach(Cart::content() as $product)
+            {
+                if($product['id']==$product_id)
+                {
+                    return $product['rowid'];
+                }
+            }
+        }
 
 }
