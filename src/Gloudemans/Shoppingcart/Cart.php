@@ -127,7 +127,7 @@ class Cart {
 			// Fire the cart.add event
 			$this->event->fire('cart.add', array_merge($id, ['options' => $options]));
 
-			$result = $this->addRow($id['id'], $id['name'], $id['qty'], $item['duration'], $id['price'], $options);
+			$result = $this->addRow($id['id'], $id['name'], $id['qty'], $id['duration'], $id['price'], $options);
 
 			// Fire the cart.added event
 			$this->event->fire('cart.added', array_merge($id, ['options' => $options]));
