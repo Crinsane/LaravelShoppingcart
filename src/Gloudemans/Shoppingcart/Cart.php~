@@ -512,7 +512,7 @@ class Cart {
 			return $this->remove($rowId);
 		}
 
-		return $this->updateRow($rowId, ['qty' => $qty]);
+		return $this->updateRow($rowId, array('qty' => $qty));
 	}
 
     /**
