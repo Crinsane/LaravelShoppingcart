@@ -173,7 +173,11 @@ class Cart {
 		// Fire the cart.update event
 		$this->event->fire('cart.update', $rowId);
 
-		$result = $this->updateQty($rowId, $attribute);
+		$result = $this->updateDuration($rowId, $attribute);
+
+		if($result) {
+		    $result = $this->updateQty($rowId, $attribute);
+		}
 
 		// Fire the cart.updated event
 		$this->event->fire('cart.updated', $rowId);
