@@ -94,10 +94,11 @@ class Cart {
 	 * @param string|array  $id       Unique ID of the item|Item formated as array|Array of items
 	 * @param string 	    $name     Name of the item
 	 * @param int    	    $qty      Item qty to add to the cart
+     	 * @param int           $duration Item duration to add to the cart
 	 * @param float  	    $price    Price of one item
 	 * @param array  	    $options  Array of additional options, such as 'size' or 'color'
 	 */
-	public function add($id, $name = null, $qty = null, $price = null, array $options = [])
+	public function add($id, $name = null, $qty = null, $duration = null, $price = null, array $options = [])
 	{
 		// If the first parameter is an array we need to call the add() function again
 		if(is_array($id))
@@ -112,7 +113,7 @@ class Cart {
 				foreach($id as $item)
 				{
 					$options = array_get($item, 'options', []);
-					$this->addRow($item['id'], $item['name'], $item['qty'], $item['price'], $options);
+					$this->addRow($item['id'], $item['name'], $item['qty'], $item['duration'], $item['price'], $options);
 				}
 
 				// Fire the cart.batched event
@@ -126,7 +127,7 @@ class Cart {
 			// Fire the cart.add event
 			$this->event->fire('cart.add', array_merge($id, ['options' => $options]));
 
-			$result = $this->addRow($id['id'], $id['name'], $id['qty'], $id['price'], $options);
+			$result = $this->addRow($id['id'], $id['name'], $id['qty'], $id['duration'], $id['price'], $options);
 
 			// Fire the cart.added event
 			$this->event->fire('cart.added', array_merge($id, ['options' => $options]));
@@ -135,12 +136,12 @@ class Cart {
 		}
 
 		// Fire the cart.add event
-		$this->event->fire('cart.add', compact('id', 'name', 'qty', 'price', 'options'));
+		$this->event->fire('cart.add', compact('id', 'name', 'qty', 'duration', 'price', 'options'));
 
-		$result = $this->addRow($id, $name, $qty, $price, $options);
+		$result = $this->addRow($id, $name, $qty, $duration, $price, $options);
 
 		// Fire the cart.added event
-		$this->event->fire('cart.added', compact('id', 'name', 'qty', 'price', 'options'));
+		$this->event->fire('cart.added', compact('id', 'name', 'qty', 'duration', 'price', 'options'));
 
 		return $result;
 	}
@@ -323,12 +324,13 @@ class Cart {
 	 * @param string  $id       Unique ID of the item
 	 * @param string  $name     Name of the item
 	 * @param int     $qty      Item qty to add to the cart
+     	 * @param int     $duration Item duration to add to the cart
 	 * @param float   $price    Price of one item
 	 * @param array   $options  Array of additional options, such as 'size' or 'color'
 	 */
-	protected function addRow($id, $name, $qty, $price, array $options = [])
+	protected function addRow($id, $name, $qty, $duration, $price, array $options = [])
 	{
-		if(empty($id) || empty($name) || empty($qty) || ! isset($price))
+		if(empty($id) || empty($name) || empty($qty) || empty($duration) || ! isset($price))
 		{
 			throw new Exceptions\ShoppingcartInvalidItemException;
 		}
@@ -336,6 +338,11 @@ class Cart {
 		if( ! is_numeric($qty))
 		{
 			throw new Exceptions\ShoppingcartInvalidQtyException;
+		}
+
+		if( !is_numeric($duration))
+		{
+		    throw new Exceptions\ShoppingcartInvalidDurationException;
 		}
 
 		if( ! is_numeric($price))
@@ -350,11 +357,11 @@ class Cart {
 		if($cart->has($rowId))
 		{
 			$row = $cart->get($rowId);
-			$cart = $this->updateRow($rowId, ['qty' => $row->qty + $qty]);
+			$cart = $this->updateRow($rowId, ['qty' => $row->qty + $qty, 'duration' => $row->duration + $duration]);
 		}
 		else
 		{
-			$cart = $this->createRow($rowId, $id, $name, $qty, $price, $options);
+			$cart = $this->createRow($rowId, $id, $name, $qty, $duration, $price, $options);
 		}
 
 		return $this->updateCart($cart);
@@ -423,6 +430,7 @@ class Cart {
 	 *
 	 * @param  string   $rowId  The ID of the row to update
 	 * @param  integer  $qty    The quantity to add to the row
+     	 * @param  integer  $duration The duration to add to the row
 	 * @return Gloudemans\Shoppingcart\CartCollection
 	 */
 	protected function updateRow($rowId, $attributes)
@@ -444,9 +452,9 @@ class Cart {
 			}
 		}
 
-		if( ! is_null(array_keys($attributes, ['qty', 'price'])))
+		if( ! is_null(array_keys($attributes, ['qty', 'duration', 'price'])))
 		{
-			$row->put('subtotal', $row->qty * $row->price);
+			$row->put('subtotal', $row->qty * $row->duration * $row->price);
 		}
 
 		$cart->put($rowId, $row);
@@ -461,11 +469,12 @@ class Cart {
 	 * @param  string  $id       Unique ID of the item
 	 * @param  string  $name     Name of the item
 	 * @param  int     $qty      Item qty to add to the cart
+	 * @param  int     $duration Item duration to add to the cart
 	 * @param  float   $price    Price of one item
 	 * @param  array   $options  Array of additional options, such as 'size' or 'color'
 	 * @return Gloudemans\Shoppingcart\CartCollection
 	 */
-	protected function createRow($rowId, $id, $name, $qty, $price, $options)
+	protected function createRow($rowId, $id, $name, $qty, $duration, $price, $options)
 	{
 		$cart = $this->getContent();
 
@@ -474,9 +483,10 @@ class Cart {
 			'id' => $id,
 			'name' => $name,
 			'qty' => $qty,
+    			'duration' => $duration,
 			'price' => $price,
 			'options' => new CartRowOptionsCollection($options),
-			'subtotal' => $qty * $price
+			'subtotal' => $qty * $duration * $price
 		], $this->associatedModel, $this->associatedModelNamespace);
 
 		$cart->put($rowId, $newRow);
@@ -499,6 +509,18 @@ class Cart {
 		}
 
 		return $this->updateRow($rowId, ['qty' => $qty]);
+	}
+
+	/**
+	* Update the duration of a row
+	*
+	* @param  string  $rowId  The ID of the row
+	* @param  int     $duration    The duration to add
+	* @return Gloudemans\Shoppingcart\CartCollection
+	*/
+	protected function updateDuration($rowId, $duration)
+	{
+		return $this->updateRow($rowId, array('duration' => $duration));
 	}
 
 	/**
