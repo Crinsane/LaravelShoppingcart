@@ -94,7 +94,7 @@ class Cart {
 	 * @param string|array  $id       Unique ID of the item|Item formated as array|Array of items
 	 * @param string 	    $name     Name of the item
 	 * @param int    	    $qty      Item qty to add to the cart
-     * @param int           $duration Item duration to add to the cart
+     	 * @param int           $duration Item duration to add to the cart
 	 * @param float  	    $price    Price of one item
 	 * @param array  	    $options  Array of additional options, such as 'size' or 'color'
 	 */
@@ -175,11 +175,11 @@ class Cart {
 
 		$result = $this->updateDuration($rowId, $attribute);
 
-        if($result) {
-            $result = $this->updateQty($rowId, $attribute);
-        }
+		if($result) {
+		    $result = $this->updateQty($rowId, $attribute);
+		}
 
-        // Fire the cart.updated event
+		// Fire the cart.updated event
 		$this->event->fire('cart.updated', $rowId);
 
 		return $result;
@@ -328,7 +328,7 @@ class Cart {
 	 * @param string  $id       Unique ID of the item
 	 * @param string  $name     Name of the item
 	 * @param int     $qty      Item qty to add to the cart
-     * @param int     $duration Item duration to add to the cart
+     	 * @param int     $duration Item duration to add to the cart
 	 * @param float   $price    Price of one item
 	 * @param array   $options  Array of additional options, such as 'size' or 'color'
 	 */
@@ -344,10 +344,10 @@ class Cart {
 			throw new Exceptions\ShoppingcartInvalidQtyException;
 		}
 
-        if( !is_numeric($duration))
-        {
-            throw new Exceptions\ShoppingcartInvalidDurationException;
-        }
+		if( !is_numeric($duration))
+		{
+		    throw new Exceptions\ShoppingcartInvalidDurationException;
+		}
 
 		if( ! is_numeric($price))
 		{
@@ -434,7 +434,7 @@ class Cart {
 	 *
 	 * @param  string   $rowId  The ID of the row to update
 	 * @param  integer  $qty    The quantity to add to the row
-     * @param  integer  $duration The duration to add to the row
+     	 * @param  integer  $duration The duration to add to the row
 	 * @return Gloudemans\Shoppingcart\CartCollection
 	 */
 	protected function updateRow($rowId, $attributes)
@@ -473,7 +473,7 @@ class Cart {
 	 * @param  string  $id       Unique ID of the item
 	 * @param  string  $name     Name of the item
 	 * @param  int     $qty      Item qty to add to the cart
-       	 * @param  int     $duration Item duration to add to the cart
+	 * @param  int     $duration Item duration to add to the cart
 	 * @param  float   $price    Price of one item
 	 * @param  array   $options  Array of additional options, such as 'size' or 'color'
 	 * @return Gloudemans\Shoppingcart\CartCollection
@@ -515,17 +515,17 @@ class Cart {
 		return $this->updateRow($rowId, ['qty' => $qty]);
 	}
 
-    /**
-     * Update the duration of a row
-     *
-     * @param  string  $rowId  The ID of the row
-     * @param  int     $duration    The duration to add
-     * @return Gloudemans\Shoppingcart\CartCollection
-     */
-    protected function updateDuration($rowId, $duration)
-    {
-        return $this->updateRow($rowId, array('duration' => $duration));
-    }
+	/**
+	* Update the duration of a row
+	*
+	* @param  string  $rowId  The ID of the row
+	* @param  int     $duration    The duration to add
+	* @return Gloudemans\Shoppingcart\CartCollection
+	*/
+	protected function updateDuration($rowId, $duration)
+	{
+		return $this->updateRow($rowId, array('duration' => $duration));
+	}
 
 	/**
 	 * Update an attribute of the row
