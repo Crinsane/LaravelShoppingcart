@@ -370,7 +370,6 @@ class Cart {
 	protected function generateRowId($id, $options)
 	{
 		ksort($options);
-
 		return md5($id . serialize($options));
 	}
 
@@ -428,7 +427,6 @@ class Cart {
 	protected function updateRow($rowId, $attributes)
 	{
 		$cart = $this->getContent();
-
 		$row = $cart->get($rowId);
 
 		foreach($attributes as $key => $value)
@@ -449,7 +447,11 @@ class Cart {
 			$row->put('subtotal', $row->qty * $row->price);
 		}
 
-		$cart->put($rowId, $row);
+		$id = $cart->get($rowId)->id;
+		
+		$newRowId = $this->generateRowId($id, $attributes);
+
+		$row->updateRowId($newRowId);
 
 		return $cart;
 	}

@@ -131,6 +131,25 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(2, $this->cart->content()->first()->qty);
 	}
 
+
+	/**
+	 * Test case for issue #76
+	 */
+
+	public function testCartUpdatesRowIdWhenUpdatingItem()
+	{
+		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
+		$this->events->shouldReceive('fire')->once()->with('cart.added', m::type('array'));
+		$this->events->shouldReceive('fire')->once()->with('cart.update', m::type('string'));
+		$this->events->shouldReceive('fire')->once()->with('cart.updated', m::type('string'));
+
+		$rowId = '8cbf215baa3b757e910e5305ab981172';
+		$this->cart->add('293ad', 'Product 1', 1, 9.99);
+		$this->cart->update($rowId, ['size' => 'large']);
+		$this->assertNotEquals($rowId, $this->cart->content()->first()->rowid);
+	}
+
+
 	public function testCartCanUpdateQty()
 	{
 		$this->events->shouldReceive('fire')->once()->with('cart.add', m::type('array'));
@@ -140,7 +159,6 @@ class CartTest extends PHPUnit_Framework_TestCase {
 
 		$this->cart->add('293ad', 'Product 1', 1, 9.99);
 		$this->cart->update('8cbf215baa3b757e910e5305ab981172', 2);
-
 		$this->assertEquals(2, $this->cart->content()->first()->qty);
 	}
 
@@ -422,4 +440,3 @@ class CartTest extends PHPUnit_Framework_TestCase {
 	}
 
 }
-

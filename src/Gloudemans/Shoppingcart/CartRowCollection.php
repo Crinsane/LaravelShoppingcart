@@ -70,4 +70,16 @@ class CartRowCollection extends Collection {
 		return $found;
 	}
 
+	/**
+	 * Constructor for the CartRowCollection
+	 *
+	 * @param string   $newId
+	 * @return void
+	 */
+
+	public function updateRowId($newId)
+  {
+    $this->items['rowid'] = $newId;
+  }
+
 }
