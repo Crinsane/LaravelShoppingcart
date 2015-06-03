@@ -22,7 +22,7 @@ Install the package through [Composer](http://getcomposer.org/). Edit your proje
 ```php
 "require": {
 	"laravel/framework": "5.0.*",
-	"gloudemans/shoppingcart": "dev-master"
+	"gloudemans/shoppingcart": "~1.3"
 }
 ```
 
