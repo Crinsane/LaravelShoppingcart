@@ -83,7 +83,7 @@ class CartTest extends PHPUnit_Framework_TestCase {
 
 		$this->cart->add('293ad', 'Product 1', 1, 9.99, array('size' => 'large', 'color' => 'red'));
 
-		$cartRow = $this->cart->get('c5417b5761c7fb837e4227a38870dd4d');
+		$cartRow = $this->cart->content()->first();
 
 		$this->assertInstanceOf('Gloudemans\Shoppingcart\CartRowOptionsCollection', $cartRow->options);
 		$this->assertEquals('large', $cartRow->options->size);
@@ -139,7 +139,7 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		$this->events->shouldReceive('fire')->once()->with('cart.updated', m::type('string'));
 
 		$this->cart->add('293ad', 'Product 1', 1, 9.99);
-		$this->cart->update('8cbf215baa3b757e910e5305ab981172', 2);
+		$this->cart->update($this->getKey(), 2);
 
 		$this->assertEquals(2, $this->cart->content()->first()->qty);
 	}
@@ -152,7 +152,7 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		$this->events->shouldReceive('fire')->once()->with('cart.updated', m::type('string'));
 
 		$this->cart->add('293ad', 'Product 1', 1, 9.99);
-		$this->cart->update('8cbf215baa3b757e910e5305ab981172', array('name' => 'Product 2'));
+		$this->cart->update($this->getKey(), array('name' => 'Product 2'));
 
 		$this->assertEquals('Product 2', $this->cart->content()->first()->name);
 	}
@@ -165,7 +165,7 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		$this->events->shouldReceive('fire')->once()->with('cart.updated', m::type('string'));
 
 		$this->cart->add('293ad', 'Product 1', 1, 9.99);
-		$this->cart->update('8cbf215baa3b757e910e5305ab981172', array('id' => 12345));
+		$this->cart->update($this->getKey(), array('id' => 12345));
 
 		$this->assertEquals(12345, $this->cart->content()->first()->id);
 	}
@@ -178,7 +178,7 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		$this->events->shouldReceive('fire')->once()->with('cart.updated', m::type('string'));
 
 		$this->cart->add('293ad', 'Product 1', 1, 9.99, array('size' => 'S'));
-		$this->cart->update('9be7e69d236ca2d09d2e0838d2c59aeb', array('options' => array('size' => 'L')));
+		$this->cart->update($this->getKey(), array('options' => array('size' => 'L')));
 
 		$this->assertEquals('L', $this->cart->content()->first()->options->size);
 	}
@@ -199,7 +199,7 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		$this->events->shouldReceive('fire')->once()->with('cart.removed', m::type('string'));
 
 		$this->cart->add('293ad', 'Product 1', 1, 9.99);
-		$this->cart->remove('8cbf215baa3b757e910e5305ab981172');
+		$this->cart->remove($this->getKey());
 
 		$this->assertTrue($this->cart->content()->isEmpty());
 	}
@@ -214,7 +214,7 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		$this->events->shouldReceive('fire')->once()->with('cart.removed', m::type('string'));
 
 		$this->cart->add('293ad', 'Product 1', 1, 9.99);
-		$this->cart->update('8cbf215baa3b757e910e5305ab981172', 0);
+		$this->cart->update($this->getKey(), 0);
 
 		$this->assertTrue($this->cart->content()->isEmpty());
 	}
@@ -229,7 +229,7 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		$this->events->shouldReceive('fire')->once()->with('cart.removed', m::type('string'));
 
 		$this->cart->add('293ad', 'Product 1', 1, 9.99);
-		$this->cart->update('8cbf215baa3b757e910e5305ab981172', -1);
+		$this->cart->update($this->getKey(), -1);
 
 		$this->assertTrue($this->cart->content()->isEmpty());
 	}
@@ -240,7 +240,7 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		$this->events->shouldReceive('fire')->once()->with('cart.added', m::type('array'));
 
 		$this->cart->add('293ad', 'Product 1', 1, 9.99);
-		$item = $this->cart->get('8cbf215baa3b757e910e5305ab981172');
+		$item = $this->cart->get($this->getKey());
 
 		$this->assertEquals('293ad', $item->id);
 	}
@@ -311,7 +311,7 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		$this->cart->add('293ad', 'Product 1', 1, 9.99);
 
 		$searchResult = $this->cart->search(array('id' => '293ad'));
-		$this->assertEquals('8cbf215baa3b757e910e5305ab981172', $searchResult[0]);
+		$this->assertEquals($this->getKey(), $searchResult[0]);
 	}
 
 	public function testCartCanHaveMultipleInstances()
@@ -320,12 +320,14 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		$this->events->shouldReceive('fire')->twice()->with('cart.added', m::type('array'));
 
 		$this->cart->instance('firstInstance')->add('293ad', 'Product 1', 1, 9.99);
+		$keyFirstInstance = $this->getKey($this->cart->instance('firstInstance'));
 		$this->cart->instance('secondInstance')->add('986se', 'Product 2', 1, 19.99);
+		$keySecondInstance = $this->getKey($this->cart->instance('secondInstance'));
 
-		$this->assertTrue($this->cart->instance('firstInstance')->content()->has('8cbf215baa3b757e910e5305ab981172'));
-		$this->assertFalse($this->cart->instance('firstInstance')->content()->has('22eae2b9c10083d6631aaa023106871a'));
-		$this->assertTrue($this->cart->instance('secondInstance')->content()->has('22eae2b9c10083d6631aaa023106871a'));
-		$this->assertFalse($this->cart->instance('secondInstance')->content()->has('8cbf215baa3b757e910e5305ab981172'));
+		$this->assertTrue($this->cart->instance('firstInstance')->content()->has($keyFirstInstance));
+		$this->assertFalse($this->cart->instance('firstInstance')->content()->has($keySecondInstance));
+		$this->assertTrue($this->cart->instance('secondInstance')->content()->has($keySecondInstance));
+		$this->assertFalse($this->cart->instance('secondInstance')->content()->has($keyFirstInstance));
 	}
 
 	public function testCartCanSearchInMultipleInstances()
@@ -334,10 +336,12 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		$this->events->shouldReceive('fire')->twice()->with('cart.added', m::type('array'));
 
 		$this->cart->instance('firstInstance')->add('293ad', 'Product 1', 1, 9.99);
+		$keyFirstInstance = $this->getKey($this->cart->instance('firstInstance'));
 		$this->cart->instance('secondInstance')->add('986se', 'Product 2', 1, 19.99);
+		$keySecondInstance = $this->getKey($this->cart->instance('secondInstance'));
 
-		$this->assertEquals($this->cart->instance('firstInstance')->search(array('id' => '293ad')), array('8cbf215baa3b757e910e5305ab981172'));
-		$this->assertEquals($this->cart->instance('secondInstance')->search(array('id' => '986se')), array('22eae2b9c10083d6631aaa023106871a'));
+		$this->assertEquals($this->cart->instance('firstInstance')->search(array('id' => '293ad')), array($keyFirstInstance));
+		$this->assertEquals($this->cart->instance('secondInstance')->search(array('id' => '986se')), array($keySecondInstance));
 	}
 
 	/**
@@ -400,7 +404,7 @@ class CartTest extends PHPUnit_Framework_TestCase {
 
 		$this->cart->associate('TestProduct')->add('293ad', 'Product 1', 1, 9.99);
 
-		$this->assertEquals('This is the description of the test model', $this->cart->get('8cbf215baa3b757e910e5305ab981172')->testproduct->description);
+		$this->assertEquals('This is the description of the test model', $this->cart->get($this->getKey())->testproduct->description);
 	}
 
 	public function testCartCanReturnNamespadedModelProperties()
@@ -410,7 +414,7 @@ class CartTest extends PHPUnit_Framework_TestCase {
 
 		$this->cart->associate('TestProduct', 'Acme\Test\Models')->add('293ad', 'Product 1', 1, 9.99);
 
-		$this->assertEquals('This is the description of the namespaced test model', $this->cart->get('8cbf215baa3b757e910e5305ab981172')->testproduct->description);
+		$this->assertEquals('This is the description of the namespaced test model', $this->cart->get($this->getKey())->testproduct->description);
 	}
 
 	/**
@@ -421,5 +425,19 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		$this->cart->associate('NoneExistingModel');
 	}
 
+	/**
+	 * Get the key of the first record
+	 *
+	 * @param null $cart
+	 * @return mixed
+	 */
+	protected function getKey($cart = null)
+	{
+		if (is_null($cart)) {
+			$cart = $this->cart;
+		}
+
+		return $cart->content()->first()->get('rowid');
+	}
 }
 

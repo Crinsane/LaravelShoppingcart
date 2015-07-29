@@ -345,33 +345,50 @@ class Cart {
 
 		$cart = $this->getContent();
 
-		$rowId = $this->generateRowId($id, $options);
-
-		if($cart->has($rowId))
-		{
-			$row = $cart->get($rowId);
-			$cart = $this->updateRow($rowId, ['qty' => $row->qty + $qty]);
-		}
-		else
-		{
-			$cart = $this->createRow($rowId, $id, $name, $qty, $price, $options);
+		if ($cart->isEmpty() || is_null($row = $this->findRowByAttributes($cart, $id, $price, $options))) {
+			$cart = $this->createRow($this->generateRowId(), $id, $name, $qty, $price, $options);
+		} else {
+			$cart = $this->updateRow($row->get('rowid'), ['qty' => $row->qty + $qty]);
 		}
 
 		return $this->updateCart($cart);
 	}
 
 	/**
+	 * Find valid row by id+price+options
+	 *
+	 * @param CartCollection $cart
+	 * @param string $id
+	 * @param string $price
+	 * @param array $options
+	 * @return CartRowCollection
+	 */
+	protected function findRowByAttributes($cart, $id, $price, array $options = [])
+	{
+		$row = $cart->where('id', $id);
+		if (!$row->isEmpty()) {
+			$row = $row->where('price', $price);
+
+			if (!$row->isEmpty()) {
+				$row = $row->whereLoose('options', new CartRowOptionsCollection($options));
+
+				if (!$row->isEmpty()) {
+					return $row->first();
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Generate a unique id for the new row
 	 *
-	 * @param  string  $id       Unique ID of the item
-	 * @param  array   $options  Array of additional options, such as 'size' or 'color'
 	 * @return boolean
 	 */
-	protected function generateRowId($id, $options)
+	protected function generateRowId()
 	{
-		ksort($options);
-
-		return md5($id . serialize($options));
+		return str_random(32);
 	}
 
 	/**
