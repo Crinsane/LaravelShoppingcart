@@ -30,11 +30,16 @@ Next, run the Composer update command from the Terminal:
 
     composer update
 
-Now all you have to do is add the service provider of the package and alias the package. To do this open your `app/config/app.php` file.
+Now all you have to do is add the service provider of the package and alias the package. To do this open your `app/config/app.php` or if you're using Laravel 5 `config/app.php` file.
 
 Add a new line to the `service providers` array:
 
-	'Gloudemans\Shoppingcart\ShoppingcartServiceProvider'
+	'Gloudemans\Shoppingcart\ShoppingcartServiceProvider'  
+
+If you're using Laravel 5
+
+	Gloudemans\Shoppingcart\ShoppingcartServiceProvider::class
+
 
 And finally add a new line to the `aliases` array:
 
