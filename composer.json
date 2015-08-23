@@ -17,6 +17,9 @@
         "mockery/mockery": "~0.9",
         "phpunit/phpunit": "~4.0"
     },
+    "suggest": {
+        "gloudemans/notify": "Simple flash notifications for Laravel 5"
+    },
     "autoload": {
         "psr-0": {
             "Gloudemans\\Shoppingcart": "src/"
