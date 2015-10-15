@@ -421,5 +421,9 @@ class CartTest extends PHPUnit_Framework_TestCase {
 		$this->cart->associate('NoneExistingModel');
 	}
 
-}
+	public function testCartDestroyReturnsBoolean()
+	{
+		$this->assertTrue($this->cart->destroy());
+	}
 
+}
