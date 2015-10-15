@@ -389,11 +389,13 @@ class Cart {
 	 * Update the cart
 	 *
 	 * @param  Gloudemans\Shoppingcart\CartCollection  $cart  The new cart content
-	 * @return void
+	 * @return boolean
 	 */
 	protected function updateCart($cart)
 	{
-		return $this->session->put($this->getInstance(), $cart);
+		$this->session->put($this->getInstance(), $cart);
+
+		return $cart === $this->session->get($this->getInstance());
 	}
 
 	/**
