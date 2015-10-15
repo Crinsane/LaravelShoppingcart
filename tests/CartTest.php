@@ -423,6 +423,9 @@ class CartTest extends PHPUnit_Framework_TestCase {
 
 	public function testCartDestroyReturnsBoolean()
 	{
+		$this->events->shouldReceive('fire')->once()->with('cart.destroy');
+		$this->events->shouldReceive('fire')->once()->with('cart.destroyed');
+		
 		$this->assertTrue($this->cart->destroy());
 	}
 
