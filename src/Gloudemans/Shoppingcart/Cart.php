@@ -188,7 +188,7 @@ class Cart {
 	 */
 	public function remove($rowId)
 	{
-		if( ! $this->hasRowId($rowId)) throw new Exceptions\ShoppingcartInvalidRowIDException;
+		if( ! $this->hasRowId($rowId)) return false;
 
 		$cart = $this->getContent();
 
@@ -389,11 +389,13 @@ class Cart {
 	 * Update the cart
 	 *
 	 * @param  Gloudemans\Shoppingcart\CartCollection  $cart  The new cart content
-	 * @return void
+	 * @return boolean
 	 */
 	protected function updateCart($cart)
 	{
-		return $this->session->put($this->getInstance(), $cart);
+		$this->session->put($this->getInstance(), $cart);
+		// Ensure session has been updated by comparing the new content with the content from session.
+		return $this->session->get($this->getInstance()) === $cart;
 	}
 
 	/**
