@@ -248,18 +248,20 @@ Here is an example:
 
 Cart::associate('Product')->add('293ad', 'Product 1', 1, 9.99, array('size' => 'large'));
 
-
 $content = Cart::content();
 
-
-foreach($content as $row)
-{
+foreach($content as $row) {
 	echo 'You have ' . $row->qty . ' items of ' . $row->product->name . ' with description: "' . $row->product->description . '" in your cart.';
 }
 ```
 
 The key to access the model is the same as the model name you associated (lowercase).
-The `associate()` method has a second optional parameter for specifying the model namespace.
+
+The `associate()` method has a second optional parameter for specifying the model namespace. For example, a typical eloquent model would be associated as:
+
+```php
+Cart::associate('Product', 'App')->add('293ad', 'Product 1', 1, 9.99, array('size' => 'large'));
+```
 
 ## Exceptions
 The Cart package will throw exceptions if something goes wrong. This way it's easier to debug your code using the Cart package or to handle the error based on the type of exceptions. The Cart packages can throw the following exceptions:
