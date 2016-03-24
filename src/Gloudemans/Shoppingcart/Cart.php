@@ -75,7 +75,7 @@ class Cart {
 	 *
 	 * @param  string    $modelName        The name of the model
 	 * @param  string    $modelNamespace   The namespace of the model
-	 * @return void
+	 * @return $this
 	 */
 	public function associate($modelName, $modelNamespace = null)
 	{
