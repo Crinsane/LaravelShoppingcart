@@ -1,6 +1,7 @@
 <?php namespace Gloudemans\Shoppingcart;
 
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 class Cart {
@@ -79,6 +80,9 @@ class Cart {
 	 */
 	public function associate($modelName, $modelNamespace = null)
 	{
+		if($modelName instanceof Model)
+            		$modelName = get_class($modelName);
+            		
 		$this->associatedModel = $modelName;
 		$this->associatedModelNamespace = $modelNamespace;
 
