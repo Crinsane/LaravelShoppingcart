@@ -42,58 +42,49 @@ The shoppingcart gives you the following methods to use:
 **Cart::add()**
 
 ```php
-/**
- * Add a row to the cart
- *
- * @param string|Array $id      Unique ID of the item|Item formated as array|Array of items
- * @param string       $name    Name of the item
- * @param int          $qty     Item qty to add to the cart
- * @param float        $price   Price of one item
- * @param Array        $options Array of additional options, such as 'size' or 'color'
- */
-
 // Basic form
-Cart::add('293ad', 'Product 1', 1, 9.99, array('size' => 'large'));
+Cart::add('293ad', 'Product 1', 1, 9.99, ['size' => 'large']);
 
 // Array form
-Cart::add(array('id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 9.99, 'options' => array('size' => 'large')));
+Cart::add(['id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 9.99, 'options' => ['size' => 'large']]);
 
 // Batch method
-Cart::add(array(
-  array('id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 10.00),
-  array('id' => '4832k', 'name' => 'Product 2', 'qty' => 1, 'price' => 10.00, 'options' => array('size' => 'large'))
-));
+Cart::add([
+  ['id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 10.00],
+  ['id' => '4832k', 'name' => 'Product 2', 'qty' => 1, 'price' => 10.00, 'options' => ['size' => 'large']]
+]);
+
+ // NEW!!!
+ // Have a model implement the Buyable interface
+ Cart::add($product, 1, $options);
+ 
+ // Batch add Buyables
+ Cart::add([$product1, $product2]);
+
 ```
+
+The `add()` method will return the instance of a `CartItem` that was just added to the cart. When you batch insert it will return an array of `CartItem`.
 
 **Cart::update()**
 
 ```php
-/**
- * Update the quantity of one row of the cart
- *
- * @param  string        $rowId       The rowid of the item you want to update
- * @param  integer|Array $attribute   New quantity of the item|Array of attributes to update
- * @return boolean
- */
  $rowId = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
 
-Cart::update($rowId, 2);
+Cart::update($rowId, 2); // Will update the quantity
 
 OR
 
-Cart::update($rowId, array('name' => 'Product 1'));
+Cart::update($rowId, ['name' => 'Product 1']); // Will update the name
+
+// NEW!!!
+// Update the cart using a Buyable
+Cart::update($rowId, $product);
+
 ```
 
 **Cart::remove()**
 
 ```php
-/**
- * Remove a row from the cart
- *
- * @param  string  $rowId The rowid of the item
- * @return boolean
- */
-
  $rowId = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
 
 Cart::remove($rowId);
@@ -102,13 +93,6 @@ Cart::remove($rowId);
 **Cart::get()**
 
 ```php
-/**
- * Get a row of the cart by its ID
- *
- * @param  string $rowId The ID of the row to fetch
- * @return CartRowCollection
- */
-
 $rowId = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
 
 Cart::get($rowId);
@@ -147,21 +131,38 @@ Cart::destroy();
  * @return float
  */
 
-Cart::total();
+Cart::total;
+
+Cart::total($decimals, $decimalSeperator, $thousandSeperator);
+
 ```
+
+**Cart::tax()**
+
+```php
+
+Cart::tax; // Will return the tax for all items in the cart
+
+Cart::tax($decimals, $decimalSeperator, $thousandSeperator);
+
+```
+
+**Cart::subtotal()**
+
+```php
+
+Cart::subtotal; // Will return the total - tax
+
+Cart::subtotal($decimals, $decimalSeperator, $thousandSeperator);
+
+```
+
 
 **Cart::count()**
 
 ```php
-/**
- * Get the number of items in the cart
- *
- * @param  boolean $totalItems Get all the items (when false, will return the number of rows)
- * @return int
- */
 
- Cart::count();      // Total items
- Cart::count(false); // Total rows
+ Cart::count(); // Total items
 ```
 
 **Cart::search()**
@@ -248,12 +249,9 @@ The Cart package will throw exceptions if something goes wrong. This way it's ea
 
 | Exception                             | Reason                                                                           |
 | ------------------------------------- | --------------------------------------------------------------------------------- |
-| *ShoppingcartInstanceException*       | When no instance is passed to the instance() method                              |
-| *ShoppingcartInvalidItemException*    | When a new product misses one of it's arguments (`id`, `name`, `qty`, `price`)   |
-| *ShoppingcartInvalidPriceException*   | When a non-numeric price is passed                                               |
-| *ShoppingcartInvalidQtyException*     | When a non-numeric quantity is passed                                            |
-| *ShoppingcartInvalidRowIDException*   | When the `$rowId` that got passed doesn't exists in the current cart             |
-| *ShoppingcartUnknownModelException*   | When an unknown model is associated to a cart row                                |
+| *CartAlreadyStoredException*       | When trying to store a cart that was already stored using the specified identifier                                                                         |
+| *InvalidRowIDException*   | When the `$rowId` that got passed doesn't exists in the current cart             |
+| *UnknownModelException*   | When an unknown model is associated to a cart row                                |
 
 ## Events
 
@@ -261,11 +259,10 @@ The cart also has events build in. There are five events available for you to li
 
 | Event                | Fired                                   |
 | -------------------- | --------------------------------------- |
-| cart.add($item)      | When a single item is added             |
-| cart.batch($items)   | When a batch of items is added          |
-| cart.update($rowId)  | When an item in the cart is updated     |
-| cart.remove($rowId)  | When an item is removed from the cart   |
-| cart.destroy()       | When the cart is destroyed              |
+| cart.add($cartItem)      | When an item is added             |
+| cart.update($cartItem)  | When an item in the cart is updated     |
+| cart.remove($cartItem)  | When an item is removed from the cart   |
+| cart.destroy(cartItem)       | When the cart is destroyed              |
 
 ## Example
 
