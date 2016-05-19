@@ -247,6 +247,21 @@ class CartTest extends Orchestra\Testbench\TestCase
     }
 
     /** @test */
+    public function it_will_keep_updating_the_quantity_when_an_item_is_added_multiple_times()
+    {
+        $cart = $this->getCart();
+
+        $item = $this->getBuyableMock();
+
+        $cart->add($item);
+        $cart->add($item);
+        $cart->add($item);
+
+        $this->assertItemsInCart(3, $cart);
+        $this->assertRowsInCart(1, $cart);
+    }
+
+    /** @test */
     public function it_can_update_the_quantity_of_an_existing_item_in_the_cart()
     {
         $this->expectsEvents('cart.updated');
