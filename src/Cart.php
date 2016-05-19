@@ -99,7 +99,7 @@ class Cart
         $content = $this->getContent();
 
         if ($content->has($cartItem->rowId)) {
-            $cartItem->qty++;
+            $cartItem->qty += $content->get($cartItem->rowId)->qty;
         }
 
         $content->put($cartItem->rowId, $cartItem);
