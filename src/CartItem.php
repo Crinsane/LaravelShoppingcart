@@ -74,7 +74,7 @@ class CartItem
     {
         if(empty($id)) throw new \InvalidArgumentException('Please supply a valid identifier.');
         if(empty($name)) throw new \InvalidArgumentException('Please supply a valid name.');
-        if(empty($price) || ! is_numeric($price))
+        if(strlen($price) < 0 || ! is_numeric($price))
             throw new \InvalidArgumentException('Please supply a valid price.');
 
         $this->id = $id;
