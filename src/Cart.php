@@ -205,6 +205,10 @@ class Cart
      */
     public function content()
     {
+        if (is_null($this->session->get($this->instance))) {
+            return new Collection([]);
+        }
+
         return $this->session->get($this->instance);
     }
 

@@ -447,6 +447,17 @@ class CartTest extends Orchestra\Testbench\TestCase
     }
 
     /** @test */
+    public function it_will_return_an_empty_collection_if_the_cart_is_empty()
+    {
+        $cart = $this->getCart();
+
+        $content = $cart->content();
+
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $content);
+        $this->assertCount(0, $content);
+    }
+
+    /** @test */
     public function it_can_destroy_a_cart()
     {
         $cart = $this->getCart();
