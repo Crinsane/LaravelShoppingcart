@@ -458,6 +458,42 @@ class CartTest extends Orchestra\Testbench\TestCase
     }
 
     /** @test */
+    public function it_will_include_the_tax_and_subtotal_when_converted_to_an_array()
+    {
+        $cart = $this->getCart();
+
+        $item = $this->getBuyableMock();
+        $item2 = $this->getBuyableMock(2);
+
+        $cart->add($item);
+        $cart->add($item2);
+
+        $content = $cart->content();
+
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $content);
+        $this->assertEquals([
+            '027c91341fd5cf4d2579b49c4b6a90da' => [
+                'rowId' => '027c91341fd5cf4d2579b49c4b6a90da',
+                'id' => 1,
+                'name' => 'Item name',
+                'qty' => 1,
+                'price' => 10.00,
+                'tax' => 2.10,
+                'subtotal' => 10.0,
+            ],
+            '370d08585360f5c568b18d1f2e4ca1df' => [
+                'rowId' => '370d08585360f5c568b18d1f2e4ca1df',
+                'id' => 2,
+                'name' => 'Item name',
+                'qty' => 1,
+                'price' => 10.00,
+                'tax' => 2.10,
+                'subtotal' => 10.0,
+            ]
+        ], $content->toArray());
+    }
+
+    /** @test */
     public function it_can_destroy_a_cart()
     {
         $cart = $this->getCart();
