@@ -131,7 +131,7 @@ Cart::destroy();
  * @return float
  */
 
-Cart::total;
+Cart::total();
 
 Cart::total($decimals, $decimalSeperator, $thousandSeperator);
 
