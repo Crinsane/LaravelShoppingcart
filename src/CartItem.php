@@ -2,9 +2,10 @@
 
 namespace Gloudemans\Shoppingcart;
 
+use Illuminate\Contracts\Support\Arrayable;
 use Gloudemans\Shoppingcart\Contracts\Buyable;
 
-class CartItem
+class CartItem implements Arrayable
 {
     /**
      * The rowID of the cart item.
@@ -267,5 +268,23 @@ class CartItem
         ksort($options);
 
         return md5($id . serialize($options));
+    }
+
+    /**
+     * Get the instance as an array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return [
+            'rowId'    => $this->rowId,
+            'id'       => $this->id,
+            'name'     => $this->name,
+            'qty'      => $this->qty,
+            'price'    => $this->price,
+            'tax'      => $this->tax,
+            'subtotal' => $this->subtotal
+        ];
     }
 }
