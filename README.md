@@ -172,11 +172,11 @@ Cart::subtotal($decimals, $decimalSeperator, $thousandSeperator);
      * Search the cart content for a cart item matching the given search closure.
      *
      * @param \Closure $search
-     * @return \Gloudemans\Shoppingcart\CartItem|\Illuminate\Support\Collection
+     * @return \Illuminate\Support\Collection
      */
 
  Cart::search(function($cartItem){
-    return $cartItem->id == 1; // Returns an array of rowid(s) of found item(s) or false on failure
+    return $cartItem->id == 1; // Returns a collection of CartItems. If empty, returns an empty collection.
  });
 ```
 
