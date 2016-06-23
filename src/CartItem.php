@@ -168,7 +168,7 @@ class CartItem implements Arrayable
      */
     public function taxTotal($decimals = 2, $decimalPoint = '.', $thousandSeperator = ',')
     {
-        return number_format(($this->tax * $this->qty), $decimals, $decimalPoint, $thousandSeperator);
+        return number_format($this->taxTotal, $decimals, $decimalPoint, $thousandSeperator);
     }
 
     /**
@@ -264,6 +264,10 @@ class CartItem implements Arrayable
 
         if($attribute === 'tax') {
             return $this->price * ($this->taxRate / 100);
+        }
+        
+        if($attribute === 'taxTotal') {
+            return $this->tax * $this->qty;
         }
 
         if($attribute === 'model') {
