@@ -521,7 +521,7 @@ class CartTest extends Orchestra\Testbench\TestCase
         $cart->add($item2, 2);
 
         $this->assertItemsInCart(3, $cart);
-        $this->assertEquals(60.00, $cart->total);
+        $this->assertEquals(60.00, $cart->subtotal());
     }
 
     /** @test */
@@ -536,7 +536,7 @@ class CartTest extends Orchestra\Testbench\TestCase
         $cart->add($item2, 2);
 
         $this->assertItemsInCart(3, $cart);
-        $this->assertEquals('6.000,00', $cart->total(2, ',', '.'));
+        $this->assertEquals('6.000,00', $cart->subtotal(2, ',', '.'));
     }
 
     /** @test */
@@ -769,7 +769,7 @@ class CartTest extends Orchestra\Testbench\TestCase
         $cart->add($item, 1);
         $cart->add($item2, 2);
 
-        $this->assertEquals(39.50, $cart->subtotal);
+        $this->assertEquals(50.00, $cart->subtotal);
     }
 
     /** @test */
@@ -783,7 +783,7 @@ class CartTest extends Orchestra\Testbench\TestCase
         $cart->add($item, 1);
         $cart->add($item2, 2);
 
-        $this->assertEquals('3.950,00', $cart->subtotal(2, ',', '.'));
+        $this->assertEquals('5.000,00', $cart->subtotal(2, ',', '.'));
     }
 
     /** @test */
@@ -891,13 +891,16 @@ class CartTest extends Orchestra\Testbench\TestCase
 
         $cart->setTax('027c91341fd5cf4d2579b49c4b6a90da', 19);
 
-        $this->assertEquals(10.00, $cartItem->price);
-        $this->assertEquals(20.00, $cartItem->subtotal);
-        $this->assertEquals(1.90, $cartItem->tax);
+        $this->assertEquals(10.00, $cartItem->price(2));
+        $this->assertEquals(11.90, $cartItem->priceTax(2));
+        $this->assertEquals(20.00, $cartItem->subtotal(2));
+        $this->assertEquals(23.80, $cartItem->total(2));
+        $this->assertEquals(1.90, $cartItem->tax(2));
+        $this->assertEquals(3.80, $cartItem->taxTotal(2));
 
-        $this->assertEquals(16.20, $cart->subtotal);
-        $this->assertEquals(3.80, $cart->tax);
-        $this->assertEquals(20.00, $cart->total);
+        $this->assertEquals(20.00, $cart->subtotal(2));
+        $this->assertEquals(23.80, $cart->total(2));
+        $this->assertEquals(3.80, $cart->tax(2));
     }
 
     /**

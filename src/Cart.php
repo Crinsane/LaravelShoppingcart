@@ -236,8 +236,8 @@ class Cart
     {
         $content = $this->getContent();
 
-        $total = $content->reduce(function ($subTotal, CartItem $cartItem) {
-            return $subTotal + ($cartItem->qty * $cartItem->price);
+        $total = $content->reduce(function ($total, CartItem $cartItem) {
+            return $total + ($cartItem->qty * $cartItem->priceTax);
         }, 0);
 
         return number_format($total, $decimals, $decimalPoint, $thousandSeperator);
@@ -272,9 +272,13 @@ class Cart
      */
     public function subtotal($decimals = 2, $decimalPoint = '.', $thousandSeperator = ',')
     {
-        $subtotal = $this->total - $this->tax;
+        $content = $this->getContent();
 
-        return number_format($subtotal, $decimals, $decimalPoint, $thousandSeperator);
+        $subTotal = $content->reduce(function ($subTotal, CartItem $cartItem) {
+            return $subTotal + ($cartItem->qty * $cartItem->price);
+        }, 0);
+
+        return number_format($subTotal, $decimals, $decimalPoint, $thousandSeperator);
     }
 
     /**
@@ -303,8 +307,9 @@ class Cart
      */
     public function associate($rowId, $model)
     {
-        if(is_string($model) && ! class_exists($model))
+        if(is_string($model) && ! class_exists($model)) {
             throw new UnknownModelException("The supplied model {$model} does not exist.");
+        }
 
         $cartItem = $this->get($rowId);
 
