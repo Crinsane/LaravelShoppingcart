@@ -878,6 +878,28 @@ class CartTest extends Orchestra\Testbench\TestCase
         $this->assertItemsInCart(0, $cart);
     }
 
+    /** @test */
+    public function it_can_calculate_all_values()
+    {
+        $cart = $this->getCart();
+
+        $item = $this->getBuyableMock(1, 'First item', 10.00);
+
+        $cart->add($item, 2);
+
+        $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
+
+        $cart->setTax('027c91341fd5cf4d2579b49c4b6a90da', 19);
+
+        $this->assertEquals(10.00, $cartItem->price);
+        $this->assertEquals(20.00, $cartItem->subtotal);
+        $this->assertEquals(1.90, $cartItem->tax);
+
+        $this->assertEquals(16.20, $cart->subtotal);
+        $this->assertEquals(3.80, $cart->tax);
+        $this->assertEquals(20.00, $cart->total);
+    }
+
     /**
      * Get an instance of the cart.
      *
