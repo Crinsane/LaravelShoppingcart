@@ -27,5 +27,5 @@
     "suggest": {
         "gloudemans/notify": "Simple flash notifications for Laravel"
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "stable"
 }
