@@ -343,6 +343,7 @@ class CartItem implements Arrayable
             'name'     => $this->name,
             'qty'      => $this->qty,
             'price'    => $this->price,
+            'options'  => $this->options,
             'tax'      => $this->tax,
             'subtotal' => $this->subtotal
         ];
