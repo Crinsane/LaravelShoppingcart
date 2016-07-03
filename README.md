@@ -249,7 +249,7 @@ foreach($content as $row)
 <?php 
 
 /**
- * Let say we have a Product model that has a name and description but does not implements Buyable.
+ * Let say we have a Product model that has a name and description but does not implement Buyable.
  */
 
 $addition = Cart::add('293ad', 'Product 1', 1, 9.99, ['size' => 'large']);
