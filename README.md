@@ -107,7 +107,7 @@ Cart::get($rowId);
 /**
  * Get the cart content
  *
- * @return CartCollection
+ * @return Illuminate\Support\Collection
  */
 
 Cart::content();
@@ -178,14 +178,16 @@ Cart::subtotal($decimals, $decimalSeperator, $thousandSeperator);
  * @return Array|boolean
  */
 
- Cart::search(array('id' => 1, 'options' => array('size' => 'L'))); // Returns an array of rowid(s) of found item(s) or false on failure
+ Cart::search(['id' => 1, 'options' => ['size' => 'L']]); // Returns an array of rowId(s) of found item(s) or false on failure
 ```
 
 ## Collections
 
-As you might have seen, the `Cart::content()` and `Cart::get()` methods both return a Collection, a `CartCollection` and a `CartRowCollection`.
+As you might have seen, the `Cart::content()` and `Cart::get()` methods both return a Collection, therefore you can use all methods of [Laravel Collections](https://laravel.com/docs/master/collections).  
 
-These Collections extends the 'native' Laravel 4 Collection class, so all methods you know from this class can also be used on your shopping cart. With some addition to easily work with your carts content.
+Each item on the cart is an instance of `Gloudemans\Shoppingcart\CartItem` and contains an unique `rowId` (notice: those were called `rowid`, all lowercase, in previous versions) along it's various properties such as quantity, price and description.
+
+
 
 ## Instances
 
@@ -218,21 +220,23 @@ N.B. Keep in mind that the cart stays in the last set instance for as long as yo
 
 N.B.2 The default cart instance is called `main`, so when you're not using instances,`Cart::content();` is the same as `Cart::instance('main')->content()`.
 
-## Models
-A new feature is associating a model with the items in the cart. Let's say you have a `Product` model in your application. With the new `associate()` method, you can tell the cart that an item in the cart, is associated to the `Product` model. 
+## Models  
 
-That way you can access your model right from the `CartRowCollection`!
 
-Here is an example:
+In versions >=2.0, association works in a different way. Instead of calling the method `associate` to add an item to the cart as you would do, you have to either add a model that implements the `Buyable` contract or add the item and then associate it to a model.     
+
+If you choose the latter, you'll have to pass the fully qualified namespace of the model as the second parameter of the `associate` method, while the first one will be the additions' rowId. 
+
+`Buyable` implementation example:  
 
 ```php
 <?php 
 
 /**
- * Let say we have a Product model that has a name and description.
+ * Let say we have a Product model that has a name and description and also implements Buyable.
  */
 
-Cart::associate('Product')->add('293ad', 'Product 1', 1, 9.99, array('size' => 'large'));
+Cart::add(Product::find(1), 1);
 
 
 $content = Cart::content();
@@ -240,12 +244,36 @@ $content = Cart::content();
 
 foreach($content as $row)
 {
-	echo 'You have ' . $row->qty . ' items of ' . $row->product->name . ' with description: "' . $row->product->description . '" in your cart.';
+  echo 'You have ' . $row->qty . ' items of ' . $row->model->name . ' with description: "' . $row->model->description . '" in your cart.';
 }
-```
+```  
 
-The key to access the model is the same as the model name you associated (lowercase).
-The `associate()` method has a second optional parameter for specifying the model namespace.
+`Associate` implementation example:  
+
+```php
+<?php 
+
+/**
+ * Let say we have a Product model that has a name and description but does not implement Buyable.
+ */
+
+$addition = Cart::add('293ad', 'Product 1', 1, 9.99, ['size' => 'large']);
+
+Cart::associate($addition->rowId, \App\Product::class);
+
+
+$content = Cart::content();
+
+
+foreach($content as $row)
+{
+  echo 'You have ' . $row->qty . ' items of ' . $row->model->name . ' with description: "' . $row->model->description . '" in your cart.';
+}
+```  
+
+
+
+The key to access the model is `model`.
 
 ## Exceptions
 The Cart package will throw exceptions if something goes wrong. This way it's easier to debug your code using the Cart package or to handle the error based on the type of exceptions. The Cart packages can throw the following exceptions:

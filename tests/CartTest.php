@@ -1,8 +1,8 @@
 <?php
 
 use Gloudemans\Shoppingcart\Cart;
+use Gloudemans\Shoppingcart\CartItemOptions;
 use Gloudemans\Shoppingcart\Contracts\Buyable;
-use Gloudemans\Shoppingcart\Contracts\Taxable;
 
 class CartTest extends Orchestra\Testbench\TestCase
 {
@@ -33,12 +33,12 @@ class CartTest extends Orchestra\Testbench\TestCase
 
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
     }
-    
+
     /** @test */
     public function it_has_a_default_instance()
     {
@@ -63,7 +63,7 @@ class CartTest extends Orchestra\Testbench\TestCase
         $this->assertItemsInCart(1, $cart->instance(Cart::DEFAULT_INSTANCE));
         $this->assertItemsInCart(1, $cart->instance('wishlist'));
     }
-    
+
     /** @test */
     public function it_can_add_an_item()
     {
@@ -158,7 +158,7 @@ class CartTest extends Orchestra\Testbench\TestCase
 
         $cart->add([
             ['id' => 1, 'name' => 'Test item 1', 'qty' => 1, 'price' => 10.00],
-            ['id' => 2, 'name' => 'Test item 2', 'qty' => 1, 'price' => 10.00]
+            ['id' => 2, 'name' => 'Test item 2', 'qty' => 1, 'price' => 10.00],
         ]);
 
         $this->assertEquals(2, $cart->count());
@@ -480,6 +480,7 @@ class CartTest extends Orchestra\Testbench\TestCase
                 'price' => 10.00,
                 'tax' => 2.10,
                 'subtotal' => 10.0,
+                'options' => new CartItemOptions,
             ],
             '370d08585360f5c568b18d1f2e4ca1df' => [
                 'rowId' => '370d08585360f5c568b18d1f2e4ca1df',
@@ -489,7 +490,8 @@ class CartTest extends Orchestra\Testbench\TestCase
                 'price' => 10.00,
                 'tax' => 2.10,
                 'subtotal' => 10.0,
-            ]
+                'options' => new CartItemOptions,
+            ],
         ], $content->toArray());
     }
 
@@ -791,7 +793,7 @@ class CartTest extends Orchestra\Testbench\TestCase
     {
         $this->artisan('migrate', [
             '--database' => 'testing',
-            '--realpath' => realpath(__DIR__.'/../database/migrations'),
+            '--realpath' => realpath(__DIR__ . '/../database/migrations'),
         ]);
 
         $this->expectsEvents('cart.stored');
@@ -809,7 +811,7 @@ class CartTest extends Orchestra\Testbench\TestCase
         $this->seeInDatabase('shoppingcart', ['identifier' => $identifier, 'instance' => 'default', 'content' => $serialized]);
     }
 
-    /** 
+    /**
      * @test
      * @expectedException \Gloudemans\Shoppingcart\Exceptions\CartAlreadyStoredException
      * @expectedExceptionMessage A cart with identifier 123 was already stored.
@@ -818,7 +820,7 @@ class CartTest extends Orchestra\Testbench\TestCase
     {
         $this->artisan('migrate', [
             '--database' => 'testing',
-            '--realpath' => realpath(__DIR__.'/../database/migrations'),
+            '--realpath' => realpath(__DIR__ . '/../database/migrations'),
         ]);
 
         $this->expectsEvents('cart.stored');
@@ -839,7 +841,7 @@ class CartTest extends Orchestra\Testbench\TestCase
     {
         $this->artisan('migrate', [
             '--database' => 'testing',
-            '--realpath' => realpath(__DIR__.'/../database/migrations'),
+            '--realpath' => realpath(__DIR__ . '/../database/migrations'),
         ]);
 
         $this->expectsEvents('cart.restored');
@@ -868,7 +870,7 @@ class CartTest extends Orchestra\Testbench\TestCase
     {
         $this->artisan('migrate', [
             '--database' => 'testing',
-            '--realpath' => realpath(__DIR__.'/../database/migrations'),
+            '--realpath' => realpath(__DIR__ . '/../database/migrations'),
         ]);
 
         $cart = $this->getCart();
@@ -938,7 +940,9 @@ class CartTest extends Orchestra\Testbench\TestCase
     }
 }
 
-class ModelStub {
+class ModelStub
+{
     public $someValue = 'Some value';
-    public function find($id) { return $this; }
+    public function find($id)
+    {return $this;}
 }
