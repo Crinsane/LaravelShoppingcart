@@ -175,14 +175,16 @@ Cart::subtotal($decimals, $decimalSeperator, $thousandSeperator);
  * @return Array|boolean
  */
 
- Cart::search(array('id' => 1, 'options' => array('size' => 'L'))); // Returns an array of rowid(s) of found item(s) or false on failure
+ Cart::search(['id' => 1, 'options' => ['size' => 'L']]); // Returns an array of rowId(s) of found item(s) or false on failure
 ```
 
 ## Collections
 
-As you might have seen, the `Cart::content()` and `Cart::get()` methods both return a Collection, a `CartCollection` and a `CartRowCollection`.
+As you might have seen, the `Cart::content()` and `Cart::get()` methods both return a Collection, therefore you can use all methods of [Laravel Collections](https://laravel.com/docs/master/collections).  
 
-These Collections extends the 'native' Laravel 4 Collection class, so all methods you know from this class can also be used on your shopping cart. With some addition to easily work with your carts content.
+Each item on the cart is an instance of `Gloudemans\Shoppingcart\CartItem` and contains an unique `rowId` (notice: those were called `rowid`, all lowercase, in previous versions) along it's various properties such as quantity, price and description.
+
+
 
 ## Instances
 
