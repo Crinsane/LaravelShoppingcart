@@ -4,6 +4,9 @@
 
 A simple shoppingcart implementation for Laravel.
 
+# Be careful - Documentation out-of-date
+## The documentation is not up-to-date with version 2. Will be updated soon!
+
 ## Installation
 
 Install the package through [Composer](http://getcomposer.org/). 
