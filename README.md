@@ -171,14 +171,16 @@ Cart::subtotal($decimals, $decimalSeperator, $thousandSeperator);
 **Cart::search()**
 
 ```php
-/**
- * Search if the cart has a item
- *
- * @param  Array  $search An array with the item ID and optional options
- * @return Array|boolean
- */
+ /**
+     * Search the cart content for a cart item matching the given search closure.
+     *
+     * @param \Closure $search
+     * @return \Illuminate\Support\Collection
+     */
 
- Cart::search(array('id' => 1, 'options' => array('size' => 'L'))); // Returns an array of rowid(s) of found item(s) or false on failure
+ Cart::search(function($cartItem){
+    return $cartItem->id == 1; // Returns a collection of CartItems. If empty, returns an empty collection.
+ });
 ```
 
 ## Collections

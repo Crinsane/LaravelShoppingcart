@@ -293,8 +293,6 @@ class Cart
 
         $found = $content->filter($search);
 
-        if($found->count() === 1) return $found->first();
-
         return $found;
     }
 
