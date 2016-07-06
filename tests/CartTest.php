@@ -550,12 +550,12 @@ class CartTest extends Orchestra\Testbench\TestCase
         $cart->add($item);
         $cart->add($item2);
 
-        $cartItem = $cart->search(function ($cartItem, $rowId) {
+        $cartItemCollection = $cart->search(function ($cartItem, $rowId) {
             return $cartItem->name == 'Some item';
         });
 
-        $this->assertInstanceOf(\Gloudemans\Shoppingcart\CartItem::class, $cartItem);
-        $this->assertEquals(1, $cartItem->id);
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $cartItemCollection);
+        $this->assertEquals(1, $cartItemCollection->count());
     }
 
     /** @test */
@@ -571,11 +571,12 @@ class CartTest extends Orchestra\Testbench\TestCase
         $cart->add($item2);
         $cart->add($item3);
 
-        $cartItem = $cart->search(function ($cartItem, $rowId) {
+        $cartItemCollection = $cart->search(function ($cartItem, $rowId) {
             return $cartItem->name == 'Some item';
         });
 
-        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $cartItem);
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $cartItemCollection);
+        $this->assertEquals(2, $cartItemCollection->count());
     }
 
     /** @test */
@@ -589,12 +590,11 @@ class CartTest extends Orchestra\Testbench\TestCase
         $cart->add($item, 1, ['color' => 'red']);
         $cart->add($item2, 1, ['color' => 'blue']);
 
-        $cartItem = $cart->search(function ($cartItem, $rowId) {
+        $cartItemCollection = $cart->search(function ($cartItem, $rowId) {
             return $cartItem->options->color == 'red';
         });
 
-        $this->assertInstanceOf(\Gloudemans\Shoppingcart\CartItem::class, $cartItem);
-        $this->assertEquals(1, $cartItem->id);
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $cartItemCollection);
     }
 
     /** @test */
