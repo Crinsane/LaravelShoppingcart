@@ -285,17 +285,13 @@ class Cart
      * Search the cart content for a cart item matching the given search closure.
      *
      * @param \Closure $search
-     * @return \Gloudemans\Shoppingcart\CartItem|\Illuminate\Support\Collection
+     * @return \Illuminate\Support\Collection
      */
     public function search(Closure $search)
     {
         $content = $this->getContent();
 
-        $found = $content->filter($search);
-
-        if($found->count() === 1) return $found->first();
-
-        return $found;
+        return $content->filter($search);
     }
 
     /**
