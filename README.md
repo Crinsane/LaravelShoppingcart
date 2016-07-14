@@ -309,10 +309,6 @@ $cartItem->associate('Product');
 Cart::add('293ad', 'Product 1', 1, 9.99, ['size' => 'large'])->associate('Product');
 
 // Now, when iterating over the content of the cart, you can access the model.
-
-$content = Cart::content();
-
-
 foreach(Cart::content() as $row) {
 	echo 'You have ' . $row->qty . ' items of ' . $row->model->name . ' with description: "' . $row->model->description . '" in your cart.';
 }
