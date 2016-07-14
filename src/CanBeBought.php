@@ -22,9 +22,9 @@ trait CanBeBought
      */
     public function getBuyableDescription()
     {
-        if(property_exists('name', $this)) return $this->name;
-        if(property_exists('title', $this)) return $this->title;
-        if(property_exists('description', $this)) return $this->description;
+        if(property_exists($this, 'name')) return $this->name;
+        if(property_exists($this, 'title')) return $this->title;
+        if(property_exists($this, 'description')) return $this->description;
 
         return null;
     }
@@ -36,7 +36,7 @@ trait CanBeBought
      */
     public function getBuyablePrice()
     {
-        if(property_exists('price', $this)) return $this->price;
+        if(property_exists($this, 'price')) return $this->price;
 
         return null;
     }
