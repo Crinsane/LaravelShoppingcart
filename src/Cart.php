@@ -3,14 +3,14 @@
 namespace Gloudemans\Shoppingcart;
 
 use Closure;
-use Gloudemans\Shoppingcart\Exceptions\CartAlreadyStoredException;
-use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Collection;
 use Illuminate\Session\SessionManager;
+use Illuminate\Database\DatabaseManager;
 use Illuminate\Contracts\Events\Dispatcher;
 use Gloudemans\Shoppingcart\Contracts\Buyable;
 use Gloudemans\Shoppingcart\Exceptions\UnknownModelException;
 use Gloudemans\Shoppingcart\Exceptions\InvalidRowIDException;
+use Gloudemans\Shoppingcart\Exceptions\CartAlreadyStoredException;
 
 class Cart
 {
