@@ -24,7 +24,7 @@ And optionally add a new line to the `aliases` array:
 
 Now you're ready to start using the shoppingcart in your application.
 
-** As of version 2 of this package it's possibly to use dependency injection to inject an instance of the Cart class into your controller or other class **
+**As of version 2 of this package it's possibly to use dependency injection to inject an instance of the Cart class into your controller or other class**
 
 ## Overview
 Look at one of the following topics to learn more about LaravelShoppingcart
@@ -57,7 +57,7 @@ As an optional fifth parameter you can pass it options, so you can add multiple 
 Cart::add('293ad', 'Product 1', 1, 9.99, ['size' => 'large']);
 ```
 
-** The `add()` method will return an CartItem instance of the item you just added to the cart. **
+**The `add()` method will return an CartItem instance of the item you just added to the cart.**
 
 Maybe you prefer to add the item using an array? As long as the array contains the required keys, you can pass it to the method. The options key is optional.
 
@@ -81,7 +81,7 @@ Cart::add($product, 1, ['size' => 'large']);
 Finally, you can also add multipe items to the cart at once.
 You can just pass the `add()` method an array of arrays, or an array of Buyables and they will be added to the cart. 
 
-** When adding multiple items to the cart, the `add()` method will return an array of CartItems. **
+**When adding multiple items to the cart, the `add()` method will return an array of CartItems.**
 
 ```php
 Cart::add([
@@ -171,7 +171,7 @@ The method will automatically format the result, which you can tweak using the t
 Cart::total($decimals, $decimalSeperator, $thousandSeperator);
 ```
 
-** If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the total property `$cart->total` **
+**If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the total property `$cart->total`**
 
 **Cart::tax()**
 
@@ -187,7 +187,7 @@ The method will automatically format the result, which you can tweak using the t
 Cart::tax($decimals, $decimalSeperator, $thousandSeperator);
 ```
 
-** If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the tax property `$cart->tax` **
+**If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the tax property `$cart->tax`**
 
 **Cart::subtotal()**
 
@@ -203,7 +203,7 @@ The method will automatically format the result, which you can tweak using the t
 Cart::subtotal($decimals, $decimalSeperator, $thousandSeperator);
 ```
 
-** If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the subtotal property `$cart->subtotal` **
+**If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the subtotal property `$cart->subtotal`**
 
 **Cart::count()**
 
@@ -217,7 +217,7 @@ Cart::count();
 
 To find an item in the cart, you can use the `search()` method.
 
-** This method was changed on version 2 **
+**This method was changed on version 2**
 
 Behind the scenes, the method simply uses the search method of the Laravel Collection class. This means you must pass it a Closure in which you'll specify you search terms.
 
@@ -231,7 +231,7 @@ $cart->search(function ($cartItem, $rowId) {
 
 As you can see the Closure will receive two parameters. The first is the CartItem to perform the check against. The second parameter is the rowId of this CartItem.
 
-** The method will return a Collection containing all CartItems that where found **
+**The method will return a Collection containing all CartItems that where found**
 
 This way of searching gives you total control over the search process and gives you the ability to create very precise and specific searches.
 
@@ -278,9 +278,9 @@ Cart::instance('shopping')->content();
 Cart::instance('wishlist')->count();
 ```
 
-** N.B. Keep in mind that the cart stays in the last set instance for as long as you don't set a different one during script execution. **
+**N.B. Keep in mind that the cart stays in the last set instance for as long as you don't set a different one during script execution.**
 
-** N.B.2 The default cart instance is called `default`, so when you're not using instances,`Cart::content();` is the same as `Cart::instance('default')->content()`. **
+**N.B.2 The default cart instance is called `default`, so when you're not using instances,`Cart::content();` is the same as `Cart::instance('default')->content()`.**
 
 ## Models
 
@@ -290,7 +290,7 @@ That way you can access your model right from the `CartItem`!
 
 The model can be accessed via the `model` property on the CartItem.
 
-** If your model implements the `Buyable` interface and you used your model to add the item to the cart, it will associate automatically. **
+**If your model implements the `Buyable` interface and you used your model to add the item to the cart, it will associate automatically.**
 
 Here is an example:
 
