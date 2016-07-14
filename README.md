@@ -41,7 +41,7 @@ Look at one of the following topics to learn more about LaravelShoppingcart
 
 The shoppingcart gives you the following methods to use:
 
-**Cart::add()**
+### Cart::add()
 
 Adding an item to the cart is really simple, you just use the `add()` method, which accepts a variety of parameters.
 
@@ -93,7 +93,7 @@ Cart::add([$product1, $product2]);
 
 ```
 
-**Cart::update()**
+### Cart::update()
 
 To update an item in the cart, you'll first need the rowId of the item.
 Next you can use the `update()` method to update it.
@@ -115,7 +115,7 @@ Cart::update($rowId, $product); // Will update the id, name and price
 
 ```
 
-**Cart::remove()**
+### Cart::remove()
 
 To remove an item for the cart, you'll again need the rowId. This rowId you simply pass to the `remove()` method and it will remove the item from the cart.
 
@@ -125,7 +125,7 @@ $rowId = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
 Cart::remove($rowId);
 ```
 
-**Cart::get()**
+### Cart::get()
 
 If you want to get an item from the cart using its rowId, you can simply call the `get()` method on the cart and pass it the rowId.
 
@@ -135,7 +135,7 @@ $rowId = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
 Cart::get($rowId);
 ```
 
-**Cart::content()**
+### Cart::content()
 
 Of course you also want to get the carts content. This is where you'll use the `content` method. This method will return a Collection of CartItems which you can iterate over and show the content to your customers.
 
@@ -149,7 +149,7 @@ This method will return the content of the current cart instance, if you want th
 Cart::instance('wishlist')->content();
 ```
 
-**Cart::destroy()**
+### Cart::destroy()
 
 If you want to completely remove the content of a cart, you can call the destroy method on the cart. This will remove all CartItems from the cart for the current cart instance.
 
@@ -157,7 +157,7 @@ If you want to completely remove the content of a cart, you can call the destroy
 Cart::destroy();
 ```
 
-**Cart::total()**
+### Cart::total()
 
 The `total()` method can be used to get the calculated total of all items in the cart, given there price and quantity.
 
@@ -173,7 +173,7 @@ Cart::total($decimals, $decimalSeperator, $thousandSeperator);
 
 **If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the total property `$cart->total`**
 
-**Cart::tax()**
+### Cart::tax()
 
 The `tax()` method can be used to get the calculated amount of tax for all items in the cart, given there price and quantity.
 
@@ -189,7 +189,7 @@ Cart::tax($decimals, $decimalSeperator, $thousandSeperator);
 
 **If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the tax property `$cart->tax`**
 
-**Cart::subtotal()**
+### Cart::subtotal()
 
 The `subtotal()` method can be used to get the total of all items in the cart, minus the total amount of tax. 
 
@@ -205,7 +205,7 @@ Cart::subtotal($decimals, $decimalSeperator, $thousandSeperator);
 
 **If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the subtotal property `$cart->subtotal`**
 
-**Cart::count()**
+### Cart::count()
 
 If you want to know how many items there are in your cart, you can use the `count()` method. This method will return the total number of items in the cart. So if you've added 2 books and 1 shirt, it will return 3 items.
 
@@ -213,7 +213,7 @@ If you want to know how many items there are in your cart, you can use the `coun
 Cart::count();
 ```
 
-**Cart::search()**
+### Cart::search()
 
 To find an item in the cart, you can use the `search()` method.
 
