@@ -480,6 +480,7 @@ class CartTest extends Orchestra\Testbench\TestCase
                 'price' => 10.00,
                 'tax' => 2.10,
                 'subtotal' => 10.0,
+                'options' => new \Gloudemans\Shoppingcart\CartItemOptions,
             ],
             '370d08585360f5c568b18d1f2e4ca1df' => [
                 'rowId' => '370d08585360f5c568b18d1f2e4ca1df',
@@ -489,6 +490,7 @@ class CartTest extends Orchestra\Testbench\TestCase
                 'price' => 10.00,
                 'tax' => 2.10,
                 'subtotal' => 10.0,
+                'options' => new \Gloudemans\Shoppingcart\CartItemOptions,
             ]
         ], $content->toArray());
     }
@@ -554,8 +556,10 @@ class CartTest extends Orchestra\Testbench\TestCase
             return $cartItem->name == 'Some item';
         });
 
-        $this->assertInstanceOf(\Gloudemans\Shoppingcart\CartItem::class, $cartItem);
-        $this->assertEquals(1, $cartItem->id);
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $cartItem);
+        $this->assertCount(1, $cartItem);
+        $this->assertInstanceOf(\Gloudemans\Shoppingcart\CartItem::class, $cartItem->first());
+        $this->assertEquals(1, $cartItem->first()->id);
     }
 
     /** @test */
@@ -593,8 +597,10 @@ class CartTest extends Orchestra\Testbench\TestCase
             return $cartItem->options->color == 'red';
         });
 
-        $this->assertInstanceOf(\Gloudemans\Shoppingcart\CartItem::class, $cartItem);
-        $this->assertEquals(1, $cartItem->id);
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $cartItem);
+        $this->assertCount(1, $cartItem);
+        $this->assertInstanceOf(\Gloudemans\Shoppingcart\CartItem::class, $cartItem->first());
+        $this->assertEquals(1, $cartItem->first()->id);
     }
 
     /** @test */
