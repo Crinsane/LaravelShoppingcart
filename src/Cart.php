@@ -230,7 +230,7 @@ class Cart
      * @param int    $decimals
      * @param string $decimalPoint
      * @param string $thousandSeperator
-     * @return float
+     * @return string
      */
     public function total($decimals = 2, $decimalPoint = '.', $thousandSeperator = ',')
     {
