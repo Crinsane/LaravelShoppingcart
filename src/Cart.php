@@ -493,7 +493,9 @@ class Cart
      */
     private function getConnection()
     {
-        return app(DatabaseManager::class)->connection(config('cart.database.connection', config('database.default')));
+        $connectionName = $this->getConnectionName();
+
+        return app(DatabaseManager::class)->connection($connectionName);
     }
 
     /**
@@ -504,5 +506,17 @@ class Cart
     private function getTableName()
     {
         return config('cart.database.table', 'shoppingcart');
+    }
+
+    /**
+     * Get the database connection name.
+     *
+     * @return string
+     */
+    private function getConnectionName()
+    {
+        $connection = config('cart.database.connection');
+
+        return is_null($connection) ? config('database.default') : $connection;
     }
 }

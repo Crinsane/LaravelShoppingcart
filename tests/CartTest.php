@@ -614,7 +614,7 @@ class CartTest extends Orchestra\Testbench\TestCase
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
-        $this->assertEquals('Mockery_0_Gloudemans_Shoppingcart_Contracts_Buyable', PHPUnit_Framework_Assert::readAttribute($cartItem, 'associatedModel'));
+        $this->assertContains('Gloudemans_Shoppingcart_Contracts_Buyable', PHPUnit_Framework_Assert::readAttribute($cartItem, 'associatedModel'));
     }
 
     /** @test */
@@ -907,6 +907,22 @@ class CartTest extends Orchestra\Testbench\TestCase
         $this->assertEquals(20.00, $cart->subtotal(2));
         $this->assertEquals(23.80, $cart->total(2));
         $this->assertEquals(3.80, $cart->tax(2));
+    }
+
+    /** @test */
+    public function it_will_destroy_the_cart_when_the_user_logs_out_and_the_config_setting_was_set_to_true()
+    {
+        $this->app['config']->set('cart.destroy_on_logout', true);
+
+        $session = Mockery::mock(\Illuminate\Session\SessionManager::class);
+
+        $session->shouldReceive('forget')->once()->with('cart');
+
+        $this->app->instance(\Illuminate\Session\SessionManager::class, $session);
+
+        $user = Mockery::mock(\Illuminate\Contracts\Auth\Authenticatable::class);
+
+        event(new \Illuminate\Auth\Events\Logout($user));
     }
 
     /**
