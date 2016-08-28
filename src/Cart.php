@@ -3,14 +3,14 @@
 namespace Gloudemans\Shoppingcart;
 
 use Closure;
-use Illuminate\Support\Collection;
-use Illuminate\Session\SessionManager;
-use Illuminate\Database\DatabaseManager;
-use Illuminate\Contracts\Events\Dispatcher;
 use Gloudemans\Shoppingcart\Contracts\Buyable;
-use Gloudemans\Shoppingcart\Exceptions\UnknownModelException;
-use Gloudemans\Shoppingcart\Exceptions\InvalidRowIDException;
 use Gloudemans\Shoppingcart\Exceptions\CartAlreadyStoredException;
+use Gloudemans\Shoppingcart\Exceptions\InvalidRowIDException;
+use Gloudemans\Shoppingcart\Exceptions\UnknownModelException;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Database\DatabaseManager;
+use Illuminate\Session\SessionManager;
+use Illuminate\Support\Collection;
 
 class Cart
 {
@@ -25,7 +25,7 @@ class Cart
 
     /**
      * Instance of the event dispatcher.
-     * 
+     *
      * @var \Illuminate\Contracts\Events\Dispatcher
      */
     private $events;
@@ -77,6 +77,25 @@ class Cart
     }
 
     /**
+     * Copies current instance content to new instance
+     *
+     * @param string $instance
+     * @return \Gloudemans\Shoppingcart\Cart
+     */
+    public function copyInstanceTo($instance = 'default')
+    {
+        $previous_instance = $this->instace;
+        $content = $this->session->get($previous_instance)['cart']['default'];
+
+        $this->destroy();
+
+        $this->instance = $instance;
+        $this->session->put($instance, $content);
+
+        return $this;
+    }
+
+    /**
      * Add an item to the cart.
      *
      * @param mixed     $id
@@ -103,7 +122,7 @@ class Cart
         }
 
         $content->put($cartItem->rowId, $cartItem);
-        
+
         $this->events->fire('cart.added', $cartItem);
 
         $this->session->put($this->instance, $content);
@@ -182,8 +201,9 @@ class Cart
     {
         $content = $this->getContent();
 
-        if ( ! $content->has($rowId))
+        if (!$content->has($rowId)) {
             throw new InvalidRowIDException("The cart does not contain rowId {$rowId}.");
+        }
 
         return $content->get($rowId);
     }
@@ -303,7 +323,7 @@ class Cart
      */
     public function associate($rowId, $model)
     {
-        if(is_string($model) && ! class_exists($model)) {
+        if (is_string($model) && !class_exists($model)) {
             throw new UnknownModelException("The supplied model {$model} does not exist.");
         }
 
@@ -355,7 +375,7 @@ class Cart
         $this->getConnection()->table($this->getTableName())->insert([
             'identifier' => $identifier,
             'instance' => $this->currentInstance(),
-            'content' => serialize($content)
+            'content' => serialize($content),
         ]);
 
         $this->events->fire('cart.stored');
@@ -369,7 +389,7 @@ class Cart
      */
     public function restore($identifier)
     {
-        if( ! $this->storedCartWithIdentifierExists($identifier)) {
+        if (!$this->storedCartWithIdentifierExists($identifier)) {
             return;
         }
 
@@ -406,15 +426,15 @@ class Cart
      */
     public function __get($attribute)
     {
-        if($attribute === 'total') {
+        if ($attribute === 'total') {
             return $this->total(2, '.', '');
         }
 
-        if($attribute === 'tax') {
+        if ($attribute === 'tax') {
             return $this->tax(2, '.', '');
         }
 
-        if($attribute === 'subtotal') {
+        if ($attribute === 'subtotal') {
             return $this->subtotal(2, '.', '');
         }
 
@@ -429,8 +449,8 @@ class Cart
     protected function getContent()
     {
         $content = $this->session->has($this->instance)
-            ? $this->session->get($this->instance)
-            : new Collection;
+        ? $this->session->get($this->instance)
+        : new Collection;
 
         return $content;
     }
@@ -472,7 +492,9 @@ class Cart
      */
     private function isMulti($item)
     {
-        if ( ! is_array($item)) return false;
+        if (!is_array($item)) {
+            return false;
+        }
 
         return is_array(head($item)) || head($item) instanceof Buyable;
     }
