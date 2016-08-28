@@ -928,7 +928,7 @@ class CartTest extends Orchestra\Testbench\TestCase
     /**
      * Get an instance of the cart.
      *
-     * @return \Gloudemans\Shoppingcart\Cart
+     * @return \Gloudemans\Shoppingcart\Contracts\CartContract
      */
     private function getCart()
     {

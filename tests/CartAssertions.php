@@ -9,10 +9,10 @@ trait CartAssertions
     /**
      * Assert that the cart contains the given number of items.
      *
-     * @param int|float                     $items
-     * @param \Gloudemans\Shoppingcart\Cart $cart
+     * @param int|float $items
+     * @param \Gloudemans\Shoppingcart\Contracts\CartContract $cart
      */
-    public function assertItemsInCart($items, Cart $cart)
+    public function assertItemsInCart($items, \Gloudemans\Shoppingcart\Contracts\CartContract $cart)
     {
         $actual = $cart->count();
 
@@ -22,10 +22,10 @@ trait CartAssertions
     /**
      * Assert that the cart contains the given number of rows.
      *
-     * @param int                           $rows
-     * @param \Gloudemans\Shoppingcart\Cart $cart
+     * @param int $rows
+     * @param \Gloudemans\Shoppingcart\Contracts\CartContract $cart
      */
-    public function assertRowsInCart($rows, Cart $cart)
+    public function assertRowsInCart($rows, \Gloudemans\Shoppingcart\Contracts\CartContract $cart)
     {
         $actual = $cart->content()->count();
 

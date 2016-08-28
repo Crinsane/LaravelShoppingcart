@@ -3,6 +3,7 @@
 namespace Gloudemans\Shoppingcart;
 
 use Closure;
+use Gloudemans\Shoppingcart\Contracts\CartContract;
 use Illuminate\Support\Collection;
 use Illuminate\Session\SessionManager;
 use Illuminate\Database\DatabaseManager;
@@ -12,7 +13,7 @@ use Gloudemans\Shoppingcart\Exceptions\UnknownModelException;
 use Gloudemans\Shoppingcart\Exceptions\InvalidRowIDException;
 use Gloudemans\Shoppingcart\Exceptions\CartAlreadyStoredException;
 
-class Cart
+class Cart implements CartContract
 {
     const DEFAULT_INSTANCE = 'default';
 
@@ -55,7 +56,7 @@ class Cart
      * Set the current cart instance.
      *
      * @param string|null $instance
-     * @return \Gloudemans\Shoppingcart\Cart
+     * @return CartContract
      */
     public function instance($instance = null)
     {
