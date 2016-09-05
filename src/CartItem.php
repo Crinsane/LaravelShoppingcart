@@ -99,9 +99,9 @@ class CartItem implements Arrayable
      * @param string $thousandSeperator
      * @return string
      */
-    public function price($decimals = 2, $decimalPoint = '.', $thousandSeperator = ',')
+    public function price($decimals = null, $decimalPoint = null, $thousandSeperator = null)
     {
-        return number_format($this->price, $decimals, $decimalPoint, $thousandSeperator);
+        return $this->numberFormat($this->price, $decimals, $decimalPoint, $thousandSeperator);
     }
     
     /**
@@ -112,9 +112,9 @@ class CartItem implements Arrayable
      * @param string $thousandSeperator
      * @return string
      */
-    public function priceTax($decimals = 2, $decimalPoint = '.', $thousandSeperator = ',')
+    public function priceTax($decimals = null, $decimalPoint = null, $thousandSeperator = null)
     {
-        return number_format($this->priceTax, $decimals, $decimalPoint, $thousandSeperator);
+        return $this->numberFormat($this->priceTax, $decimals, $decimalPoint, $thousandSeperator);
     }
 
     /**
@@ -126,9 +126,9 @@ class CartItem implements Arrayable
      * @param string $thousandSeperator
      * @return string
      */
-    public function subtotal($decimals = 2, $decimalPoint = '.', $thousandSeperator = ',')
+    public function subtotal($decimals = null, $decimalPoint = null, $thousandSeperator = null)
     {
-        return number_format($this->subtotal, $decimals, $decimalPoint, $thousandSeperator);
+        return $this->numberFormat($this->subtotal, $decimals, $decimalPoint, $thousandSeperator);
     }
     
     /**
@@ -140,9 +140,9 @@ class CartItem implements Arrayable
      * @param string $thousandSeperator
      * @return string
      */
-    public function total($decimals = 2, $decimalPoint = '.', $thousandSeperator = ',')
+    public function total($decimals = null, $decimalPoint = null, $thousandSeperator = null)
     {
-        return number_format($this->total, $decimals, $decimalPoint, $thousandSeperator);
+        return $this->numberFormat($this->total, $decimals, $decimalPoint, $thousandSeperator);
     }
 
     /**
@@ -153,9 +153,9 @@ class CartItem implements Arrayable
      * @param string $thousandSeperator
      * @return string
      */
-    public function tax($decimals = 2, $decimalPoint = '.', $thousandSeperator = ',')
+    public function tax($decimals = null, $decimalPoint = null, $thousandSeperator = null)
     {
-        return number_format($this->tax, $decimals, $decimalPoint, $thousandSeperator);
+        return $this->numberFormat($this->tax, $decimals, $decimalPoint, $thousandSeperator);
     }
     
     /**
@@ -166,9 +166,9 @@ class CartItem implements Arrayable
      * @param string $thousandSeperator
      * @return string
      */
-    public function taxTotal($decimals = 2, $decimalPoint = '.', $thousandSeperator = ',')
+    public function taxTotal($decimals = null, $decimalPoint = null, $thousandSeperator = null)
     {
-        return number_format($this->taxTotal, $decimals, $decimalPoint, $thousandSeperator);
+        return $this->numberFormat($this->taxTotal, $decimals, $decimalPoint, $thousandSeperator);
     }
 
     /**
@@ -347,5 +347,23 @@ class CartItem implements Arrayable
             'tax'      => $this->tax,
             'subtotal' => $this->subtotal
         ];
+    }
+
+    /**
+     * Get the Formated number
+     *
+     * @param $value
+     * @param $decimals
+     * @param $decimalPoint
+     * @param $thousandSeperator
+     * @return string
+     */
+    private function numberFormat($value, $decimals, $decimalPoint, $thousandSeperator)
+    {
+        $decimals = $decimals ?: config('cart.format.decimals') ?: 2;
+        $decimalPoint = $decimalPoint ?: config('cart.format.decimal_point') ?: '.';
+        $thousandSeperator = $thousandSeperator ?: config('cart.format.thousand_seperator') ?: ',';
+
+        return number_format($value, $decimals, $decimalPoint, $thousandSeperator);
     }
 }

@@ -793,6 +793,48 @@ class CartTest extends Orchestra\Testbench\TestCase
     }
 
     /** @test */
+    public function it_can_return_cart_formated_numbers_by_config_values()
+    {
+        $this->setConfigFormat(2, ',', '.');
+
+        $cart = $this->getCart();
+
+        $item = $this->getBuyableMock(1, 'Some title', 1000.00);
+        $item2 = $this->getBuyableMock(2, 'Some title', 2000.00);
+
+        $cart->add($item, 1);
+        $cart->add($item2, 2);
+
+        $this->assertEquals('5.000,00', $cart->subtotal());
+        $this->assertEquals('1.050,00', $cart->tax());
+        $this->assertEquals('6.050,00', $cart->total());
+
+        $this->assertEquals('5.000,00', $cart->subtotal);
+        $this->assertEquals('1.050,00', $cart->tax);
+        $this->assertEquals('6.050,00', $cart->total);
+    }
+
+    /** @test */
+    public function it_can_return_cartItem_formated_numbers_by_config_values()
+    {
+        $this->setConfigFormat(2, ',', '.');
+
+        $cart = $this->getCart();
+        $item = $this->getBuyableMock(1, 'Some title', 2000.00);
+
+        $cart->add($item, 2);
+
+        $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
+
+        $this->assertEquals('2.000,00', $cartItem->price());
+        $this->assertEquals('2.420,00', $cartItem->priceTax());
+        $this->assertEquals('4.000,00', $cartItem->subtotal());
+        $this->assertEquals('4.840,00', $cartItem->total());
+        $this->assertEquals('420,00', $cartItem->tax());
+        $this->assertEquals('840,00', $cartItem->taxTotal());
+    }
+
+    /** @test */
     public function it_can_store_the_cart_in_a_database()
     {
         $this->artisan('migrate', [
@@ -957,6 +999,20 @@ class CartTest extends Orchestra\Testbench\TestCase
         $item->shouldReceive('getBuyablePrice')->andReturn($price);
 
         return $item;
+    }
+
+    /**
+     * Set the config number format
+     * 
+     * @param $decimals
+     * @param $decimalPoint
+     * @param $thousandSeperator
+     */
+    private function setConfigFormat($decimals, $decimalPoint, $thousandSeperator)
+    {
+        $this->app['config']->set('cart.format.decimals', $decimals);
+        $this->app['config']->set('cart.format.decimal_point', $decimalPoint);
+        $this->app['config']->set('cart.format.thousand_seperator', $thousandSeperator);
     }
 }
 

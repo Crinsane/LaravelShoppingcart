@@ -232,7 +232,7 @@ class Cart
      * @param string $thousandSeperator
      * @return string
      */
-    public function total($decimals = 2, $decimalPoint = '.', $thousandSeperator = ',')
+    public function total($decimals = null, $decimalPoint = null, $thousandSeperator = null)
     {
         $content = $this->getContent();
 
@@ -240,7 +240,7 @@ class Cart
             return $total + ($cartItem->qty * $cartItem->priceTax);
         }, 0);
 
-        return number_format($total, $decimals, $decimalPoint, $thousandSeperator);
+        return $this->numberFormat($total, $decimals, $decimalPoint, $thousandSeperator);
     }
 
     /**
@@ -251,7 +251,7 @@ class Cart
      * @param string $thousandSeperator
      * @return float
      */
-    public function tax($decimals = 2, $decimalPoint = '.', $thousandSeperator = ',')
+    public function tax($decimals = null, $decimalPoint = null, $thousandSeperator = null)
     {
         $content = $this->getContent();
 
@@ -259,7 +259,7 @@ class Cart
             return $tax + ($cartItem->qty * $cartItem->tax);
         }, 0);
 
-        return number_format($tax, $decimals, $decimalPoint, $thousandSeperator);
+        return $this->numberFormat($tax, $decimals, $decimalPoint, $thousandSeperator);
     }
 
     /**
@@ -270,7 +270,7 @@ class Cart
      * @param string $thousandSeperator
      * @return float
      */
-    public function subtotal($decimals = 2, $decimalPoint = '.', $thousandSeperator = ',')
+    public function subtotal($decimals = null, $decimalPoint = null, $thousandSeperator = null)
     {
         $content = $this->getContent();
 
@@ -278,7 +278,7 @@ class Cart
             return $subTotal + ($cartItem->qty * $cartItem->price);
         }, 0);
 
-        return number_format($subTotal, $decimals, $decimalPoint, $thousandSeperator);
+        return $this->numberFormat($subTotal, $decimals, $decimalPoint, $thousandSeperator);
     }
 
     /**
@@ -407,15 +407,15 @@ class Cart
     public function __get($attribute)
     {
         if($attribute === 'total') {
-            return $this->total(2, '.', '');
+            return $this->total();
         }
 
         if($attribute === 'tax') {
-            return $this->tax(2, '.', '');
+            return $this->tax();
         }
 
         if($attribute === 'subtotal') {
-            return $this->subtotal(2, '.', '');
+            return $this->subtotal();
         }
 
         return null;
@@ -518,5 +518,23 @@ class Cart
         $connection = config('cart.database.connection');
 
         return is_null($connection) ? config('database.default') : $connection;
+    }
+
+    /**
+     * Get the Formated number
+     *
+     * @param $value
+     * @param $decimals
+     * @param $decimalPoint
+     * @param $thousandSeperator
+     * @return string
+     */
+    private function numberFormat($value, $decimals, $decimalPoint, $thousandSeperator)
+    {
+        $decimals = $decimals ?: config('cart.format.decimals') ?: 2;
+        $decimalPoint = $decimalPoint ?: config('cart.format.decimal_point') ?: '.';
+        $thousandSeperator = $thousandSeperator ?: config('cart.format.thousand_seperator') ?: ',';
+
+        return number_format($value, $decimals, $decimalPoint, $thousandSeperator);
     }
 }
