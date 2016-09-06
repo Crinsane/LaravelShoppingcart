@@ -72,7 +72,7 @@ class CartItem implements Arrayable
      * @param float      $price
      * @param array      $options
      */
-    public function __construct($id, $name, $price, array $options = [])
+    public function __construct($id, $name, $price, array $options = [], $model = null)
     {
         if(empty($id)) {
             throw new \InvalidArgumentException('Please supply a valid identifier.');
@@ -88,7 +88,13 @@ class CartItem implements Arrayable
         $this->name     = $name;
         $this->price    = floatval($price);
         $this->options  = new CartItemOptions($options);
-        $this->rowId = $this->generateRowId($id, $options);
+
+        // First associate with model if possible
+        if (!is_null($model))
+            $this->associate($model);
+
+        // Then generate rowId
+        $this->rowId            = $this->generateRowId($id, $options);
     }
 
     /**
@@ -286,7 +292,7 @@ class CartItem implements Arrayable
      */
     public static function fromBuyable(Buyable $item, array $options = [])
     {
-        return new self($item->getBuyableIdentifier($options), $item->getBuyableDescription($options), $item->getBuyablePrice($options), $options);
+        return new self($item->getBuyableIdentifier($options), $item->getBuyableDescription($options), $item->getBuyablePrice($options), $options, $item);
     }
 
     /**
@@ -327,7 +333,7 @@ class CartItem implements Arrayable
     {
         ksort($options);
 
-        return md5($id . serialize($options));
+        return md5($id . serialize($options) . $this->associatedModel);
     }
 
     /**
