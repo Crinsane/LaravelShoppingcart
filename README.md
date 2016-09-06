@@ -16,11 +16,11 @@ Now all you have to do is add the service provider of the package and alias the 
 
 Add a new line to the `providers` array:
 
-	\Gloudemans\Shoppingcart\ShoppingcartServiceProvider::class
+	Gloudemans\Shoppingcart\ShoppingcartServiceProvider::class
 
 And optionally add a new line to the `aliases` array:
 
-	'Cart' => \Gloudemans\Shoppingcart\Facades\Cart::class,
+	'Cart' => Gloudemans\Shoppingcart\Facades\Cart::class,
 
 Now you're ready to start using the shoppingcart in your application.
 
