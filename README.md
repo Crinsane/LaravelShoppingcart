@@ -20,7 +20,7 @@ Add a new line to the `providers` array:
 
 And optionally add a new line to the `aliases` array:
 
-	'Cart'            => \Gloudemans\Shoppingcart\Facades\Cart::class,
+	'Cart' => \Gloudemans\Shoppingcart\Facades\Cart::class,
 
 Now you're ready to start using the shoppingcart in your application.
 
