@@ -789,13 +789,13 @@ class CartTest extends Orchestra\Testbench\TestCase
         $cart->add($item, 1);
         $cart->add($item2, 2);
 
-        $this->assertEquals('5.000,00', $cart->subtotal(2, ',', '.'));
+        $this->assertEquals('5000,00', $cart->subtotal(2, ',', ''));
     }
 
     /** @test */
     public function it_can_return_cart_formated_numbers_by_config_values()
     {
-        $this->setConfigFormat(2, ',', '.');
+        $this->setConfigFormat(2, ',', '');
 
         $cart = $this->getCart();
 
@@ -805,19 +805,19 @@ class CartTest extends Orchestra\Testbench\TestCase
         $cart->add($item, 1);
         $cart->add($item2, 2);
 
-        $this->assertEquals('5.000,00', $cart->subtotal());
-        $this->assertEquals('1.050,00', $cart->tax());
-        $this->assertEquals('6.050,00', $cart->total());
+        $this->assertEquals('5000,00', $cart->subtotal());
+        $this->assertEquals('1050,00', $cart->tax());
+        $this->assertEquals('6050,00', $cart->total());
 
-        $this->assertEquals('5.000,00', $cart->subtotal);
-        $this->assertEquals('1.050,00', $cart->tax);
-        $this->assertEquals('6.050,00', $cart->total);
+        $this->assertEquals('5000,00', $cart->subtotal);
+        $this->assertEquals('1050,00', $cart->tax);
+        $this->assertEquals('6050,00', $cart->total);
     }
 
     /** @test */
     public function it_can_return_cartItem_formated_numbers_by_config_values()
     {
-        $this->setConfigFormat(2, ',', '.');
+        $this->setConfigFormat(2, ',', '');
 
         $cart = $this->getCart();
         $item = $this->getBuyableMock(1, 'Some title', 2000.00);
@@ -826,10 +826,10 @@ class CartTest extends Orchestra\Testbench\TestCase
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
-        $this->assertEquals('2.000,00', $cartItem->price());
-        $this->assertEquals('2.420,00', $cartItem->priceTax());
-        $this->assertEquals('4.000,00', $cartItem->subtotal());
-        $this->assertEquals('4.840,00', $cartItem->total());
+        $this->assertEquals('2000,00', $cartItem->price());
+        $this->assertEquals('2420,00', $cartItem->priceTax());
+        $this->assertEquals('4000,00', $cartItem->subtotal());
+        $this->assertEquals('4840,00', $cartItem->total());
         $this->assertEquals('420,00', $cartItem->tax());
         $this->assertEquals('840,00', $cartItem->taxTotal());
     }
@@ -857,7 +857,7 @@ class CartTest extends Orchestra\Testbench\TestCase
         $this->seeInDatabase('shoppingcart', ['identifier' => $identifier, 'instance' => 'default', 'content' => $serialized]);
     }
 
-    /** 
+    /**
      * @test
      * @expectedException \Gloudemans\Shoppingcart\Exceptions\CartAlreadyStoredException
      * @expectedExceptionMessage A cart with identifier 123 was already stored.
