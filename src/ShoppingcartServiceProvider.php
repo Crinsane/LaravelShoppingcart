@@ -8,20 +8,17 @@ use Illuminate\Support\ServiceProvider;
 
 class ShoppingcartServiceProvider extends ServiceProvider
 {
-
     /**
      * Register the service provider.
-     *
-     * @return void
      */
     public function register()
     {
         $this->app->bind('cart', 'Gloudemans\Shoppingcart\Cart');
 
-        $config = __DIR__ . '/../config/cart.php';
+        $config = __DIR__.'/../config/cart.php';
         $this->mergeConfigFrom($config, 'cart');
 
-        $this->publishes([__DIR__ . '/../config/cart.php' => config_path('cart.php')], 'config');
+        $this->publishes([__DIR__.'/../config/cart.php' => config_path('cart.php')], 'config');
 
         $this->app['events']->listen(Logout::class, function () {
             if ($this->app['config']->get('cart.destroy_on_logout')) {
@@ -29,7 +26,7 @@ class ShoppingcartServiceProvider extends ServiceProvider
             }
         });
 
-        if ( ! class_exists('CreateShoppingcartTable')) {
+        if (!class_exists('CreateShoppingcartTable')) {
             // Publish the migration
             $timestamp = date('Y_m_d_His', time());
 
