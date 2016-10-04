@@ -3,14 +3,14 @@
 namespace Gloudemans\Shoppingcart;
 
 use Closure;
-use Illuminate\Support\Collection;
-use Illuminate\Session\SessionManager;
-use Illuminate\Database\DatabaseManager;
-use Illuminate\Contracts\Events\Dispatcher;
 use Gloudemans\Shoppingcart\Contracts\Buyable;
-use Gloudemans\Shoppingcart\Exceptions\UnknownModelException;
-use Gloudemans\Shoppingcart\Exceptions\InvalidRowIDException;
 use Gloudemans\Shoppingcart\Exceptions\CartAlreadyStoredException;
+use Gloudemans\Shoppingcart\Exceptions\InvalidRowIDException;
+use Gloudemans\Shoppingcart\Exceptions\UnknownModelException;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Database\DatabaseManager;
+use Illuminate\Session\SessionManager;
+use Illuminate\Support\Collection;
 
 class Cart
 {
@@ -25,7 +25,7 @@ class Cart
 
     /**
      * Instance of the event dispatcher.
-     * 
+     *
      * @var \Illuminate\Contracts\Events\Dispatcher
      */
     private $events;
@@ -55,6 +55,7 @@ class Cart
      * Set the current cart instance.
      *
      * @param string|null $instance
+     *
      * @return \Gloudemans\Shoppingcart\Cart
      */
     public function instance($instance = null)
@@ -77,6 +78,18 @@ class Cart
     }
 
     /**
+     * Get the available instances.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function instances()
+    {
+        $instances = new Collection($this->session->all()['cart']);
+
+        return $instances;
+    }
+
+    /**
      * Add an item to the cart.
      *
      * @param mixed     $id
@@ -84,6 +97,7 @@ class Cart
      * @param int|float $qty
      * @param float     $price
      * @param array     $options
+     *
      * @return \Gloudemans\Shoppingcart\CartItem
      */
     public function add($id, $name = null, $qty = null, $price = null, array $options = [])
@@ -103,7 +117,7 @@ class Cart
         }
 
         $content->put($cartItem->rowId, $cartItem);
-        
+
         $this->events->fire('cart.added', $cartItem);
 
         $this->session->put($this->instance, $content);
@@ -116,7 +130,6 @@ class Cart
      *
      * @param string $rowId
      * @param mixed  $qty
-     * @return void
      */
     public function update($rowId, $qty)
     {
@@ -143,6 +156,7 @@ class Cart
 
         if ($cartItem->qty <= 0) {
             $this->remove($cartItem->rowId);
+
             return;
         } else {
             $content->put($cartItem->rowId, $cartItem);
@@ -157,7 +171,6 @@ class Cart
      * Remove the cart item with the given rowId from the cart.
      *
      * @param string $rowId
-     * @return void
      */
     public function remove($rowId)
     {
@@ -176,22 +189,22 @@ class Cart
      * Get a cart item from the cart by its rowId.
      *
      * @param string $rowId
+     *
      * @return \Gloudemans\Shoppingcart\CartItem
      */
     public function get($rowId)
     {
         $content = $this->getContent();
 
-        if ( ! $content->has($rowId))
+        if (!$content->has($rowId)) {
             throw new InvalidRowIDException("The cart does not contain rowId {$rowId}.");
+        }
 
         return $content->get($rowId);
     }
 
     /**
      * Destroy the current cart instance.
-     *
-     * @return void
      */
     public function destroy()
     {
@@ -230,6 +243,7 @@ class Cart
      * @param int    $decimals
      * @param string $decimalPoint
      * @param string $thousandSeperator
+     *
      * @return string
      */
     public function total($decimals = null, $decimalPoint = null, $thousandSeperator = null)
@@ -249,6 +263,7 @@ class Cart
      * @param int    $decimals
      * @param string $decimalPoint
      * @param string $thousandSeperator
+     *
      * @return float
      */
     public function tax($decimals = null, $decimalPoint = null, $thousandSeperator = null)
@@ -268,6 +283,7 @@ class Cart
      * @param int    $decimals
      * @param string $decimalPoint
      * @param string $thousandSeperator
+     *
      * @return float
      */
     public function subtotal($decimals = null, $decimalPoint = null, $thousandSeperator = null)
@@ -285,6 +301,7 @@ class Cart
      * Search the cart content for a cart item matching the given search closure.
      *
      * @param \Closure $search
+     *
      * @return \Illuminate\Support\Collection
      */
     public function search(Closure $search)
@@ -299,11 +316,10 @@ class Cart
      *
      * @param string $rowId
      * @param mixed  $model
-     * @return void
      */
     public function associate($rowId, $model)
     {
-        if(is_string($model) && ! class_exists($model)) {
+        if (is_string($model) && !class_exists($model)) {
             throw new UnknownModelException("The supplied model {$model} does not exist.");
         }
 
@@ -323,7 +339,6 @@ class Cart
      *
      * @param string    $rowId
      * @param int|float $taxRate
-     * @return void
      */
     public function setTax($rowId, $taxRate)
     {
@@ -342,7 +357,6 @@ class Cart
      * Store an the current instance of the cart.
      *
      * @param mixed $identifier
-     * @return void
      */
     public function store($identifier)
     {
@@ -355,7 +369,7 @@ class Cart
         $this->getConnection()->table($this->getTableName())->insert([
             'identifier' => $identifier,
             'instance' => $this->currentInstance(),
-            'content' => serialize($content)
+            'content' => serialize($content),
         ]);
 
         $this->events->fire('cart.stored');
@@ -365,11 +379,10 @@ class Cart
      * Restore the cart with the given identifier.
      *
      * @param mixed $identifier
-     * @return void
      */
     public function restore($identifier)
     {
-        if( ! $this->storedCartWithIdentifierExists($identifier)) {
+        if (!$this->storedCartWithIdentifierExists($identifier)) {
             return;
         }
 
@@ -402,35 +415,36 @@ class Cart
      * Magic method to make accessing the total, tax and subtotal properties possible.
      *
      * @param string $attribute
+     *
      * @return float|null
      */
     public function __get($attribute)
     {
-        if($attribute === 'total') {
+        if ($attribute === 'total') {
             return $this->total();
         }
 
-        if($attribute === 'tax') {
+        if ($attribute === 'tax') {
             return $this->tax();
         }
 
-        if($attribute === 'subtotal') {
+        if ($attribute === 'subtotal') {
             return $this->subtotal();
         }
 
-        return null;
+        return;
     }
 
     /**
-     * Get the carts content, if there is no cart content set yet, return a new empty Collection
+     * Get the carts content, if there is no cart content set yet, return a new empty Collection.
      *
      * @return \Illuminate\Support\Collection
      */
     protected function getContent()
     {
         $content = $this->session->has($this->instance)
-            ? $this->session->get($this->instance)
-            : new Collection;
+        ? $this->session->get($this->instance)
+        : new Collection();
 
         return $content;
     }
@@ -443,6 +457,7 @@ class Cart
      * @param int|float $qty
      * @param float     $price
      * @param array     $options
+     *
      * @return \Gloudemans\Shoppingcart\CartItem
      */
     private function createCartItem($id, $name, $qty, $price, array $options)
@@ -468,17 +483,21 @@ class Cart
      * Check if the item is a multidimensional array or an array of Buyables.
      *
      * @param mixed $item
+     *
      * @return bool
      */
     private function isMulti($item)
     {
-        if ( ! is_array($item)) return false;
+        if (!is_array($item)) {
+            return false;
+        }
 
         return is_array(head($item)) || head($item) instanceof Buyable;
     }
 
     /**
      * @param $identifier
+     *
      * @return bool
      */
     private function storedCartWithIdentifierExists($identifier)
@@ -521,12 +540,13 @@ class Cart
     }
 
     /**
-     * Get the Formated number
+     * Get the Formated number.
      *
      * @param $value
      * @param $decimals
      * @param $decimalPoint
      * @param $thousandSeperator
+     *
      * @return string
      */
     private function numberFormat($value, $decimals, $decimalPoint, $thousandSeperator)

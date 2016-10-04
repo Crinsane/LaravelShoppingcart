@@ -2,7 +2,7 @@
 
 use Gloudemans\Shoppingcart\Cart;
 use Gloudemans\Shoppingcart\Contracts\Buyable;
-use Gloudemans\Shoppingcart\Contracts\Taxable;
+use Illuminate\Support\Collection;
 
 class CartTest extends Orchestra\Testbench\TestCase
 {
@@ -33,12 +33,12 @@ class CartTest extends Orchestra\Testbench\TestCase
 
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
     }
-    
+
     /** @test */
     public function it_has_a_default_instance()
     {
@@ -63,7 +63,29 @@ class CartTest extends Orchestra\Testbench\TestCase
         $this->assertItemsInCart(1, $cart->instance(Cart::DEFAULT_INSTANCE));
         $this->assertItemsInCart(1, $cart->instance('wishlist'));
     }
-    
+
+    /** @test */
+    public function it_can_list_instances()
+    {
+        $cart = $this->getCart();
+
+        $item = $this->getBuyableMock();
+
+        $cart->add($item);
+
+        $cart->instance('foo');
+
+        $cart->add($item);
+
+        $cart_instances = $cart->instances();
+
+        $this->assertArrayHasKey('default', $cart_instances);
+        $this->assertArrayHasKey('foo', $cart_instances);
+
+        $this->assertInstanceOf(Collection::class, $cart_instances['default']);
+        $this->assertInstanceOf(Collection::class, $cart_instances['foo']);
+    }
+
     /** @test */
     public function it_can_add_an_item()
     {
@@ -158,7 +180,7 @@ class CartTest extends Orchestra\Testbench\TestCase
 
         $cart->add([
             ['id' => 1, 'name' => 'Test item 1', 'qty' => 1, 'price' => 10.00],
-            ['id' => 2, 'name' => 'Test item 2', 'qty' => 1, 'price' => 10.00]
+            ['id' => 2, 'name' => 'Test item 2', 'qty' => 1, 'price' => 10.00],
         ]);
 
         $this->assertEquals(2, $cart->count());
@@ -491,7 +513,7 @@ class CartTest extends Orchestra\Testbench\TestCase
                 'tax' => 2.10,
                 'subtotal' => 10.0,
                 'options' => new \Gloudemans\Shoppingcart\CartItemOptions,
-            ]
+            ],
         ], $content->toArray());
     }
 
@@ -839,7 +861,7 @@ class CartTest extends Orchestra\Testbench\TestCase
     {
         $this->artisan('migrate', [
             '--database' => 'testing',
-            '--realpath' => realpath(__DIR__.'/../database/migrations'),
+            '--realpath' => realpath(__DIR__ . '/../database/migrations'),
         ]);
 
         $this->expectsEvents('cart.stored');
@@ -857,7 +879,7 @@ class CartTest extends Orchestra\Testbench\TestCase
         $this->seeInDatabase('shoppingcart', ['identifier' => $identifier, 'instance' => 'default', 'content' => $serialized]);
     }
 
-    /** 
+    /**
      * @test
      * @expectedException \Gloudemans\Shoppingcart\Exceptions\CartAlreadyStoredException
      * @expectedExceptionMessage A cart with identifier 123 was already stored.
@@ -866,7 +888,7 @@ class CartTest extends Orchestra\Testbench\TestCase
     {
         $this->artisan('migrate', [
             '--database' => 'testing',
-            '--realpath' => realpath(__DIR__.'/../database/migrations'),
+            '--realpath' => realpath(__DIR__ . '/../database/migrations'),
         ]);
 
         $this->expectsEvents('cart.stored');
@@ -887,7 +909,7 @@ class CartTest extends Orchestra\Testbench\TestCase
     {
         $this->artisan('migrate', [
             '--database' => 'testing',
-            '--realpath' => realpath(__DIR__.'/../database/migrations'),
+            '--realpath' => realpath(__DIR__ . '/../database/migrations'),
         ]);
 
         $this->expectsEvents('cart.restored');
@@ -916,7 +938,7 @@ class CartTest extends Orchestra\Testbench\TestCase
     {
         $this->artisan('migrate', [
             '--database' => 'testing',
-            '--realpath' => realpath(__DIR__.'/../database/migrations'),
+            '--realpath' => realpath(__DIR__ . '/../database/migrations'),
         ]);
 
         $cart = $this->getCart();
@@ -1003,7 +1025,7 @@ class CartTest extends Orchestra\Testbench\TestCase
 
     /**
      * Set the config number format
-     * 
+     *
      * @param $decimals
      * @param $decimalPoint
      * @param $thousandSeperator
@@ -1016,7 +1038,9 @@ class CartTest extends Orchestra\Testbench\TestCase
     }
 }
 
-class ModelStub {
+class ModelStub
+{
     public $someValue = 'Some value';
-    public function find($id) { return $this; }
+    public function find($id)
+    {return $this;}
 }
