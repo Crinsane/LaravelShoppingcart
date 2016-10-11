@@ -345,7 +345,8 @@ class CartItem implements Arrayable
             'price'    => $this->price,
             'options'  => $this->options,
             'tax'      => $this->tax,
-            'subtotal' => $this->subtotal
+            'subtotal' => $this->subtotal,
+            'model'    => $this->associatedModel ? $this->model->toArray(): null,
         ];
     }
 
