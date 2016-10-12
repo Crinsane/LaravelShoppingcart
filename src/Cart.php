@@ -531,9 +531,15 @@ class Cart
      */
     private function numberFormat($value, $decimals, $decimalPoint, $thousandSeperator)
     {
-        $decimals = $decimals ?: config('cart.format.decimals') ?: 2;
-        $decimalPoint = $decimalPoint ?: config('cart.format.decimal_point') ?: '.';
-        $thousandSeperator = $thousandSeperator ?: config('cart.format.thousand_seperator') ?: ',';
+        if(is_null($decimals)){
+            $decimals = is_null(config('cart.format.decimals')) ? 2 : config('cart.format.decimals');
+        }
+        if(is_null($decimalPoint)){
+            $decimalPoint = is_null(config('cart.format.decimal_point')) ? '.' : config('cart.format.decimal_point');
+        }
+        if(is_null($thousandSeperator)){
+            $thousandSeperator = is_null(config('cart.format.thousand_seperator')) ? ',' : config('cart.format.thousand_seperator');
+        }
 
         return number_format($value, $decimals, $decimalPoint, $thousandSeperator);
     }
