@@ -220,22 +220,26 @@ class CartItem implements Arrayable
      * Associate the cart item with the given model.
      *
      * @param mixed $model
-     * @return void
+     * @return \Gloudemans\Shoppingcart\CartItem
      */
     public function associate($model)
     {
         $this->associatedModel = is_string($model) ? $model : get_class($model);
+        
+        return $this;
     }
 
     /**
      * Set the tax rate.
      *
      * @param int|float $taxRate
-     * @return void
+     * @return \Gloudemans\Shoppingcart\CartItem
      */
     public function setTaxRate($taxRate)
     {
         $this->taxRate = $taxRate;
+        
+        return $this;
     }
 
     /**
