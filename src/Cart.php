@@ -357,7 +357,8 @@ class Cart
         $this->getConnection()->table($this->getTableName())->insert([
             'identifier' => $identifier,
             'instance' => $this->currentInstance(),
-            'content' => serialize($content)
+            'content' => serialize($content),
+            'created_at' => \Carbon\Carbon::now(),
         ]);
 
         $this->events->fire('cart.stored');
@@ -375,12 +376,12 @@ class Cart
             return;
         }
 
+        $currentInstance = $this->currentInstance();
+
         $stored = $this->getConnection()->table($this->getTableName())
-            ->where('identifier', $identifier)->first();
+            ->where('identifier', $identifier)->where('instance', $currentInstance)->first();
 
         $storedContent = unserialize($stored->content);
-
-        $currentInstance = $this->currentInstance();
 
         $this->instance($stored->instance);
 
@@ -485,7 +486,7 @@ class Cart
      */
     private function storedCartWithIdentifierExists($identifier)
     {
-        return $this->getConnection()->table($this->getTableName())->where('identifier', $identifier)->exists();
+        return $this->getConnection()->table($this->getTableName())->where('identifier', $identifier)->where('instance', $this->currentInstance())->exists();
     }
 
     /**
