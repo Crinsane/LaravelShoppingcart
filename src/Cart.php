@@ -116,7 +116,7 @@ class Cart
      *
      * @param string $rowId
      * @param mixed  $qty
-     * @return void
+     * @return \Gloudemans\Shoppingcart\CartItem
      */
     public function update($rowId, $qty)
     {
@@ -151,6 +151,8 @@ class Cart
         $this->events->fire('cart.updated', $cartItem);
 
         $this->session->put($this->instance, $content);
+
+        return $cartItem;
     }
 
     /**
