@@ -481,6 +481,7 @@ class CartTest extends Orchestra\Testbench\TestCase
                 'tax' => 2.10,
                 'subtotal' => 10.0,
                 'options' => new \Gloudemans\Shoppingcart\CartItemOptions,
+                'model'=> null,
             ],
             '370d08585360f5c568b18d1f2e4ca1df' => [
                 'rowId' => '370d08585360f5c568b18d1f2e4ca1df',
@@ -491,6 +492,7 @@ class CartTest extends Orchestra\Testbench\TestCase
                 'tax' => 2.10,
                 'subtotal' => 10.0,
                 'options' => new \Gloudemans\Shoppingcart\CartItemOptions,
+                'model'=> null,
             ]
         ], $content->toArray());
     }
