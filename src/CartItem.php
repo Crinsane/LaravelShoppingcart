@@ -224,8 +224,14 @@ class CartItem implements Arrayable
      */
     public function associate($model)
     {
-        $this->associatedModel = is_string($model) ? $model : get_class($model);
-        
+        if ( is_string($model) ) {
+            if (! class_exists($model)) {
+                throw new UnknownModelException("The supplied model {$model} does not exist.");
+            }
+            $model = $model::find($this->id);
+        }
+        $this->associatedModel = $model;
+
         return $this;
     }
 
@@ -275,7 +281,7 @@ class CartItem implements Arrayable
         }
 
         if($attribute === 'model') {
-            return with(new $this->associatedModel)->find($this->id);
+            return $this->associatedModel;
         }
 
         return null;

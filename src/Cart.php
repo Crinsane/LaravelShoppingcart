@@ -305,11 +305,13 @@ class Cart
      */
     public function associate($rowId, $model)
     {
-        if(is_string($model) && ! class_exists($model)) {
-            throw new UnknownModelException("The supplied model {$model} does not exist.");
-        }
-
         $cartItem = $this->get($rowId);
+        if (is_string($model)) {
+            if (! class_exists($model)) {
+                throw new UnknownModelException("The supplied model {$model} does not exist.");
+            }
+            $model = $model::find($cartItem->id);
+        }
 
         $cartItem->associate($model);
 
@@ -349,7 +351,6 @@ class Cart
     public function store($identifier)
     {
         $content = $this->getContent();
-
         if ($this->storedCartWithIdentifierExists($identifier)) {
             throw new CartAlreadyStoredException("A cart with identifier {$identifier} was already stored.");
         }
