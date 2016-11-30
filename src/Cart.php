@@ -351,15 +351,20 @@ class Cart
         $content = $this->getContent();
 
         if ($this->storedCartWithIdentifierExists($identifier)) {
-            throw new CartAlreadyStoredException("A cart with identifier {$identifier} was already stored.");
+            $this->getConnection()->table($this->getTableName())->where('identifier', $identifier)
+                ->where('instance', $this->currentInstance())
+                ->update([
+                    'content' => serialize($content),
+                    'updated_at' => \Carbon\Carbon::now(),
+                ]);
+        } else {
+            $this->getConnection()->table($this->getTableName())->insert([
+                'identifier' => $identifier,
+                'instance' => $this->currentInstance(),
+                'content' => serialize($content),
+                'created_at' => \Carbon\Carbon::now(),
+            ]);
         }
-
-        $this->getConnection()->table($this->getTableName())->insert([
-            'identifier' => $identifier,
-            'instance' => $this->currentInstance(),
-            'content' => serialize($content),
-            'created_at' => \Carbon\Carbon::now(),
-        ]);
 
         $this->events->fire('cart.stored');
     }
@@ -397,8 +402,8 @@ class Cart
 
         $this->instance($currentInstance);
 
-        $this->getConnection()->table($this->getTableName())
-            ->where('identifier', $identifier)->where('instance', $currentInstance)->delete();
+        // $this->getConnection()->table($this->getTableName())
+            // ->where('identifier', $identifier)->where('instance', $currentInstance)->delete();
     }
 
     /**
