@@ -33,6 +33,7 @@ Now you're ready to start using the shoppingcart in your application.
 Look at one of the following topics to learn more about LaravelShoppingcart
 
 * [Usage](#usage)
+* [Discounts](#discounts)
 * [Collections](#collections)
 * [Instances](#instances)
 * [Models](#models)
@@ -60,12 +61,18 @@ As an optional fifth parameter you can pass it options, so you can add multiple 
 Cart::add('293ad', 'Product 1', 1, 9.99, ['size' => 'large']);
 ```
 
+In the sixth optional parameter you can pass it extra information. As shipping information for example.
+
+```php
+Cart::add('293ad', 'Product 1', 1, 9.99, ['size' => 'large'], ['gift' => true]);
+```
+
 **The `add()` method will return an CartItem instance of the item you just added to the cart.**
 
 Maybe you prefer to add the item using an array? As long as the array contains the required keys, you can pass it to the method. The options key is optional.
 
 ```php
-Cart::add(['id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 9.99, 'options' => ['size' => 'large']]);
+Cart::add(['id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 9.99, 'options' => ['size' => 'large'], 'extras' => ['gift' => true]]);
 ```
 
 New in version 2 of the package is the possibility to work with the `Buyable` interface. The way this works is that you have a model implement the `Buyable` interface, which will make you implement a few methods so the package knows how to get the id, name and price from your model. 
@@ -74,11 +81,11 @@ This way you can just pass the `add()` method a model and the quantity and it wi
 **As an added bonus it will automatically associate the model with the CartItem**
 
 ```php
-Cart::add($product, 1, ['size' => 'large']);
+Cart::add($product, 1);
 ```
-As an optional third parameter you can add options.
+As an optional third and fourth parameters you can add options and extras.
 ```php
-Cart::add($product, 1, ['size' => 'large']);
+Cart::add($product, 1, ['size' => 'large'], ['gift' => true]);
 ```
 
 Finally, you can also add multipe items to the cart at once.
@@ -89,7 +96,7 @@ You can just pass the `add()` method an array of arrays, or an array of Buyables
 ```php
 Cart::add([
   ['id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 10.00],
-  ['id' => '4832k', 'name' => 'Product 2', 'qty' => 1, 'price' => 10.00, 'options' => ['size' => 'large']]
+  ['id' => '4832k', 'name' => 'Product 2', 'qty' => 1, 'price' => 10.00, 'options' => ['size' => 'large'], 'extras' => ['gift' => true]]
 ]);
 
 Cart::add([$product1, $product2]);
@@ -171,7 +178,7 @@ Cart::total();
 The method will automatically format the result, which you can tweak using the three optional parameters
 
 ```php
-Cart::total($decimals, $decimalSeperator, $thousandSeperator);
+Cart::total($decimals, $decimalSeparator, $thousandSeparator);
 ```
 
 You can set the default number format in the config file.
@@ -189,7 +196,7 @@ Cart::tax();
 The method will automatically format the result, which you can tweak using the three optional parameters
 
 ```php
-Cart::tax($decimals, $decimalSeperator, $thousandSeperator);
+Cart::tax($decimals, $decimalSeparator, $thousandSeparator);
 ```
 
 You can set the default number format in the config file.
@@ -207,7 +214,7 @@ Cart::subtotal();
 The method will automatically format the result, which you can tweak using the three optional parameters
 
 ```php
-Cart::subtotal($decimals, $decimalSeperator, $thousandSeperator);
+Cart::subtotal($decimals, $decimalSeparator, $thousandSeparator);
 ```
 
 You can set the default number format in the config file.
@@ -243,6 +250,20 @@ As you can see the Closure will receive two parameters. The first is the CartIte
 **The method will return a Collection containing all CartItems that where found**
 
 This way of searching gives you total control over the search process and gives you the ability to create very precise and specific searches.
+
+## Discounts
+
+It's possible to set a discount to the each item in the cart. You'll pass the setDiscount method the rowId, value, the type of discount and as optional fourth parameter, the description:
+
+```php
+$rowId = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
+
+Cart::setDiscount($rowId, 10, 'percentage', 'Simple Discount');
+```
+The types of discount accepts are percentage and currency.
+
+// It´s possible to call the setDiscount method on the CartItem using an array of parameters!
+$cartItem->setDiscount([10, 'currency', 'Simple Discount']);
 
 ## Collections
 

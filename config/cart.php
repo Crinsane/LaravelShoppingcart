@@ -16,6 +16,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | How the taxes will be apply
+    |--------------------------------------------------------------------------
+    |
+    | Define whether the tax rate will be calculate on the discounted price or on normal price.
+    |
+    */
+
+    'calculate_taxes_on_discounted_price' => false,
+
+    /*
+    |--------------------------------------------------------------------------
     | Shoppingcart database settings
     |--------------------------------------------------------------------------
     |
@@ -60,7 +71,7 @@ return [
 
         'decimal_point' => '.',
 
-        'thousand_seperator' => ','
+        'thousand_separator' => ','
 
     ],
 
