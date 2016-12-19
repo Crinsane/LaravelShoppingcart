@@ -443,7 +443,7 @@ class Cart
     }
 
     /**
-     * Magic method to make accessing the total, tax and subtotal properties possible.
+     * Magic method to make accessing the total, tax, discount and subtotal properties possible.
      *
      * @param string $attribute
      * @return float|null
@@ -456,6 +456,10 @@ class Cart
 
         if($attribute === 'tax') {
             return $this->tax();
+        }
+
+        if($attribute === 'discount') {
+            return $this->discount();
         }
 
         if($attribute === 'subtotal') {
