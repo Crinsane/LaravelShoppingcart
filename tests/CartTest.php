@@ -613,8 +613,8 @@ class CartTest extends Orchestra\Testbench\TestCase
         $cart->add($item);
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
-
-        $this->assertContains('Gloudemans_Shoppingcart_Contracts_Buyable', PHPUnit_Framework_Assert::readAttribute($cartItem, 'associatedModel'));
+        $this->assertEquals($cartItem->associatedModel, $item);
+        // $this->assertContains('Gloudemans_Shoppingcart_Contracts_Buyable', PHPUnit_Framework_Assert::readAttribute($cartItem, 'associatedModel'));
     }
 
     /** @test */
@@ -630,7 +630,8 @@ class CartTest extends Orchestra\Testbench\TestCase
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
-        $this->assertEquals(get_class($model), PHPUnit_Framework_Assert::readAttribute($cartItem, 'associatedModel'));
+        $this->assertEquals($cartItem->associatedModel, $model);
+        // $this->assertEquals(get_class($model), PHPUnit_Framework_Assert::readAttribute($cartItem, 'associatedModel'));
     }
 
     /**
