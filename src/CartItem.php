@@ -275,7 +275,10 @@ class CartItem implements Arrayable
         }
 
         if($attribute === 'model') {
-            return with(new $this->associatedModel)->find($this->id);
+            $model = new $this->associatedModel;
+            if(method_exists($model, 'find'))
+                return with($model)->find($this->id);
+            return null;
         }
 
         return null;
@@ -349,7 +352,8 @@ class CartItem implements Arrayable
             'price'    => $this->price,
             'options'  => $this->options,
             'tax'      => $this->tax,
-            'subtotal' => $this->subtotal
+            'subtotal' => $this->subtotal,
+            'model'    => $this->model ? $this->model->toArray(): null,
         ];
     }
 
