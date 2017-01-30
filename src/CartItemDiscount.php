@@ -27,7 +27,7 @@ class CartItemDiscount
      */
     public function __construct($value, $type = 'currency', $description = '')
     {
-        if ($value < 0 || $value > 100) {
+        if ($type == 'percentage' && ($value < 0 || $value > 100)) {
             throw new \InvalidArgumentException('Please supply a valid discount value.');
         }
 
@@ -87,7 +87,7 @@ class CartItemDiscount
     {
         switch ($this->type) {
             case 'currency':
-                return $this->value;
+                return ($this->value > $price) ? 0 : $this->value;
                 break;
             case 'percentage':
                 return ($price * ($this->value / 100));
