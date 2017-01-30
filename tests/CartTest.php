@@ -184,6 +184,47 @@ class CartTest extends Orchestra\Testbench\TestCase
         $this->assertEquals('red', $cartItem->options->color);
     }
 
+    /** @test */
+    public function it_can_add_an_item_with_extras()
+    {
+        $this->expectsEvents('cart.added');
+
+        $cart = $this->getCart();
+
+        $item = $this->getBuyableMock();
+
+        $extras = ['gift' => true];
+
+        $cart->add($item, 1, [], $extras);
+
+        $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
+
+        $this->assertInstanceOf(\Gloudemans\Shoppingcart\CartItem::class, $cartItem);
+        $this->assertEquals(true, $cartItem->extras->gift);
+    }
+
+    /** @test */
+    public function it_can_add_an_item_with_options_and_extras()
+    {
+        $this->expectsEvents('cart.added');
+
+        $cart = $this->getCart();
+
+        $item = $this->getBuyableMock();
+
+        $options = ['size' => 'XL', 'color' => 'red'];
+        $extras = ['gift' => true];
+
+        $cart->add($item, 1, $options, $extras);
+
+        $cartItem = $cart->get('07d5da5550494c62daf9993cf954303f');
+
+        $this->assertInstanceOf(\Gloudemans\Shoppingcart\CartItem::class, $cartItem);
+        $this->assertEquals('XL', $cartItem->options->size);
+        $this->assertEquals('red', $cartItem->options->color);
+        $this->assertEquals(true, $cartItem->extras->gift);
+    }
+
     /**
      * @test
      * @expectedException \InvalidArgumentException
@@ -481,6 +522,8 @@ class CartTest extends Orchestra\Testbench\TestCase
                 'tax' => 2.10,
                 'subtotal' => 10.0,
                 'options' => new \Gloudemans\Shoppingcart\CartItemOptions,
+                'extras' => new \Gloudemans\Shoppingcart\CartItemExtras,
+                'discount' => new \Gloudemans\Shoppingcart\CartItemDiscount(0),
             ],
             '370d08585360f5c568b18d1f2e4ca1df' => [
                 'rowId' => '370d08585360f5c568b18d1f2e4ca1df',
@@ -491,6 +534,8 @@ class CartTest extends Orchestra\Testbench\TestCase
                 'tax' => 2.10,
                 'subtotal' => 10.0,
                 'options' => new \Gloudemans\Shoppingcart\CartItemOptions,
+                'extras' => new \Gloudemans\Shoppingcart\CartItemExtras,
+                'discount' => new \Gloudemans\Shoppingcart\CartItemDiscount(0),
             ]
         ], $content->toArray());
     }
@@ -693,6 +738,22 @@ class CartTest extends Orchestra\Testbench\TestCase
     }
 
     /** @test */
+    public function it_can_calculate_discount_based_on_the_specified_discount()
+    {
+        $cart = $this->getCart();
+
+        $item = $this->getBuyableMock(1, 'Some title', 10.00);
+
+        $cart->add($item, 1);
+
+        $cart->setDiscount('027c91341fd5cf4d2579b49c4b6a90da', 10, 'percentage', 'Same Discount');
+
+        $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
+
+        $this->assertEquals(1.00, $cartItem->discount);
+    }
+
+    /** @test */
     public function it_can_calculate_tax_based_on_the_default_tax_rate_in_the_config()
     {
         $cart = $this->getCart();
@@ -720,6 +781,25 @@ class CartTest extends Orchestra\Testbench\TestCase
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
         $this->assertEquals(1.90, $cartItem->tax);
+    }
+
+    /** @test */
+    public function it_can_calculate_tax_based_on_discounted_price()
+    {
+        $this->app['config']->set('cart.calculate_taxes_on_discounted_price', true); //Set the calculate on discounted price
+
+        $cart = $this->getCart();
+
+        $item = $this->getBuyableMock(1, 'Some title', 10.00);
+
+        $cart->add($item, 1);
+
+        $cart->setDiscount('027c91341fd5cf4d2579b49c4b6a90da', 10, 'percentage', 'Same Discount');
+        $cart->setTax('027c91341fd5cf4d2579b49c4b6a90da', 10);
+
+        $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
+
+        $this->assertEquals(0.90000000000000002, $cartItem->tax);
     }
 
     /** @test */
@@ -824,12 +904,17 @@ class CartTest extends Orchestra\Testbench\TestCase
 
         $cart->add($item, 2);
 
+        $cart->setDiscount('027c91341fd5cf4d2579b49c4b6a90da', 10, 'percentage', 'Same Discount');
+
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
         $this->assertEquals('2000,00', $cartItem->price());
-        $this->assertEquals('2420,00', $cartItem->priceTax());
+        $this->assertEquals('1800,00', $cartItem->priceDiscount());
+        $this->assertEquals('2220,00', $cartItem->priceTax());
         $this->assertEquals('4000,00', $cartItem->subtotal());
-        $this->assertEquals('4840,00', $cartItem->total());
+        $this->assertEquals('4440,00', $cartItem->total());
+        $this->assertEquals('200,00', $cartItem->discount());
+        $this->assertEquals('400,00', $cartItem->discountTotal());
         $this->assertEquals('420,00', $cartItem->tax());
         $this->assertEquals('840,00', $cartItem->taxTotal());
     }
@@ -938,16 +1023,20 @@ class CartTest extends Orchestra\Testbench\TestCase
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
         $cart->setTax('027c91341fd5cf4d2579b49c4b6a90da', 19);
+        $cart->setDiscount('027c91341fd5cf4d2579b49c4b6a90da', 10, 'percentage', 'Same Discount');
 
         $this->assertEquals(10.00, $cartItem->price(2));
-        $this->assertEquals(11.90, $cartItem->priceTax(2));
+        $this->assertEquals(9.00, $cartItem->priceDiscount(2));
+        $this->assertEquals(10.90, $cartItem->priceTax(2));
         $this->assertEquals(20.00, $cartItem->subtotal(2));
-        $this->assertEquals(23.80, $cartItem->total(2));
+        $this->assertEquals(21.80, $cartItem->total(2));
+        $this->assertEquals(1.00, $cartItem->discount(2));
+        $this->assertEquals(2.00, $cartItem->discountTotal(2));
         $this->assertEquals(1.90, $cartItem->tax(2));
         $this->assertEquals(3.80, $cartItem->taxTotal(2));
 
         $this->assertEquals(20.00, $cart->subtotal(2));
-        $this->assertEquals(23.80, $cart->total(2));
+        $this->assertEquals(21.80, $cart->total(2));
         $this->assertEquals(3.80, $cart->tax(2));
     }
 
@@ -1006,13 +1095,13 @@ class CartTest extends Orchestra\Testbench\TestCase
      * 
      * @param $decimals
      * @param $decimalPoint
-     * @param $thousandSeperator
+     * @param $thousandSeparator
      */
-    private function setConfigFormat($decimals, $decimalPoint, $thousandSeperator)
+    private function setConfigFormat($decimals, $decimalPoint, $thousandSeparator)
     {
         $this->app['config']->set('cart.format.decimals', $decimals);
         $this->app['config']->set('cart.format.decimal_point', $decimalPoint);
-        $this->app['config']->set('cart.format.thousand_seperator', $thousandSeperator);
+        $this->app['config']->set('cart.format.thousand_separator', $thousandSeparator);
     }
 }
 
