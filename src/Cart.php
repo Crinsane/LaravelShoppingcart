@@ -201,6 +201,14 @@ class Cart
     }
 
     /**
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return $this->getContent()->isEmpty();
+    }
+
+    /**
      * Get the content of the cart.
      *
      * @return \Illuminate\Support\Collection

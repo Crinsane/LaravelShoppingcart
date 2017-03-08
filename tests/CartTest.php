@@ -967,6 +967,29 @@ class CartTest extends Orchestra\Testbench\TestCase
         event(new \Illuminate\Auth\Events\Logout($user));
     }
 
+    /** @test */
+    public function it_can_check_if_cart_is_empty()
+    {
+        $cart = $this->getCart();
+
+        $this->assertEquals(true, $cart->isEmpty());
+
+        $item = $this->getBuyableMock(1, 'First item', 10.00);
+
+        $cart->add($item, 2);
+
+        $this->assertEquals(false, $cart->isEmpty());
+
+        $this->assertEquals(true, $cart->instance("test")->isEmpty());
+
+        $cart->instance("test")->add($item, 2);
+
+        $this->assertEquals(false, $cart->instance("test")->isEmpty());
+
+        $cart->destroy();
+
+        $this->assertEquals(true, $cart->isEmpty());
+    }
     /**
      * Get an instance of the cart.
      *
