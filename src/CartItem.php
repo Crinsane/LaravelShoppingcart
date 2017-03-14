@@ -178,8 +178,8 @@ class CartItem implements Arrayable
      */
     public function setQuantity($qty)
     {
-        if(empty($qty) || ! is_numeric($qty))
-            throw new \InvalidArgumentException('Please supply a valid quantity.');
+        if(! is_numeric($qty))
+            throw new \InvalidArgumentException('Please supply a numeric value for the quantity.');
 
         $this->qty = $qty;
     }

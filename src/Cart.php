@@ -141,12 +141,7 @@ class Cart
             }
         }
 
-        if ($cartItem->qty <= 0) {
-            $this->remove($cartItem->rowId);
-            return;
-        } else {
-            $content->put($cartItem->rowId, $cartItem);
-        }
+        $content->put($cartItem->rowId, $cartItem);
 
         $this->events->fire('cart.updated', $cartItem);
 
@@ -451,7 +446,7 @@ class Cart
     {
         if ($id instanceof Buyable) {
             $cartItem = CartItem::fromBuyable($id, $qty ?: []);
-            $cartItem->setQuantity($name ?: 1);
+            $cartItem->setQuantity($name ?: 0);
             $cartItem->associate($id);
         } elseif (is_array($id)) {
             $cartItem = CartItem::fromArray($id);
