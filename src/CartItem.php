@@ -188,10 +188,16 @@ class CartItem implements Arrayable
      * Update the cart item from a Buyable.
      *
      * @param \Gloudemans\Shoppingcart\Contracts\Buyable $item
+     * @param array $options
+     *
      * @return void
      */
-    public function updateFromBuyable(Buyable $item)
+    public function updateFromBuyable(Buyable $item, array $options = NULL)
     {
+        if(is_array($options)) {
+            $this->options  = new CartItemOptions($options);
+        }
+
         $this->id       = $item->getBuyableIdentifier($this->options);
         $this->name     = $item->getBuyableDescription($this->options);
         $this->price    = $item->getBuyablePrice($this->options);

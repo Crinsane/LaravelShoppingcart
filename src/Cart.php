@@ -116,14 +116,14 @@ class Cart
      *
      * @param string $rowId
      * @param mixed  $qty
+     * @param array  $options options for Buyables
      * @return \Gloudemans\Shoppingcart\CartItem
      */
-    public function update($rowId, $qty)
+    public function update($rowId, $qty, array $options = NULL)
     {
         $cartItem = $this->get($rowId);
-
         if ($qty instanceof Buyable) {
-            $cartItem->updateFromBuyable($qty);
+            $cartItem->updateFromBuyable($qty, $options);
         } elseif (is_array($qty)) {
             $cartItem->updateFromArray($qty);
         } else {
