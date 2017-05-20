@@ -1,11 +1,12 @@
 <?php
 
+namespace Gloudemans\Tests\Shoppingcart;
+
 use Gloudemans\Shoppingcart\Cart;
 use PHPUnit_Framework_Assert as PHPUnit;
 
 trait CartAssertions
 {
-
     /**
      * Assert that the cart contains the given number of items.
      *
@@ -31,5 +32,4 @@ trait CartAssertions
 
         PHPUnit::assertCount($rows, $cart->content(), "Expected the cart to contain {$rows} rows, but got {$actual}.");
     }
-
 }

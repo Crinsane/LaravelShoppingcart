@@ -1,10 +1,21 @@
 <?php
 
+namespace Gloudemans\Tests\Shoppingcart;
+
 use Gloudemans\Shoppingcart\Cart;
+use Gloudemans\Shoppingcart\CartItem;
+use Gloudemans\Shoppingcart\CartItemOptions;
 use Gloudemans\Shoppingcart\Contracts\Buyable;
 use Gloudemans\Shoppingcart\Contracts\Taxable;
+use Gloudemans\Shoppingcart\ShoppingcartServiceProvider;
+use Illuminate\Auth\Events\Logout;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Session\SessionManager;
+use Illuminate\Support\Collection;
+use Mockery;
+use PHPUnit\Framework\Assert;
 
-class CartTest extends Orchestra\Testbench\TestCase
+class CartTest extends \Orchestra\Testbench\TestCase
 {
     use CartAssertions;
 
@@ -16,7 +27,7 @@ class CartTest extends Orchestra\Testbench\TestCase
      */
     protected function getPackageProviders($app)
     {
-        return [\Gloudemans\Shoppingcart\ShoppingcartServiceProvider::class];
+        return [ShoppingcartServiceProvider::class];
     }
 
     /**
@@ -38,7 +49,17 @@ class CartTest extends Orchestra\Testbench\TestCase
             'prefix'   => '',
         ]);
     }
-    
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->app->afterResolving('migrator', function ($migrator) {
+            $migrator->path(realpath(__DIR__.'/../database/migrations'));
+        });
+    }
+
+
     /** @test */
     public function it_has_a_default_instance()
     {
@@ -89,7 +110,7 @@ class CartTest extends Orchestra\Testbench\TestCase
 
         $cartItem = $cart->add($item);
 
-        $this->assertInstanceOf(\Gloudemans\Shoppingcart\CartItem::class, $cartItem);
+        $this->assertInstanceOf(CartItem::class, $cartItem);
         $this->assertEquals('027c91341fd5cf4d2579b49c4b6a90da', $cartItem->rowId);
     }
 
@@ -122,7 +143,7 @@ class CartTest extends Orchestra\Testbench\TestCase
 
         $this->assertTrue(is_array($cartItems));
         $this->assertCount(2, $cartItems);
-        $this->assertContainsOnlyInstancesOf(\Gloudemans\Shoppingcart\CartItem::class, $cartItems);
+        $this->assertContainsOnlyInstancesOf(CartItem::class, $cartItems);
     }
 
     /** @test */
@@ -179,7 +200,7 @@ class CartTest extends Orchestra\Testbench\TestCase
 
         $cartItem = $cart->get('07d5da5550494c62daf9993cf954303f');
 
-        $this->assertInstanceOf(\Gloudemans\Shoppingcart\CartItem::class, $cartItem);
+        $this->assertInstanceOf(CartItem::class, $cartItem);
         $this->assertEquals('XL', $cartItem->options->size);
         $this->assertEquals('red', $cartItem->options->color);
     }
@@ -426,7 +447,7 @@ class CartTest extends Orchestra\Testbench\TestCase
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
-        $this->assertInstanceOf(\Gloudemans\Shoppingcart\CartItem::class, $cartItem);
+        $this->assertInstanceOf(CartItem::class, $cartItem);
     }
 
     /** @test */
@@ -442,7 +463,7 @@ class CartTest extends Orchestra\Testbench\TestCase
 
         $content = $cart->content();
 
-        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $content);
+        $this->assertInstanceOf(Collection::class, $content);
         $this->assertCount(2, $content);
     }
 
@@ -453,7 +474,7 @@ class CartTest extends Orchestra\Testbench\TestCase
 
         $content = $cart->content();
 
-        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $content);
+        $this->assertInstanceOf(Collection::class, $content);
         $this->assertCount(0, $content);
     }
 
@@ -470,7 +491,7 @@ class CartTest extends Orchestra\Testbench\TestCase
 
         $content = $cart->content();
 
-        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $content);
+        $this->assertInstanceOf(Collection::class, $content);
         $this->assertEquals([
             '027c91341fd5cf4d2579b49c4b6a90da' => [
                 'rowId' => '027c91341fd5cf4d2579b49c4b6a90da',
@@ -480,7 +501,7 @@ class CartTest extends Orchestra\Testbench\TestCase
                 'price' => 10.00,
                 'tax' => 2.10,
                 'subtotal' => 10.0,
-                'options' => new \Gloudemans\Shoppingcart\CartItemOptions,
+                'options' => new CartItemOptions,
             ],
             '370d08585360f5c568b18d1f2e4ca1df' => [
                 'rowId' => '370d08585360f5c568b18d1f2e4ca1df',
@@ -490,7 +511,7 @@ class CartTest extends Orchestra\Testbench\TestCase
                 'price' => 10.00,
                 'tax' => 2.10,
                 'subtotal' => 10.0,
-                'options' => new \Gloudemans\Shoppingcart\CartItemOptions,
+                'options' => new CartItemOptions,
             ]
         ], $content->toArray());
     }
@@ -556,9 +577,9 @@ class CartTest extends Orchestra\Testbench\TestCase
             return $cartItem->name == 'Some item';
         });
 
-        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $cartItem);
+        $this->assertInstanceOf(Collection::class, $cartItem);
         $this->assertCount(1, $cartItem);
-        $this->assertInstanceOf(\Gloudemans\Shoppingcart\CartItem::class, $cartItem->first());
+        $this->assertInstanceOf(CartItem::class, $cartItem->first());
         $this->assertEquals(1, $cartItem->first()->id);
     }
 
@@ -579,7 +600,7 @@ class CartTest extends Orchestra\Testbench\TestCase
             return $cartItem->name == 'Some item';
         });
 
-        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $cartItem);
+        $this->assertInstanceOf(Collection::class, $cartItem);
     }
 
     /** @test */
@@ -597,9 +618,9 @@ class CartTest extends Orchestra\Testbench\TestCase
             return $cartItem->options->color == 'red';
         });
 
-        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $cartItem);
+        $this->assertInstanceOf(Collection::class, $cartItem);
         $this->assertCount(1, $cartItem);
-        $this->assertInstanceOf(\Gloudemans\Shoppingcart\CartItem::class, $cartItem->first());
+        $this->assertInstanceOf(CartItem::class, $cartItem->first());
         $this->assertEquals(1, $cartItem->first()->id);
     }
 
@@ -614,7 +635,7 @@ class CartTest extends Orchestra\Testbench\TestCase
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
-        $this->assertContains('Gloudemans_Shoppingcart_Contracts_Buyable', PHPUnit_Framework_Assert::readAttribute($cartItem, 'associatedModel'));
+        $this->assertContains('Gloudemans_Shoppingcart_Contracts_Buyable', Assert::readAttribute($cartItem, 'associatedModel'));
     }
 
     /** @test */
@@ -630,7 +651,7 @@ class CartTest extends Orchestra\Testbench\TestCase
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
-        $this->assertEquals(get_class($model), PHPUnit_Framework_Assert::readAttribute($cartItem, 'associatedModel'));
+        $this->assertEquals(get_class($model), Assert::readAttribute($cartItem, 'associatedModel'));
     }
 
     /**
@@ -839,7 +860,6 @@ class CartTest extends Orchestra\Testbench\TestCase
     {
         $this->artisan('migrate', [
             '--database' => 'testing',
-            '--realpath' => realpath(__DIR__.'/../database/migrations'),
         ]);
 
         $this->expectsEvents('cart.stored');
@@ -854,7 +874,7 @@ class CartTest extends Orchestra\Testbench\TestCase
 
         $serialized = serialize($cart->content());
 
-        $this->seeInDatabase('shoppingcart', ['identifier' => $identifier, 'instance' => 'default', 'content' => $serialized]);
+        $this->assertDatabaseHas('shoppingcart', ['identifier' => $identifier, 'instance' => 'default', 'content' => $serialized]);
     }
 
     /**
@@ -866,7 +886,6 @@ class CartTest extends Orchestra\Testbench\TestCase
     {
         $this->artisan('migrate', [
             '--database' => 'testing',
-            '--realpath' => realpath(__DIR__.'/../database/migrations'),
         ]);
 
         $this->expectsEvents('cart.stored');
@@ -887,7 +906,6 @@ class CartTest extends Orchestra\Testbench\TestCase
     {
         $this->artisan('migrate', [
             '--database' => 'testing',
-            '--realpath' => realpath(__DIR__.'/../database/migrations'),
         ]);
 
         $this->expectsEvents('cart.restored');
@@ -908,7 +926,7 @@ class CartTest extends Orchestra\Testbench\TestCase
 
         $this->assertItemsInCart(1, $cart);
 
-        $this->dontSeeInDatabase('shoppingcart', ['identifier' => $identifier, 'instance' => 'default']);
+        $this->assertDatabaseMissing('shoppingcart', ['identifier' => $identifier, 'instance' => 'default']);
     }
 
     /** @test */
@@ -916,7 +934,6 @@ class CartTest extends Orchestra\Testbench\TestCase
     {
         $this->artisan('migrate', [
             '--database' => 'testing',
-            '--realpath' => realpath(__DIR__.'/../database/migrations'),
         ]);
 
         $cart = $this->getCart();
@@ -956,15 +973,15 @@ class CartTest extends Orchestra\Testbench\TestCase
     {
         $this->app['config']->set('cart.destroy_on_logout', true);
 
-        $session = Mockery::mock(\Illuminate\Session\SessionManager::class);
+        $session = Mockery::mock(SessionManager::class);
 
         $session->shouldReceive('forget')->once()->with('cart');
 
-        $this->app->instance(\Illuminate\Session\SessionManager::class, $session);
+        $this->app->instance(SessionManager::class, $session);
 
-        $user = Mockery::mock(\Illuminate\Contracts\Auth\Authenticatable::class);
+        $user = Mockery::mock(Authenticatable::class);
 
-        event(new \Illuminate\Auth\Events\Logout($user));
+        event(new Logout($user));
     }
 
     /**
