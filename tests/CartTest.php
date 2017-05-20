@@ -2,20 +2,22 @@
 
 namespace Gloudemans\Tests\Shoppingcart;
 
-use Gloudemans\Shoppingcart\Cart;
-use Gloudemans\Shoppingcart\CartItem;
-use Gloudemans\Shoppingcart\CartItemOptions;
-use Gloudemans\Shoppingcart\Contracts\Buyable;
-use Gloudemans\Shoppingcart\Contracts\Taxable;
-use Gloudemans\Shoppingcart\ShoppingcartServiceProvider;
-use Illuminate\Auth\Events\Logout;
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Session\SessionManager;
-use Illuminate\Support\Collection;
 use Mockery;
 use PHPUnit\Framework\Assert;
+use Gloudemans\Shoppingcart\Cart;
+use Orchestra\Testbench\TestCase;
+use Illuminate\Auth\Events\Logout;
+use Illuminate\Support\Collection;
+use Gloudemans\Shoppingcart\CartItem;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Session\SessionManager;
+use Gloudemans\Shoppingcart\CartItemOptions;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Gloudemans\Shoppingcart\ShoppingcartServiceProvider;
+use Gloudemans\Tests\Shoppingcart\Fixtures\ProductModel;
+use Gloudemans\Tests\Shoppingcart\Fixtures\BuyableProduct;
 
-class CartTest extends \Orchestra\Testbench\TestCase
+class CartTest extends TestCase
 {
     use CartAssertions;
 
@@ -50,6 +52,11 @@ class CartTest extends \Orchestra\Testbench\TestCase
         ]);
     }
 
+    /**
+     * Setup the test environment.
+     *
+     * @return void
+     */
     protected function setUp()
     {
         parent::setUp();
@@ -73,13 +80,9 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock(1, 'First item');
+        $cart->add(new BuyableProduct(1, 'First item'));
 
-        $cart->add($item);
-
-        $item2 = $this->getBuyableMock(2, 'Second item');
-
-        $cart->instance('wishlist')->add($item2);
+        $cart->instance('wishlist')->add(new BuyableProduct(2, 'Second item'));
 
         $this->assertItemsInCart(1, $cart->instance(Cart::DEFAULT_INSTANCE));
         $this->assertItemsInCart(1, $cart->instance('wishlist'));
@@ -88,92 +91,94 @@ class CartTest extends \Orchestra\Testbench\TestCase
     /** @test */
     public function it_can_add_an_item()
     {
-        $this->expectsEvents('cart.added');
+        Event::fake();
 
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock();
-
-        $cart->add($item);
+        $cart->add(new BuyableProduct);
 
         $this->assertEquals(1, $cart->count());
+
+        Event::assertDispatched('cart.added');
     }
 
     /** @test */
     public function it_will_return_the_cartitem_of_the_added_item()
     {
-        $this->expectsEvents('cart.added');
+        Event::fake();
 
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock();
-
-        $cartItem = $cart->add($item);
+        $cartItem = $cart->add(new BuyableProduct);
 
         $this->assertInstanceOf(CartItem::class, $cartItem);
         $this->assertEquals('027c91341fd5cf4d2579b49c4b6a90da', $cartItem->rowId);
+
+        Event::assertDispatched('cart.added');
     }
 
     /** @test */
     public function it_can_add_multiple_buyable_items_at_once()
     {
-        $this->expectsEvents('cart.added');
+        Event::fake();
 
         $cart = $this->getCart();
 
-        $item1 = $this->getBuyableMock();
-        $item2 = $this->getBuyableMock(2);
-
-        $cart->add([$item1, $item2]);
+        $cart->add([new BuyableProduct(1), new BuyableProduct(2)]);
 
         $this->assertEquals(2, $cart->count());
+
+        Event::assertDispatched('cart.added');
     }
 
     /** @test */
     public function it_will_return_an_array_of_cartitems_when_you_add_multiple_items_at_once()
     {
-        $this->expectsEvents('cart.added');
+        Event::fake();
 
         $cart = $this->getCart();
 
-        $item1 = $this->getBuyableMock();
-        $item2 = $this->getBuyableMock(2);
-
-        $cartItems = $cart->add([$item1, $item2]);
+        $cartItems = $cart->add([new BuyableProduct(1), new BuyableProduct(2)]);
 
         $this->assertTrue(is_array($cartItems));
         $this->assertCount(2, $cartItems);
         $this->assertContainsOnlyInstancesOf(CartItem::class, $cartItems);
+
+        Event::assertDispatched('cart.added');
     }
 
     /** @test */
     public function it_can_add_an_item_from_attributes()
     {
-        $this->expectsEvents('cart.added');
+        Event::fake();
 
         $cart = $this->getCart();
 
         $cart->add(1, 'Test item', 1, 10.00);
 
         $this->assertEquals(1, $cart->count());
+
+        Event::assertDispatched('cart.added');
     }
 
     /** @test */
     public function it_can_add_an_item_from_an_array()
     {
-        $this->expectsEvents('cart.added');
+        Event::fake();
 
         $cart = $this->getCart();
 
         $cart->add(['id' => 1, 'name' => 'Test item', 'qty' => 1, 'price' => 10.00]);
 
         $this->assertEquals(1, $cart->count());
+
+        Event::assertDispatched('cart.added');
     }
 
     /** @test */
     public function it_can_add_multiple_array_items_at_once()
     {
-        $this->expectsEvents('cart.added');
+        Event::fake();
 
         $cart = $this->getCart();
 
@@ -183,26 +188,28 @@ class CartTest extends \Orchestra\Testbench\TestCase
         ]);
 
         $this->assertEquals(2, $cart->count());
+
+        Event::assertDispatched('cart.added');
     }
 
     /** @test */
     public function it_can_add_an_item_with_options()
     {
-        $this->expectsEvents('cart.added');
+        Event::fake();
 
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock();
-
         $options = ['size' => 'XL', 'color' => 'red'];
 
-        $cart->add($item, 1, $options);
+        $cart->add(new BuyableProduct, 1, $options);
 
         $cartItem = $cart->get('07d5da5550494c62daf9993cf954303f');
 
         $this->assertInstanceOf(CartItem::class, $cartItem);
         $this->assertEquals('XL', $cartItem->options->size);
         $this->assertEquals('red', $cartItem->options->color);
+
+        Event::assertDispatched('cart.added');
     }
 
     /**
@@ -258,7 +265,7 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock();
+        $item = new BuyableProduct;
 
         $cart->add($item);
         $cart->add($item);
@@ -272,7 +279,7 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock();
+        $item = new BuyableProduct;
 
         $cart->add($item);
         $cart->add($item);
@@ -285,54 +292,52 @@ class CartTest extends \Orchestra\Testbench\TestCase
     /** @test */
     public function it_can_update_the_quantity_of_an_existing_item_in_the_cart()
     {
-        $this->expectsEvents('cart.updated');
+        Event::fake();
 
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock();
-
-        $cart->add($item);
+        $cart->add(new BuyableProduct);
 
         $cart->update('027c91341fd5cf4d2579b49c4b6a90da', 2);
 
         $this->assertItemsInCart(2, $cart);
         $this->assertRowsInCart(1, $cart);
+
+        Event::assertDispatched('cart.updated');
     }
 
     /** @test */
     public function it_can_update_an_existing_item_in_the_cart_from_a_buyable()
     {
-        $this->expectsEvents('cart.updated');
+        Event::fake();
 
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock();
+        $cart->add(new BuyableProduct);
 
-        $cart->add($item);
-
-        $item2 = $this->getBuyableMock(1, 'Different description');
-
-        $cart->update('027c91341fd5cf4d2579b49c4b6a90da', $item2);
+        $cart->update('027c91341fd5cf4d2579b49c4b6a90da', new BuyableProduct(1, 'Different description'));
 
         $this->assertItemsInCart(1, $cart);
         $this->assertEquals('Different description', $cart->get('027c91341fd5cf4d2579b49c4b6a90da')->name);
+
+        Event::assertDispatched('cart.updated');
     }
 
     /** @test */
     public function it_can_update_an_existing_item_in_the_cart_from_an_array()
     {
-        $this->expectsEvents('cart.updated');
+        Event::fake();
 
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock();
-
-        $cart->add($item);
+        $cart->add(new BuyableProduct);
 
         $cart->update('027c91341fd5cf4d2579b49c4b6a90da', ['name' => 'Different description']);
 
         $this->assertItemsInCart(1, $cart);
         $this->assertEquals('Different description', $cart->get('027c91341fd5cf4d2579b49c4b6a90da')->name);
+
+        Event::assertDispatched('cart.updated');
     }
 
     /**
@@ -343,13 +348,9 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock();
+        $cart->add(new BuyableProduct);
 
-        $cart->add($item);
-
-        $item2 = $this->getBuyableMock(1, 'Different description');
-
-        $cart->update('none-existing-rowid', $item2);
+        $cart->update('none-existing-rowid', new BuyableProduct(1, 'Different description'));
     }
 
     /** @test */
@@ -357,9 +358,7 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock();
-
-        $cart->add($item, 1, ['color' => 'red']);
+        $cart->add(new BuyableProduct, 1, ['color' => 'red']);
 
         $cart->update('ea65e0bdcd1967c4b3149e9e780177c0', ['options' => ['color' => 'blue']]);
 
@@ -373,11 +372,8 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item1 = $this->getBuyableMock();
-        $item2 = $this->getBuyableMock();
-
-        $cart->add($item1, 1, ['color' => 'red']);
-        $cart->add($item2, 1, ['color' => 'blue']);
+        $cart->add(new BuyableProduct, 1, ['color' => 'red']);
+        $cart->add(new BuyableProduct, 1, ['color' => 'blue']);
 
         $cart->update('7e70a1e9aaadd18c72921a07aae5d011', ['options' => ['color' => 'red']]);
 
@@ -388,52 +384,52 @@ class CartTest extends \Orchestra\Testbench\TestCase
     /** @test */
     public function it_can_remove_an_item_from_the_cart()
     {
-        $this->expectsEvents('cart.removed');
+        Event::fake();
 
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock();
-
-        $cart->add($item);
+        $cart->add(new BuyableProduct);
 
         $cart->remove('027c91341fd5cf4d2579b49c4b6a90da');
 
         $this->assertItemsInCart(0, $cart);
         $this->assertRowsInCart(0, $cart);
+
+        Event::assertDispatched('cart.removed');
     }
 
     /** @test */
     public function it_will_remove_the_item_if_its_quantity_was_set_to_zero()
     {
-        $this->expectsEvents('cart.removed');
+        Event::fake();
 
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock();
-
-        $cart->add($item);
+        $cart->add(new BuyableProduct);
 
         $cart->update('027c91341fd5cf4d2579b49c4b6a90da', 0);
 
         $this->assertItemsInCart(0, $cart);
         $this->assertRowsInCart(0, $cart);
+
+        Event::assertDispatched('cart.removed');
     }
 
     /** @test */
     public function it_will_remove_the_item_if_its_quantity_was_set_negative()
     {
-        $this->expectsEvents('cart.removed');
+        Event::fake();
 
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock();
-
-        $cart->add($item);
+        $cart->add(new BuyableProduct);
 
         $cart->update('027c91341fd5cf4d2579b49c4b6a90da', -1);
 
         $this->assertItemsInCart(0, $cart);
         $this->assertRowsInCart(0, $cart);
+
+        Event::assertDispatched('cart.removed');
     }
 
     /** @test */
@@ -441,9 +437,7 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock();
-
-        $cart->add($item);
+        $cart->add(new BuyableProduct);
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
@@ -455,11 +449,8 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock();
-        $item2 = $this->getBuyableMock(2);
-
-        $cart->add($item);
-        $cart->add($item2);
+        $cart->add(new BuyableProduct(1));
+        $cart->add(new BuyableProduct(2));
 
         $content = $cart->content();
 
@@ -483,11 +474,8 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock();
-        $item2 = $this->getBuyableMock(2);
-
-        $cart->add($item);
-        $cart->add($item2);
+        $cart->add(new BuyableProduct(1));
+        $cart->add(new BuyableProduct(2));
 
         $content = $cart->content();
 
@@ -521,9 +509,7 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock();
-
-        $cart->add($item);
+        $cart->add(new BuyableProduct);
 
         $this->assertItemsInCart(1, $cart);
 
@@ -537,11 +523,8 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock(1, 'First item', 10.00);
-        $item2 = $this->getBuyableMock(2, 'Second item', 25.00);
-
-        $cart->add($item);
-        $cart->add($item2, 2);
+        $cart->add(new BuyableProduct(1, 'First item', 10.00));
+        $cart->add(new BuyableProduct(2, 'Second item', 25.00), 2);
 
         $this->assertItemsInCart(3, $cart);
         $this->assertEquals(60.00, $cart->subtotal());
@@ -552,11 +535,8 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock(1, 'First item', 1000.00);
-        $item2 = $this->getBuyableMock(2, 'Second item', 2500.00);
-
-        $cart->add($item);
-        $cart->add($item2, 2);
+        $cart->add(new BuyableProduct(1, 'First item', 1000.00));
+        $cart->add(new BuyableProduct(2, 'Second item', 2500.00), 2);
 
         $this->assertItemsInCart(3, $cart);
         $this->assertEquals('6.000,00', $cart->subtotal(2, ',', '.'));
@@ -567,11 +547,8 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock(1, 'Some item');
-        $item2 = $this->getBuyableMock(2, 'Another item');
-
-        $cart->add($item);
-        $cart->add($item2);
+        $cart->add(new BuyableProduct(1, 'Some item'));
+        $cart->add(new BuyableProduct(2, 'Another item'));
 
         $cartItem = $cart->search(function ($cartItem, $rowId) {
             return $cartItem->name == 'Some item';
@@ -588,13 +565,9 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock(1, 'Some item');
-        $item2 = $this->getBuyableMock(2, 'Some item');
-        $item3 = $this->getBuyableMock(3, 'Another item');
-
-        $cart->add($item);
-        $cart->add($item2);
-        $cart->add($item3);
+        $cart->add(new BuyableProduct(1, 'Some item'));
+        $cart->add(new BuyableProduct(2, 'Some item'));
+        $cart->add(new BuyableProduct(3, 'Another item'));
 
         $cartItem = $cart->search(function ($cartItem, $rowId) {
             return $cartItem->name == 'Some item';
@@ -608,11 +581,8 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock(1, 'Some item');
-        $item2 = $this->getBuyableMock(2, 'Another item');
-
-        $cart->add($item, 1, ['color' => 'red']);
-        $cart->add($item2, 1, ['color' => 'blue']);
+        $cart->add(new BuyableProduct(1, 'Some item'), 1, ['color' => 'red']);
+        $cart->add(new BuyableProduct(2, 'Another item'), 1, ['color' => 'blue']);
 
         $cartItem = $cart->search(function ($cartItem, $rowId) {
             return $cartItem->options->color == 'red';
@@ -629,13 +599,11 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock();
-
-        $cart->add($item);
+        $cart->add(new BuyableProduct);
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
-        $this->assertContains('Gloudemans_Shoppingcart_Contracts_Buyable', Assert::readAttribute($cartItem, 'associatedModel'));
+        $this->assertContains(BuyableProduct::class, Assert::readAttribute($cartItem, 'associatedModel'));
     }
 
     /** @test */
@@ -643,15 +611,13 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $model = Mockery::mock('MockModel');
-
         $cart->add(1, 'Test item', 1, 10.00);
 
-        $cart->associate('027c91341fd5cf4d2579b49c4b6a90da', $model);
+        $cart->associate('027c91341fd5cf4d2579b49c4b6a90da', new ProductModel);
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
-        $this->assertEquals(get_class($model), Assert::readAttribute($cartItem, 'associatedModel'));
+        $this->assertEquals(ProductModel::class, Assert::readAttribute($cartItem, 'associatedModel'));
     }
 
     /**
@@ -673,15 +639,13 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $model = new ModelStub;
-
         $cart->add(1, 'Test item', 1, 10.00);
 
-        $cart->associate('027c91341fd5cf4d2579b49c4b6a90da', $model);
+        $cart->associate('027c91341fd5cf4d2579b49c4b6a90da', new ProductModel);
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
-        $this->assertInstanceOf(ModelStub::class, $cartItem->model);
+        $this->assertInstanceOf(ProductModel::class, $cartItem->model);
         $this->assertEquals('Some value', $cartItem->model->someValue);
     }
 
@@ -690,9 +654,7 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock(1, 'Some title', 9.99);
-
-        $cart->add($item, 3);
+        $cart->add(new BuyableProduct(1, 'Some title', 9.99), 3);
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
@@ -704,9 +666,7 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock(1, 'Some title', 500);
-
-        $cart->add($item, 3);
+        $cart->add(new BuyableProduct(1, 'Some title', 500), 3);
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
@@ -718,9 +678,7 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock(1, 'Some title', 10.00);
-
-        $cart->add($item, 1);
+        $cart->add(new BuyableProduct(1, 'Some title', 10.00), 1);
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
@@ -732,9 +690,7 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock(1, 'Some title', 10.00);
-
-        $cart->add($item, 1);
+        $cart->add(new BuyableProduct(1, 'Some title', 10.00), 1);
 
         $cart->setTax('027c91341fd5cf4d2579b49c4b6a90da', 19);
 
@@ -748,9 +704,7 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock(1, 'Some title', 10000.00);
-
-        $cart->add($item, 1);
+        $cart->add(new BuyableProduct(1, 'Some title', 10000.00), 1);
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
@@ -762,11 +716,8 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock(1, 'Some title', 10.00);
-        $item2 = $this->getBuyableMock(2, 'Some title', 20.00);
-
-        $cart->add($item, 1);
-        $cart->add($item2, 2);
+        $cart->add(new BuyableProduct(1, 'Some title', 10.00), 1);
+        $cart->add(new BuyableProduct(2, 'Some title', 20.00), 2);
 
         $this->assertEquals(10.50, $cart->tax);
     }
@@ -776,11 +727,8 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock(1, 'Some title', 1000.00);
-        $item2 = $this->getBuyableMock(2, 'Some title', 2000.00);
-
-        $cart->add($item, 1);
-        $cart->add($item2, 2);
+        $cart->add(new BuyableProduct(1, 'Some title', 1000.00), 1);
+        $cart->add(new BuyableProduct(2, 'Some title', 2000.00), 2);
 
         $this->assertEquals('1.050,00', $cart->tax(2, ',', '.'));
     }
@@ -790,11 +738,8 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock(1, 'Some title', 10.00);
-        $item2 = $this->getBuyableMock(2, 'Some title', 20.00);
-
-        $cart->add($item, 1);
-        $cart->add($item2, 2);
+        $cart->add(new BuyableProduct(1, 'Some title', 10.00), 1);
+        $cart->add(new BuyableProduct(2, 'Some title', 20.00), 2);
 
         $this->assertEquals(50.00, $cart->subtotal);
     }
@@ -804,11 +749,8 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock(1, 'Some title', 1000.00);
-        $item2 = $this->getBuyableMock(2, 'Some title', 2000.00);
-
-        $cart->add($item, 1);
-        $cart->add($item2, 2);
+        $cart->add(new BuyableProduct(1, 'Some title', 1000.00), 1);
+        $cart->add(new BuyableProduct(2, 'Some title', 2000.00), 2);
 
         $this->assertEquals('5000,00', $cart->subtotal(2, ',', ''));
     }
@@ -820,11 +762,8 @@ class CartTest extends \Orchestra\Testbench\TestCase
 
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock(1, 'Some title', 1000.00);
-        $item2 = $this->getBuyableMock(2, 'Some title', 2000.00);
-
-        $cart->add($item, 1);
-        $cart->add($item2, 2);
+        $cart->add(new BuyableProduct(1, 'Some title', 1000.00), 1);
+        $cart->add(new BuyableProduct(2, 'Some title', 2000.00), 2);
 
         $this->assertEquals('5000,00', $cart->subtotal());
         $this->assertEquals('1050,00', $cart->tax());
@@ -841,9 +780,8 @@ class CartTest extends \Orchestra\Testbench\TestCase
         $this->setConfigFormat(2, ',', '');
 
         $cart = $this->getCart();
-        $item = $this->getBuyableMock(1, 'Some title', 2000.00);
 
-        $cart->add($item, 2);
+        $cart->add(new BuyableProduct(1, 'Some title', 2000.00), 2);
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
@@ -862,19 +800,19 @@ class CartTest extends \Orchestra\Testbench\TestCase
             '--database' => 'testing',
         ]);
 
-        $this->expectsEvents('cart.stored');
+        Event::fake();
 
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock();
-
-        $cart->add($item);
+        $cart->add(new BuyableProduct);
 
         $cart->store($identifier = 123);
 
         $serialized = serialize($cart->content());
 
         $this->assertDatabaseHas('shoppingcart', ['identifier' => $identifier, 'instance' => 'default', 'content' => $serialized]);
+
+        Event::assertDispatched('cart.stored');
     }
 
     /**
@@ -888,17 +826,17 @@ class CartTest extends \Orchestra\Testbench\TestCase
             '--database' => 'testing',
         ]);
 
-        $this->expectsEvents('cart.stored');
+        Event::fake();
 
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock();
-
-        $cart->add($item);
+        $cart->add(new BuyableProduct);
 
         $cart->store($identifier = 123);
 
         $cart->store($identifier);
+
+        Event::assertDispatched('cart.stored');
     }
 
     /** @test */
@@ -908,13 +846,11 @@ class CartTest extends \Orchestra\Testbench\TestCase
             '--database' => 'testing',
         ]);
 
-        $this->expectsEvents('cart.restored');
+        Event::fake();
 
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock();
-
-        $cart->add($item);
+        $cart->add(new BuyableProduct);
 
         $cart->store($identifier = 123);
 
@@ -927,6 +863,8 @@ class CartTest extends \Orchestra\Testbench\TestCase
         $this->assertItemsInCart(1, $cart);
 
         $this->assertDatabaseMissing('shoppingcart', ['identifier' => $identifier, 'instance' => 'default']);
+
+        Event::assertDispatched('cart.restored');
     }
 
     /** @test */
@@ -948,9 +886,7 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $cart = $this->getCart();
 
-        $item = $this->getBuyableMock(1, 'First item', 10.00);
-
-        $cart->add($item, 2);
+        $cart->add(new BuyableProduct(1, 'First item', 10.00), 2);
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
@@ -973,11 +909,9 @@ class CartTest extends \Orchestra\Testbench\TestCase
     {
         $this->app['config']->set('cart.destroy_on_logout', true);
 
-        $session = Mockery::mock(SessionManager::class);
-
-        $session->shouldReceive('forget')->once()->with('cart');
-
-        $this->app->instance(SessionManager::class, $session);
+        $this->app->instance(SessionManager::class, Mockery::mock(SessionManager::class, function ($mock) {
+            $mock->shouldReceive('forget')->once()->with('cart');
+        }));
 
         $user = Mockery::mock(Authenticatable::class);
 
@@ -994,36 +928,15 @@ class CartTest extends \Orchestra\Testbench\TestCase
         $session = $this->app->make('session');
         $events = $this->app->make('events');
 
-        $cart = new Cart($session, $events);
-
-        return $cart;
+        return new Cart($session, $events);
     }
 
     /**
-     * Get a mock of a Buyable item.
-     *
-     * @param int    $id
-     * @param string $name
-     * @param float  $price
-     * @return \Mockery\MockInterface
-     */
-    private function getBuyableMock($id = 1, $name = 'Item name', $price = 10.00)
-    {
-        $item = Mockery::mock(Buyable::class)->shouldIgnoreMissing();
-
-        $item->shouldReceive('getBuyableIdentifier')->andReturn($id);
-        $item->shouldReceive('getBuyableDescription')->andReturn($name);
-        $item->shouldReceive('getBuyablePrice')->andReturn($price);
-
-        return $item;
-    }
-
-    /**
-     * Set the config number format
+     * Set the config number format.
      * 
-     * @param $decimals
-     * @param $decimalPoint
-     * @param $thousandSeperator
+     * @param int    $decimals
+     * @param string $decimalPoint
+     * @param string $thousandSeperator
      */
     private function setConfigFormat($decimals, $decimalPoint, $thousandSeperator)
     {
@@ -1031,9 +944,4 @@ class CartTest extends \Orchestra\Testbench\TestCase
         $this->app['config']->set('cart.format.decimal_point', $decimalPoint);
         $this->app['config']->set('cart.format.thousand_seperator', $thousandSeperator);
     }
-}
-
-class ModelStub {
-    public $someValue = 'Some value';
-    public function find($id) { return $this; }
 }
