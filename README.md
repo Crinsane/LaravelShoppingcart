@@ -36,6 +36,7 @@ Look at one of the following topics to learn more about LaravelShoppingcart
 * [Collections](#collections)
 * [Instances](#instances)
 * [Models](#models)
+* [Database](#database)
 * [Exceptions](#exceptions)
 * [Events](#events)
 * [Example](#example)
@@ -322,6 +323,35 @@ foreach(Cart::content() as $row) {
 	echo 'You have ' . $row->qty . ' items of ' . $row->model->name . ' with description: "' . $row->model->description . '" in your cart.';
 }
 ```
+# Database
+- [Config](#configuration)
+- [Save Cart](#save-cart-to-database)
+- [Retrieve Cart](#retrieve-cart-from-database)
+
+### Configuration
+
+To save cart into database, you have to publish `migration` and `config` file.
+
+    php artisan vendor:publish --provider="Gloudemans\Shoppingcart\ShoppingcartServiceProvider"
+    
+This will place a `shoppingcart` table's migration file into `database/migrations` directory and `cart` config file in `config` directory.
+
+    php artisan migrate
+    
+### Save cart to database    
+To store your cart item into database you have to call `store($identifier) ` method.
+
+    Cart::store('username');
+    
+    // To store a cart instance named 'wishlist'
+    Cart::instance('wishlist')->store('username');
+
+### Retrieve cart From database    
+ 
+    Cart::restore('username');
+    
+     // To restore a cart with instance name 'wishlist'
+    Cart::instance('wishlist')->restore('username');
 
 ## Exceptions
 
