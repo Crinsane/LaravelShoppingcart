@@ -323,34 +323,41 @@ foreach(Cart::content() as $row) {
 	echo 'You have ' . $row->qty . ' items of ' . $row->model->name . ' with description: "' . $row->model->description . '" in your cart.';
 }
 ```
-# Database
+## Database
+
 - [Config](#configuration)
-- [Save Cart](#save-cart-to-database)
-- [Retrieve Cart](#retrieve-cart-from-database)
+- [Storing the cart](#save-cart-to-database)
+- [Restoring the cart](#retrieve-cart-from-database)
 
 ### Configuration
+To save cart into the database so you can retrieve it later, the package needs to know which database connection to use and what the name of the table is.
+By default the package will use the default database connection and use a table named `shoppingcart`.
+If you want to change these options, you'll have to publish the `config` file.
 
-To save cart into database, you have to publish `migration` and `config` file.
+    php artisan vendor:publish --provider="Gloudemans\Shoppingcart\ShoppingcartServiceProvider" --tag="config"
 
-    php artisan vendor:publish --provider="Gloudemans\Shoppingcart\ShoppingcartServiceProvider"
+This will give you a `cart.php` config file in which you can make the changes.
+
+To make your life easy, the package also includes a ready to use `migration` which you can publish by running:
+
+    php artisan vendor:publish --provider="Gloudemans\Shoppingcart\ShoppingcartServiceProvider" --tag="migrations"
     
-This will place a `shoppingcart` table's migration file into `database/migrations` directory and `cart` config file in `config` directory.
+This will place a `shoppingcart` table's migration file into `database/migrations` directory. Now all you have to do is run `php artisan migrate` to migrate your database.
 
-    php artisan migrate
-    
-### Save cart to database    
-To store your cart item into database you have to call `store($identifier) ` method.
+### Storing the cart    
+To store your cart instance into the database, you have to call the `store($identifier) ` method. Where `$identifier` is a random key, for instance the id or username of the user.
 
     Cart::store('username');
     
     // To store a cart instance named 'wishlist'
     Cart::instance('wishlist')->store('username');
 
-### Retrieve cart From database    
+### Restoring the cart
+If you want to retrieve the cart from the database and restore it, all you have to do is call the  `restore($identifier)` where `$identifier` is the key you specified for the `store` method.
  
     Cart::restore('username');
     
-     // To restore a cart with instance name 'wishlist'
+    // To restore a cart instance named 'wishlist'
     Cart::instance('wishlist')->restore('username');
 
 ## Exceptions
