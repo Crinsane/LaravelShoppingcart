@@ -66,7 +66,6 @@ class CartTest extends TestCase
         });
     }
 
-
     /** @test */
     public function it_has_a_default_instance()
     {
@@ -489,7 +488,7 @@ class CartTest extends TestCase
                 'price' => 10.00,
                 'tax' => 2.10,
                 'subtotal' => 10.0,
-                'options' => new CartItemOptions,
+                'options' => [],
             ],
             '370d08585360f5c568b18d1f2e4ca1df' => [
                 'rowId' => '370d08585360f5c568b18d1f2e4ca1df',
@@ -499,7 +498,7 @@ class CartTest extends TestCase
                 'price' => 10.00,
                 'tax' => 2.10,
                 'subtotal' => 10.0,
-                'options' => new CartItemOptions,
+                'options' => [],
             ]
         ], $content->toArray());
     }
