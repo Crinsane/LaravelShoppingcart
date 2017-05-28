@@ -229,7 +229,7 @@ To find an item in the cart, you can use the `search()` method.
 
 **This method was changed on version 2**
 
-Behind the scenes, the method simply uses the search method of the Laravel Collection class. This means you must pass it a Closure in which you'll specify you search terms.
+Behind the scenes, the method simply uses the filter method of the Laravel Collection class. This means you must pass it a Closure in which you'll specify you search terms.
 
 If you for instance want to find all items with an id of 1:
 
