@@ -212,8 +212,6 @@ class CartItem implements Arrayable, Jsonable
         $this->price    = array_get($attributes, 'price', $this->price);
         $this->priceTax = $this->price + $this->tax;
         $this->options  = new CartItemOptions(array_get($attributes, 'options', $this->options));
-
-        $this->rowId = $this->generateRowId($this->id, $this->options->all());
     }
 
     /**
