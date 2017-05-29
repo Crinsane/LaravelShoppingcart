@@ -619,6 +619,24 @@ class CartTest extends TestCase
         $this->assertEquals(ProductModel::class, Assert::readAttribute($cartItem, 'associatedModel'));
     }
 
+    /** @test */
+    public function it_can_cache_model()
+    {
+        $cart = $this->getCart();
+        $item = $cart->add("1", "Test", 1, 10);
+
+        $cart->associate($item->rowId, new ProductModel());
+
+        \PHPUnit_Framework_Assert::assertInstanceOf(ProductModel::class, $item->model);
+
+        // trying to change value of cached model
+        $testValue = 100;
+        $item->model->test = $testValue;
+
+        // assert that access to model attribute doesn't reset model
+        \PHPUnit_Framework_Assert::assertSame($testValue, $item->model->test);
+    }
+
     /**
      * @test
      * @expectedException \Gloudemans\Shoppingcart\Exceptions\UnknownModelException
