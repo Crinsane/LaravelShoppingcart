@@ -5,7 +5,12 @@ namespace Gloudemans\Shoppingcart;
 use Illuminate\Contracts\Support\Arrayable;
 use Gloudemans\Shoppingcart\Contracts\Buyable;
 use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property Model model Model associated with CartItem
+ * @package Gloudemans\Shoppingcart
+ */
 class CartItem implements Arrayable, Jsonable
 {
     /**
@@ -14,6 +19,12 @@ class CartItem implements Arrayable, Jsonable
      * @var string
      */
     public $rowId;
+
+    /**
+     * Cached model
+     * @var Model
+     */
+    protected $modelCached = null;
 
     /**
      * The ID of the cart item.
@@ -275,7 +286,13 @@ class CartItem implements Arrayable, Jsonable
         }
 
         if($attribute === 'model') {
-            return with(new $this->associatedModel)->find($this->id);
+
+            if(!$this->modelCached) {
+                // we get it from database and save in cache
+                $this->modelCached = with(new $this->associatedModel)->find($this->id);
+            }
+
+            return $this->modelCached;
         }
 
         return null;
