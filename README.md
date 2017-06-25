@@ -172,7 +172,7 @@ Cart::total();
 The method will automatically format the result, which you can tweak using the three optional parameters
 
 ```php
-Cart::total($decimals, $decimalSeperator, $thousandSeperator);
+Cart::total($decimals, $decimalSeparator, $thousandSeparator);
 ```
 
 You can set the default number format in the config file.
@@ -190,7 +190,7 @@ Cart::tax();
 The method will automatically format the result, which you can tweak using the three optional parameters
 
 ```php
-Cart::tax($decimals, $decimalSeperator, $thousandSeperator);
+Cart::tax($decimals, $decimalSeparator, $thousandSeparator);
 ```
 
 You can set the default number format in the config file.
@@ -208,7 +208,7 @@ Cart::subtotal();
 The method will automatically format the result, which you can tweak using the three optional parameters
 
 ```php
-Cart::subtotal($decimals, $decimalSeperator, $thousandSeperator);
+Cart::subtotal($decimals, $decimalSeparator, $thousandSeparator);
 ```
 
 You can set the default number format in the config file.
