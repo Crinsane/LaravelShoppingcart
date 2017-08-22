@@ -274,7 +274,7 @@ class CartItem implements Arrayable, Jsonable
             return $this->tax * $this->qty;
         }
 
-        if($attribute === 'model') {
+        if($attribute === 'model' && isset($this->associatedModel)) {
             return with(new $this->associatedModel)->find($this->id);
         }
 
