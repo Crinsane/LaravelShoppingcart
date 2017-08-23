@@ -767,10 +767,22 @@ class CartTest extends TestCase
         $this->assertEquals('5000,00', $cart->subtotal());
         $this->assertEquals('1050,00', $cart->tax());
         $this->assertEquals('6050,00', $cart->total());
+    }
 
-        $this->assertEquals('5000,00', $cart->subtotal);
-        $this->assertEquals('1050,00', $cart->tax);
-        $this->assertEquals('6050,00', $cart->total);
+
+    /** @test */
+    public function it_can_return_cart_float_numbers()
+    {
+        $this->setConfigFormat(2, ',', '');
+
+        $cart = $this->getCart();
+
+        $cart->add(new BuyableProduct(1, 'Some title', 1000.00), 1);
+        $cart->add(new BuyableProduct(2, 'Some title', 2000.00), 2);
+
+        $this->assertEquals(5000.00, $cart->subtotal);
+        $this->assertEquals(1050.00, $cart->tax);
+        $this->assertEquals(6050.00, $cart->total);
     }
 
     /** @test */
