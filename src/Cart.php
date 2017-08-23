@@ -253,7 +253,7 @@ class Cart
     }
 
     /**
-     * Get the formatted  subtotal (total - tax) of the items in the cart.
+     * Get the formatted subtotal (total - tax) of the items in the cart.
      *
      * @param int    $decimals
      * @param string $decimalPoint
@@ -416,7 +416,6 @@ class Cart
             return $subtotal;
         }
 
-        return null;
         return null;
     }
 
