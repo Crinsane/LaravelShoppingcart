@@ -32,5 +32,15 @@
     "suggest": {
         "gloudemans/notify": "Simple flash notifications for Laravel"
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "stable",
+    "extra": {
+      "laravel": {
+        "providers": [
+          "Gloudemans\\Shoppingcart\\ShoppingcartServiceProvider"
+        ],
+        "aliases": {
+          "Cart": "Gloudemans\\Shoppingcart\\Facades\\Cart"
+        }
+      }
+    }
 }
