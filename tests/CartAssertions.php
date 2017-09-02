@@ -3,7 +3,7 @@
 namespace Gloudemans\Tests\Shoppingcart;
 
 use Gloudemans\Shoppingcart\Cart;
-use PHPUnit_Framework_Assert as PHPUnit;
+use PHPUnit\Framework\Assert as PHPUnit;
 
 trait CartAssertions
 {
