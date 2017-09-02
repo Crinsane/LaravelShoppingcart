@@ -11,7 +11,6 @@ use Illuminate\Support\Collection;
 use Gloudemans\Shoppingcart\CartItem;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Session\SessionManager;
-use Gloudemans\Shoppingcart\CartItemOptions;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Gloudemans\Shoppingcart\ShoppingcartServiceProvider;
 use Gloudemans\Tests\Shoppingcart\Fixtures\ProductModel;
