@@ -55,14 +55,14 @@ class CartItem implements Arrayable, Jsonable
      *
      * @var string|null
      */
-    private $associatedModel = null;
+    protected $associatedModel = null;
 
     /**
      * The tax rate for the cart item.
      *
      * @var int|float
      */
-    private $taxRate = 0;
+    protected $taxRate = 0;
 
     /**
      * CartItem constructor.
@@ -373,7 +373,7 @@ class CartItem implements Arrayable, Jsonable
      * @param string $thousandSeperator
      * @return string
      */
-    private function numberFormat($value, $decimals, $decimalPoint, $thousandSeperator)
+    protected function numberFormat($value, $decimals, $decimalPoint, $thousandSeperator)
     {
         if (is_null($decimals)){
             $decimals = is_null(config('cart.format.decimals')) ? 2 : config('cart.format.decimals');
