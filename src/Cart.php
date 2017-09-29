@@ -239,7 +239,7 @@ class Cart
         $content = $this->getContent();
 
         $total = $content->reduce(function ($total, CartItem $cartItem) {
-            return $total + ($cartItem->qty * $cartItem->priceTax);
+            return $total + ($cartItem->qty * $cartItem->priceTax) + $cartItem->shipping;
         }, 0);
 
         return $this->numberFormat($total, $decimals, $decimalPoint, $thousandSeperator);
@@ -281,6 +281,26 @@ class Cart
         }, 0);
 
         return $this->numberFormat($subTotal, $decimals, $decimalPoint, $thousandSeperator);
+    }
+
+    /**
+     * Get the shipping costs.
+     *
+     * @param int    $decimals
+     * @param string $decimalPoint
+     * @param string $thousandSeperator
+     * @return float
+     */
+    public function shipping($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+    {
+        $content = $this->getContent();
+
+        $shipping = $content->reduce(
+            function ($shipping, CartItem $cartItem) {
+                return $shipping;
+            }, 0);
+
+        return $this->numberFormat($shipping, $decimals, $decimalPoint, $thousandSeperator);
     }
 
     /**
@@ -332,6 +352,26 @@ class Cart
         $cartItem = $this->get($rowId);
 
         $cartItem->setTaxRate($taxRate);
+
+        $content = $this->getContent();
+
+        $content->put($cartItem->rowId, $cartItem);
+
+        $this->session->put($this->instance, $content);
+    }
+
+    /**
+     * Set the shipping for the cart item with the given rowId.
+     *
+     * @param string    $rowId
+     * @param int|float $shipping
+     * @return void
+     */
+    public function setShipping($rowId, $shipping)
+    {
+        $cartItem = $this->get($rowId);
+
+        $cartItem->setShipping($shipping);
 
         $content = $this->getContent();
 
@@ -401,7 +441,7 @@ class Cart
     }
 
     /**
-     * Magic method to make accessing the total, tax and subtotal properties possible.
+     * Magic method to make accessing the total, tax, shipping and subtotal properties possible.
      *
      * @param string $attribute
      * @return float|null
@@ -418,6 +458,10 @@ class Cart
 
         if($attribute === 'subtotal') {
             return $this->subtotal();
+        }
+
+        if($attribute === 'shipping') {
+            return $this->shipping();
         }
 
         return null;
@@ -462,6 +506,9 @@ class Cart
         }
 
         $cartItem->setTaxRate(config('cart.tax'));
+        $cartItem->setShipping(config('cart.shipping'));
+
+        $this->shipping();
 
         return $cartItem;
     }
