@@ -442,3 +442,6 @@ Cart::add('1239ad0', 'Product 2', 2, 5.95, ['size' => 'large']);
    	</tfoot>
 </table>
 ```
+
+## Updated classes to allow override 
+All private methods are now setup to allow override ability
