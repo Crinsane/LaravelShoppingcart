@@ -64,12 +64,6 @@ class CartItem implements Arrayable, Jsonable
      */
     protected $taxRate = 0;
 
-    /**
-     * The shipping costs for the cart items.
-     *
-     * @var int|float
-     */
-    protected $shipping = 0;
 
     /**
      * CartItem constructor.
@@ -164,19 +158,6 @@ class CartItem implements Arrayable, Jsonable
     {
         return $this->numberFormat($this->tax, $decimals, $decimalPoint, $thousandSeperator);
     }
-
-    /**
-     * Returns the formatted shipping.
-     *
-     * @param int    $decimals
-     * @param string $decimalPoint
-     * @param string $thousandSeperator
-     * @return string
-     */
-    public function shipping($decimals = null, $decimalPoint = null, $thousandSeperator = null)
-    {
-        return $this->numberFormat($this->shipping, $decimals, $decimalPoint, $thousandSeperator);
-    }
     
     /**
      * Returns the formatted tax.
@@ -263,19 +244,6 @@ class CartItem implements Arrayable, Jsonable
     }
 
     /**
-     * Set the shipping.
-     *
-     * @param int|float $shipping
-     * @return \Gloudemans\Shoppingcart\CartItem
-     */
-    public function setShipping($shipping)
-    {
-        $this->shipping = $shipping;
-
-        return $this;
-    }
-
-    /**
      * Get an attribute from the cart item or get the associated model.
      *
      * @param string $attribute
@@ -292,7 +260,7 @@ class CartItem implements Arrayable, Jsonable
         }
         
         if($attribute === 'subtotal') {
-            return $this->qty * $this->price;
+            return ($this->qty * $this->price);
         }
         
         if($attribute === 'total') {
@@ -303,10 +271,6 @@ class CartItem implements Arrayable, Jsonable
             return $this->price * ($this->taxRate / 100);
         }
 
-        if($attribute === 'shipping') {
-            return $this->shipping;
-        }
-        
         if($attribute === 'taxTotal') {
             return $this->tax * $this->qty;
         }
@@ -386,7 +350,6 @@ class CartItem implements Arrayable, Jsonable
             'price'    => $this->price,
             'options'  => $this->options->toArray(),
             'tax'      => $this->tax,
-            'shipping' => $this->shipping,
             'subtotal' => $this->subtotal
         ];
     }
