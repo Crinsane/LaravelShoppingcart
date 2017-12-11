@@ -64,6 +64,12 @@ class CartItem implements Arrayable, Jsonable
      */
     private $taxRate = 0;
 
+
+    private $taxRateVar = 0;
+    private $taxRateUpdate = 0;
+    private $taxSetMax = 0;
+    public $stop_price;
+
     /**
      * CartItem constructor.
      *
@@ -86,7 +92,7 @@ class CartItem implements Arrayable, Jsonable
 
         $this->id       = $id;
         $this->name     = $name;
-        $this->price    = floatval($price);
+        $this->price    = floatval($price+($price*0.25));
         $this->options  = new CartItemOptions($options);
         $this->rowId = $this->generateRowId($id, $options);
     }
@@ -129,6 +135,11 @@ class CartItem implements Arrayable, Jsonable
     public function subtotal($decimals = null, $decimalPoint = null, $thousandSeperator = null)
     {
         return $this->numberFormat($this->subtotal, $decimals, $decimalPoint, $thousandSeperator);
+    }
+
+    public function discount($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+    {
+        return $this->numberFormat($this->discount, $decimals, $decimalPoint, $thousandSeperator);
     }
     
     /**
@@ -242,6 +253,13 @@ class CartItem implements Arrayable, Jsonable
         return $this;
     }
 
+    public function TaxSetMax($taxRate)
+    {
+        $this->taxSetMax = $taxRate;
+        
+        return $this;
+    }
+
     /**
      * Get an attribute from the cart item or get the associated model.
      *
@@ -250,6 +268,8 @@ class CartItem implements Arrayable, Jsonable
      */
     public function __get($attribute)
     {
+        
+
         if(property_exists($this, $attribute)) {
             return $this->{$attribute};
         }
@@ -261,13 +281,42 @@ class CartItem implements Arrayable, Jsonable
         if($attribute === 'subtotal') {
             return $this->qty * $this->price;
         }
+
+        if($attribute === 'discount') {
+            //Скидки
+            $maxTaxTotal = -26; //Скидки не могут превышать
+            if($this->options->stop_price == 1){
+                $this->taxRate = -20;
+                return -20; 
+            }
+            if($this->taxRate < $maxTaxTotal){
+                return $this->taxRate;
+            }else{
+            if(empty($this->taxSetMax)){$this->taxSetMax = 0;}
+            if($this->taxRate == -15){$this->taxRate = -20;}
+            if($this->taxSetMax == 0){
+                $this->taxRate = $this->taxRate - $this->taxRateVar;
+                $this->taxRateVar = $this->taxSetMax;
+                $this->taxRateUpdate = $this->taxRate; 
+                return $this->taxRate;
+            }else{
+                if(!$this->taxRateVar || ($this->taxRateUpdate != $this->taxRate)){
+                $this->taxRateVar = $this->taxSetMax;
+                $this->taxRate = $this->taxRate + $this->taxRateVar;
+                $this->taxRateUpdate = $this->taxRate; 
+                }
+                return $this->taxRate;
+            }
+        }
+           // return $this->taxSetMax;  
+        }
         
         if($attribute === 'total') {
             return $this->qty * ($this->priceTax);
         }
 
         if($attribute === 'tax') {
-            return $this->price * ($this->taxRate / 100);
+            return ($this->price) * ($this->taxRate / 100);
         }
         
         if($attribute === 'taxTotal') {
@@ -349,7 +398,8 @@ class CartItem implements Arrayable, Jsonable
             'price'    => $this->price,
             'options'  => $this->options->toArray(),
             'tax'      => $this->tax,
-            'subtotal' => $this->subtotal
+            'subtotal' => $this->subtotal,
+            'discount' => $this->discount
         ];
     }
 
