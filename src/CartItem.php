@@ -440,3 +440,4 @@ class CartItem implements Arrayable, Jsonable
         return number_format($value, $decimals, $decimalPoint, $thousandSeperator);
     }
 }
+
