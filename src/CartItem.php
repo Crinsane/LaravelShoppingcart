@@ -92,7 +92,7 @@ class CartItem implements Arrayable, Jsonable
 
         $this->id       = $id;
         $this->name     = $name;
-        $this->price    = floatval($price+($price*0.25));
+        $this->price    = floatval($price);
         $this->options  = new CartItemOptions($options);
         $this->rowId = $this->generateRowId($id, $options);
     }
@@ -286,8 +286,8 @@ class CartItem implements Arrayable, Jsonable
             //Скидки
             $maxTaxTotal = -26; //Скидки не могут превышать
             if($this->options->stop_price == 1){
-                $this->taxRate = -20;
-                return -20; 
+                $this->taxRate = -0;
+                return -0; 
             }
             if($this->taxRate < $maxTaxTotal){
                 return $this->taxRate;
@@ -440,4 +440,3 @@ class CartItem implements Arrayable, Jsonable
         return number_format($value, $decimals, $decimalPoint, $thousandSeperator);
     }
 }
-
