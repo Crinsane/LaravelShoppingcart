@@ -378,11 +378,11 @@ class Cart
         $stored = $this->getConnection()->table($this->getTableName())
             ->where('identifier', $identifier)->first();
 
-        $storedContent = unserialize($stored->content);
+        $storedContent = unserialize(data_get($stored, 'content'));
 
         $currentInstance = $this->currentInstance();
 
-        $this->instance($stored->instance);
+        $this->instance(data_get($stored, 'instance'));
 
         $content = $this->getContent();
 
