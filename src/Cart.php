@@ -246,6 +246,25 @@ class Cart
     }
 
     /**
+     * Get the total weight of the items in the cart.
+     *
+     * @param int    $decimals
+     * @param string $decimalPoint
+     * @param string $thousandSeperator
+     * @return string
+     */
+    public function weight($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+    {
+        $content = $this->getContent();
+
+        $total = $content->reduce(function ($total, CartItem $cartItem) {
+            return $total + ($cartItem->qty * $cartItem->weight);
+        }, 0);
+
+        return $this->numberFormat($total, $decimals, $decimalPoint, $thousandSeperator);
+    }
+
+    /**
      * Get the total tax of the items in the cart.
      *
      * @param int    $decimals

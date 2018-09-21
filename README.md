@@ -68,7 +68,7 @@ Cart::add('293ad', 'Product 1', 1, 9.99, ['size' => 'large']);
 Maybe you prefer to add the item using an array? As long as the array contains the required keys, you can pass it to the method. The options key is optional.
 
 ```php
-Cart::add(['id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 9.99, 'options' => ['size' => 'large']]);
+Cart::add(['id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 9.99, weight => 1.45, 'options' => ['size' => 'large']]);
 ```
 
 New in version 2 of the package is the possibility to work with the `Buyable` interface. The way this works is that you have a model implement the `Buyable` interface, which will make you implement a few methods so the package knows how to get the id, name and price from your model. 
@@ -91,8 +91,8 @@ You can just pass the `add()` method an array of arrays, or an array of Buyables
 
 ```php
 Cart::add([
-  ['id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 10.00],
-  ['id' => '4832k', 'name' => 'Product 2', 'qty' => 1, 'price' => 10.00, 'options' => ['size' => 'large']]
+  ['id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 10.00, weight => 1.45 ],
+  ['id' => '4832k', 'name' => 'Product 2', 'qty' => 1, 'price' => 10.00, weight => 1.45, 'options' => ['size' => 'large']]
 ]);
 
 Cart::add([$product1, $product2]);
@@ -180,6 +180,24 @@ Cart::total($decimals, $decimalSeperator, $thousandSeperator);
 You can set the default number format in the config file.
 
 **If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the total property `$cart->total`**
+
+### Cart::weight()
+
+The `weight()` method can be used to get the weight total of all items in the cart, given there weight and quantity.
+
+```php
+Cart::weight();
+```
+
+The method will automatically format the result, which you can tweak using the three optional parameters
+
+```php
+Cart::weight($decimals, $decimalSeperator, $thousandSeperator);
+```
+
+You can set the default number format in the config file.
+
+**If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the total property `$cart->weight`**
 
 ### Cart::tax()
 
@@ -273,12 +291,12 @@ If you want to switch instances, you just call `Cart::instance('otherInstance')`
 So a little example:
 
 ```php
-Cart::instance('shopping')->add('192ao12', 'Product 1', 1, 9.99);
+Cart::instance('shopping')->add('192ao12', 'Product 1', 1, 9.99, 1.45);
 
 // Get the content of the 'shopping' cart
 Cart::content();
 
-Cart::instance('wishlist')->add('sdjk922', 'Product 2', 1, 19.95, ['size' => 'medium']);
+Cart::instance('wishlist')->add('sdjk922', 'Product 2', 1, 19.95, 1.45, ['size' => 'medium']);
 
 // Get the content of the 'wishlist' cart
 Cart::content();
@@ -309,7 +327,7 @@ Here is an example:
 ```php
 
 // First we'll add the item to the cart.
-$cartItem = Cart::add('293ad', 'Product 1', 1, 9.99, ['size' => 'large']);
+$cartItem = Cart::add('293ad', 'Product 1', 1, 9.99, 1.45, ['size' => 'large']);
 
 // Next we associate a model with the item.
 Cart::associate($cartItem->rowId, 'Product');
@@ -318,7 +336,7 @@ Cart::associate($cartItem->rowId, 'Product');
 $cartItem->associate('Product');
 
 // You can even make it a one-liner
-Cart::add('293ad', 'Product 1', 1, 9.99, ['size' => 'large'])->associate('Product');
+Cart::add('293ad', 'Product 1', 1, 9.99, 1.45, ['size' => 'large'])->associate('Product');
 
 // Now, when iterating over the content of the cart, you can access the model.
 foreach(Cart::content() as $row) {
