@@ -5,7 +5,7 @@
 [![Latest Unstable Version](https://poser.pugx.org/gloudemans/shoppingcart/v/unstable)](https://packagist.org/packages/gloudemans/shoppingcart)
 [![License](https://poser.pugx.org/gloudemans/shoppingcart/license)](https://packagist.org/packages/gloudemans/shoppingcart)
 
-A simple shoppingcart implementation for Laravel.
+A simple shoppingcart implementation for Laravel by gloudemans, updated to work with laravel 5.7. This repository and composer package will be removed when gloudemans decides to update the original repository.
 
 ## Installation
 
