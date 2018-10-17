@@ -95,7 +95,9 @@ class Cart
         }
 
         $cartItem = $this->createCartItem($id, $name, $qty, $price, $options);
-
+        
+        $cartItem->setTaxRate( session('tax_rate', 0) );
+        
         $content = $this->getContent();
 
         if ($content->has($cartItem->rowId)) {
