@@ -3,6 +3,7 @@
 namespace Gloudemans\Shoppingcart;
 
 use Closure;
+use \App\Custom\Zipcode\Zipcode;
 use Illuminate\Support\Collection;
 use Illuminate\Session\SessionManager;
 use Illuminate\Database\DatabaseManager;
@@ -96,11 +97,18 @@ class Cart
 
         $cartItem = $this->createCartItem($id, $name, $qty, $price, $options);
         
+        if( session('zipcode') )
+        {
+            $zipcode = Zipcode::whereName( session('zipcode') )->first();
+            session(['tax_rate' => $zipcode->tax_rate]);
+        }
+
         $cartItem->setTaxRate( session('tax_rate', 0) );
         
         $content = $this->getContent();
 
-        if ($content->has($cartItem->rowId)) {
+        if ($content->has($cartItem->rowId)) 
+        {
             $cartItem->qty += $content->get($cartItem->rowId)->qty;
         }
 
