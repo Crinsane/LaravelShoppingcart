@@ -21,21 +21,21 @@ class Cart
      *
      * @var \Illuminate\Session\SessionManager
      */
-    private $session;
+    protected $session;
 
     /**
      * Instance of the event dispatcher.
      * 
      * @var \Illuminate\Contracts\Events\Dispatcher
      */
-    private $events;
+    protected $events;
 
     /**
      * Holds the current cart instance.
      *
      * @var string
      */
-    private $instance;
+    protected $instance;
 
     /**
      * Cart constructor.
@@ -47,7 +47,6 @@ class Cart
     {
         $this->session = $session;
         $this->events = $events;
-
         $this->instance(self::DEFAULT_INSTANCE);
     }
 
@@ -60,9 +59,7 @@ class Cart
     public function instance($instance = null)
     {
         $instance = $instance ?: self::DEFAULT_INSTANCE;
-
         $this->instance = sprintf('%s.%s', 'cart', $instance);
-
         return $this;
     }
 
@@ -95,7 +92,7 @@ class Cart
         }
 
         $cartItem = $this->createCartItem($id, $name, $qty, $price, $options);
-        
+
         $content = $this->getContent();
 
         if ($content->has($cartItem->rowId)) {
@@ -447,7 +444,7 @@ class Cart
      * @param array     $options
      * @return \Gloudemans\Shoppingcart\CartItem
      */
-    private function createCartItem($id, $name, $qty, $price, array $options)
+    protected function createCartItem($id, $name, $qty, $price, array $options)
     {
         if ($id instanceof Buyable) {
             $cartItem = CartItem::fromBuyable($id, $qty ?: []);
@@ -475,7 +472,7 @@ class Cart
      * @param mixed $item
      * @return bool
      */
-    private function isMulti($item)
+    protected function isMulti($item)
     {
         if ( ! is_array($item)) return false;
 
@@ -486,7 +483,7 @@ class Cart
      * @param $identifier
      * @return bool
      */
-    private function storedCartWithIdentifierExists($identifier)
+    protected function storedCartWithIdentifierExists($identifier)
     {
         return $this->getConnection()->table($this->getTableName())->where('identifier', $identifier)->exists();
     }
@@ -496,7 +493,7 @@ class Cart
      *
      * @return \Illuminate\Database\Connection
      */
-    private function getConnection()
+    protected function getConnection()
     {
         $connectionName = $this->getConnectionName();
 
@@ -508,7 +505,7 @@ class Cart
      *
      * @return string
      */
-    private function getTableName()
+    protected function getTableName()
     {
         return config('cart.database.table', 'shoppingcart');
     }
@@ -518,7 +515,7 @@ class Cart
      *
      * @return string
      */
-    private function getConnectionName()
+    protected function getConnectionName()
     {
         $connection = config('cart.database.connection');
 
@@ -534,7 +531,7 @@ class Cart
      * @param $thousandSeperator
      * @return string
      */
-    private function numberFormat($value, $decimals, $decimalPoint, $thousandSeperator)
+    protected function numberFormat($value, $decimals, $decimalPoint, $thousandSeperator)
     {
         if(is_null($decimals)){
             $decimals = is_null(config('cart.format.decimals')) ? 2 : config('cart.format.decimals');
