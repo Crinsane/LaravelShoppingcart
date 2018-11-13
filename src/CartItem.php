@@ -65,6 +65,13 @@ class CartItem implements Arrayable, Jsonable
     private $taxRate = 0;
 
     /**
+     * Is item saved for later.
+     *
+     * @var boolean
+     */
+    private $isSaved = false;
+
+    /**
      * CartItem constructor.
      *
      * @param int|string $id
@@ -243,6 +250,19 @@ class CartItem implements Arrayable, Jsonable
     }
 
     /**
+     * Set saved state.
+     *
+     * @param bool $bool
+     * @return \Gloudemans\Shoppingcart\CartItem
+     */
+    public function setSaved($bool)
+    {
+        $this->isSaved = $bool;
+
+        return $this;
+    }
+
+    /**
      * Get an attribute from the cart item or get the associated model.
      *
      * @param string $attribute
@@ -349,6 +369,7 @@ class CartItem implements Arrayable, Jsonable
             'price'    => $this->price,
             'options'  => $this->options->toArray(),
             'tax'      => $this->tax,
+            'isSaved'      => $this->isSaved,
             'subtotal' => $this->subtotal
         ];
     }
