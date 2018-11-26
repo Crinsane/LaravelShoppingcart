@@ -1,6 +1,6 @@
 ## LaravelShoppingcart
 [![Build Status](https://travis-ci.org/hardevine/LaravelShoppingcart.png?branch=master)](https://travis-ci.org/hardevine/LaravelShoppingcart)
-[![Total Downloads](https://poser.pugx.org/gloudemans/shoppingcart/downloads.png)](https://packagist.org/packages/gloudemans/shoppingcart)
+[![Total Downloads](https://poser.pugx.org/hardevine/shoppingcart/downloads.png)](https://packagist.org/packages/hardevine/shoppingcart)
 [![Latest Stable Version](https://poser.pugx.org/gloudemans/shoppingcart/v/stable)](https://packagist.org/packages/gloudemans/shoppingcart)
 [![Latest Unstable Version](https://poser.pugx.org/gloudemans/shoppingcart/v/unstable)](https://packagist.org/packages/gloudemans/shoppingcart)
 [![License](https://poser.pugx.org/gloudemans/shoppingcart/license)](https://packagist.org/packages/gloudemans/shoppingcart)
