@@ -74,6 +74,10 @@ Cart::add(['id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 9.99, 
 New in version 2 of the package is the possibility to work with the [Buyable](#buyable) interface. The way this works is that you have a model implement the `Buyable` interface, which will make you implement a few methods so the package knows how to get the id, name and price from your model. 
 This way you can just pass the `add()` method a model and the quantity and it will automatically add it to the cart. 
 
+The path to the `Buyable` interface is:
+
+    Gloudemans\Shoppingcart\Contracts\Buyable;
+
 **As an added bonus it will automatically associate the model with the CartItem**
 
 ```php
