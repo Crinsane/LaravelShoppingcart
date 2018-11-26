@@ -487,6 +487,7 @@ class CartTest extends TestCase
                 'price' => 10.00,
                 'tax' => 2.10,
                 'subtotal' => 10.0,
+                'isSaved' => false,
                 'options' => [],
             ],
             '370d08585360f5c568b18d1f2e4ca1df' => [
@@ -497,6 +498,7 @@ class CartTest extends TestCase
                 'price' => 10.00,
                 'tax' => 2.10,
                 'subtotal' => 10.0,
+                'isSaved' => false,
                 'options' => [],
             ]
         ], $content->toArray());
