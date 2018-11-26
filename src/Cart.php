@@ -349,10 +349,13 @@ class Cart
     public function store($identifier)
     {
         $content = $this->getContent();
+        
+        
+        $this->getConnection()
+             ->table($this->getTableName())
+             ->where('identifier', $identifier)
+             ->delete();
 
-        if ($this->storedCartWithIdentifierExists($identifier)) {
-            throw new CartAlreadyStoredException("A cart with identifier {$identifier} was already stored.");
-        }
 
         $this->getConnection()->table($this->getTableName())->insert([
             'identifier' => $identifier,
