@@ -1,6 +1,6 @@
 {
-  "name": "tvercruysse/shoppingcart",
-  "description": "Laravel Shoppingcart",
+  "name": "Wolkers/laravel-shopping-cart",
+  "description": "a Laravel shopping cart",
   "keywords": [
     "laravel",
     "shoppingcart"
