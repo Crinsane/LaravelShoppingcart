@@ -1,6 +1,6 @@
 <?php
 
-namespace Gloudemans\Shoppingcart;
+namespace Wolkers\Shoppingcart;
 
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Session\SessionManager;
@@ -16,7 +16,7 @@ class ShoppingcartServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('cart', 'Gloudemans\Shoppingcart\Cart');
+        $this->app->bind('cart', 'Wolkers\Shoppingcart\Cart');
 
         $config = __DIR__ . '/../config/cart.php';
         $this->mergeConfigFrom($config, 'cart');
@@ -29,7 +29,7 @@ class ShoppingcartServiceProvider extends ServiceProvider
             }
         });
 
-        if ( ! class_exists('CreateShoppingcartTable')) {
+        if (! class_exists('CreateShoppingcartTable')) {
             // Publish the migration
             $timestamp = date('Y_m_d_His', time());
 

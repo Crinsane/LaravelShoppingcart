@@ -1,16 +1,16 @@
 <?php
 
-namespace Gloudemans\Shoppingcart;
+namespace Wolkers\Shoppingcart;
 
 use Closure;
-use Illuminate\Support\Collection;
-use Illuminate\Session\SessionManager;
-use Illuminate\Database\DatabaseManager;
 use Illuminate\Contracts\Events\Dispatcher;
-use Gloudemans\Shoppingcart\Contracts\Buyable;
-use Gloudemans\Shoppingcart\Exceptions\UnknownModelException;
-use Gloudemans\Shoppingcart\Exceptions\InvalidRowIDException;
-use Gloudemans\Shoppingcart\Exceptions\CartAlreadyStoredException;
+use Illuminate\Database\DatabaseManager;
+use Illuminate\Session\SessionManager;
+use Illuminate\Support\Collection;
+use Wolkers\Shoppingcart\Contracts\Buyable;
+use Wolkers\Shoppingcart\Exceptions\CartAlreadyStoredException;
+use Wolkers\Shoppingcart\Exceptions\InvalidRowIDException;
+use Wolkers\Shoppingcart\Exceptions\UnknownModelException;
 
 class Cart
 {
@@ -25,7 +25,7 @@ class Cart
 
     /**
      * Instance of the event dispatcher.
-     * 
+     *
      * @var \Illuminate\Contracts\Events\Dispatcher
      */
     private $events;
@@ -55,7 +55,7 @@ class Cart
      * Set the current cart instance.
      *
      * @param string|null $instance
-     * @return \Gloudemans\Shoppingcart\Cart
+     * @return \Wolkers\Shoppingcart\Cart
      */
     public function instance($instance = null)
     {
@@ -84,7 +84,7 @@ class Cart
      * @param int|float $qty
      * @param float     $price
      * @param array     $options
-     * @return \Gloudemans\Shoppingcart\CartItem
+     * @return \Wolkers\Shoppingcart\CartItem
      */
     public function add($id, $name = null, $qty = null, $price = null, array $options = [])
     {
@@ -116,7 +116,7 @@ class Cart
      *
      * @param string $rowId
      * @param mixed  $qty
-     * @return \Gloudemans\Shoppingcart\CartItem
+     * @return \Wolkers\Shoppingcart\CartItem
      */
     public function update($rowId, $qty)
     {
@@ -178,14 +178,15 @@ class Cart
      * Get a cart item from the cart by its rowId.
      *
      * @param string $rowId
-     * @return \Gloudemans\Shoppingcart\CartItem
+     * @return \Wolkers\Shoppingcart\CartItem
      */
     public function get($rowId)
     {
         $content = $this->getContent();
 
-        if ( ! $content->has($rowId))
+        if (! $content->has($rowId)) {
             throw new InvalidRowIDException("The cart does not contain rowId {$rowId}.");
+        }
 
         return $content->get($rowId);
     }
@@ -305,7 +306,7 @@ class Cart
      */
     public function associate($rowId, $model)
     {
-        if(is_string($model) && ! class_exists($model)) {
+        if (is_string($model) && ! class_exists($model)) {
             throw new UnknownModelException("The supplied model {$model} does not exist.");
         }
 
@@ -357,7 +358,7 @@ class Cart
         $this->getConnection()->table($this->getTableName())->insert([
             'identifier' => $identifier,
             'instance' => $this->currentInstance(),
-            'content' => serialize($content)
+            'content' => json_encode($content)
         ]);
 
         $this->events->fire('cart.stored');
@@ -371,14 +372,14 @@ class Cart
      */
     public function restore($identifier)
     {
-        if( ! $this->storedCartWithIdentifierExists($identifier)) {
+        if (! $this->storedCartWithIdentifierExists($identifier)) {
             return;
         }
 
         $stored = $this->getConnection()->table($this->getTableName())
             ->where('identifier', $identifier)->first();
 
-        $storedContent = unserialize($stored->content);
+        $storedContent = json_decode($stored->content);
 
         $currentInstance = $this->currentInstance();
 
@@ -408,15 +409,15 @@ class Cart
      */
     public function __get($attribute)
     {
-        if($attribute === 'total') {
+        if ($attribute === 'total') {
             return $this->total();
         }
 
-        if($attribute === 'tax') {
+        if ($attribute === 'tax') {
             return $this->tax();
         }
 
-        if($attribute === 'subtotal') {
+        if ($attribute === 'subtotal') {
             return $this->subtotal();
         }
 
@@ -445,7 +446,7 @@ class Cart
      * @param int|float $qty
      * @param float     $price
      * @param array     $options
-     * @return \Gloudemans\Shoppingcart\CartItem
+     * @return \Wolkers\Shoppingcart\CartItem
      */
     private function createCartItem($id, $name, $qty, $price, array $options)
     {
@@ -474,7 +475,9 @@ class Cart
      */
     private function isMulti($item)
     {
-        if ( ! is_array($item)) return false;
+        if (! is_array($item)) {
+            return false;
+        }
 
         return is_array(head($item)) || head($item) instanceof Buyable;
     }
@@ -533,13 +536,13 @@ class Cart
      */
     private function numberFormat($value, $decimals, $decimalPoint, $thousandSeperator)
     {
-        if(is_null($decimals)){
+        if (is_null($decimals)) {
             $decimals = is_null(config('cart.format.decimals')) ? 2 : config('cart.format.decimals');
         }
-        if(is_null($decimalPoint)){
+        if (is_null($decimalPoint)) {
             $decimalPoint = is_null(config('cart.format.decimal_point')) ? '.' : config('cart.format.decimal_point');
         }
-        if(is_null($thousandSeperator)){
+        if (is_null($thousandSeperator)) {
             $thousandSeperator = is_null(config('cart.format.thousand_seperator')) ? ',' : config('cart.format.thousand_seperator');
         }
 

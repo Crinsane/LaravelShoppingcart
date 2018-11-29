@@ -1,8 +1,8 @@
 <?php
 
-namespace Gloudemans\Tests\Shoppingcart\Fixtures;
+namespace Wolkers\Tests\Shoppingcart\Fixtures;
 
-use Gloudemans\Shoppingcart\Contracts\Buyable;
+use Wolkers\Shoppingcart\Contracts\Buyable;
 
 class BuyableProduct implements Buyable
 {

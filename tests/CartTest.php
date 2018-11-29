@@ -1,20 +1,20 @@
 <?php
 
-namespace Gloudemans\Tests\Shoppingcart;
+namespace Wolkers\Tests\Shoppingcart;
 
-use Mockery;
-use PHPUnit\Framework\Assert;
-use Gloudemans\Shoppingcart\Cart;
-use Orchestra\Testbench\TestCase;
 use Illuminate\Auth\Events\Logout;
-use Illuminate\Support\Collection;
-use Gloudemans\Shoppingcart\CartItem;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Session\SessionManager;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Gloudemans\Shoppingcart\ShoppingcartServiceProvider;
-use Gloudemans\Tests\Shoppingcart\Fixtures\ProductModel;
-use Gloudemans\Tests\Shoppingcart\Fixtures\BuyableProduct;
+use Illuminate\Session\SessionManager;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Event;
+use Mockery;
+use Orchestra\Testbench\TestCase;
+use PHPUnit\Framework\Assert;
+use Wolkers\Shoppingcart\Cart;
+use Wolkers\Shoppingcart\CartItem;
+use Wolkers\Shoppingcart\ShoppingcartServiceProvider;
+use Wolkers\Tests\Shoppingcart\Fixtures\BuyableProduct;
+use Wolkers\Tests\Shoppingcart\Fixtures\ProductModel;
 
 class CartTest extends TestCase
 {
@@ -340,7 +340,7 @@ class CartTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Gloudemans\Shoppingcart\Exceptions\InvalidRowIDException
+     * @expectedException \Wolkers\Shoppingcart\Exceptions\InvalidRowIDException
      */
     public function it_will_throw_an_exception_if_a_rowid_was_not_found()
     {
@@ -620,7 +620,7 @@ class CartTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Gloudemans\Shoppingcart\Exceptions\UnknownModelException
+     * @expectedException \Wolkers\Shoppingcart\Exceptions\UnknownModelException
      * @expectedExceptionMessage The supplied model SomeModel does not exist.
      */
     public function it_will_throw_an_exception_when_a_non_existing_model_is_being_associated()
@@ -806,7 +806,7 @@ class CartTest extends TestCase
 
         $cart->store($identifier = 123);
 
-        $serialized = serialize($cart->content());
+        $serialized = json_encode($cart->content());
 
         $this->assertDatabaseHas('shoppingcart', ['identifier' => $identifier, 'instance' => 'default', 'content' => $serialized]);
 
@@ -815,7 +815,7 @@ class CartTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Gloudemans\Shoppingcart\Exceptions\CartAlreadyStoredException
+     * @expectedException \Wolkers\Shoppingcart\Exceptions\CartAlreadyStoredException
      * @expectedExceptionMessage A cart with identifier 123 was already stored.
      */
     public function it_will_throw_an_exception_when_a_cart_was_already_stored_using_the_specified_identifier()
@@ -912,14 +912,14 @@ class CartTest extends TestCase
         }));
 
         $user = Mockery::mock(Authenticatable::class);
-
-        event(new Logout($user));
+        
+        event(new Logout('web', $user));
     }
 
     /**
      * Get an instance of the cart.
      *
-     * @return \Gloudemans\Shoppingcart\Cart
+     * @return \Wolkers\Shoppingcart\Cart
      */
     private function getCart()
     {
@@ -928,10 +928,9 @@ class CartTest extends TestCase
 
         return new Cart($session, $events);
     }
-
     /**
      * Set the config number format.
-     * 
+     *
      * @param int    $decimals
      * @param string $decimalPoint
      * @param string $thousandSeperator

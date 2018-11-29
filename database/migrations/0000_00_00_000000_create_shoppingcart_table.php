@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateShoppingcartTable extends Migration
 {
@@ -14,7 +14,7 @@ class CreateShoppingcartTable extends Migration
         Schema::create(config('cart.database.table'), function (Blueprint $table) {
             $table->string('identifier');
             $table->string('instance');
-            $table->longText('content');
+            $table->jsonb('content');
             $table->nullableTimestamps();
 
             $table->primary(['identifier', 'instance']);
