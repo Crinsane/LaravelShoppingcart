@@ -28,7 +28,7 @@ return [
 
         'connection' => null,
 
-        'table' => 'shoppingcart',
+        'table' => 'shopping_cart',
 
     ],
 

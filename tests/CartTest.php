@@ -808,7 +808,7 @@ class CartTest extends TestCase
 
         $serialized = json_encode($cart->content());
 
-        $this->assertDatabaseHas('shoppingcart', ['identifier' => $identifier, 'instance' => 'default', 'content' => $serialized]);
+        $this->assertDatabaseHas('shopping_cart', ['identifier' => $identifier, 'instance' => 'default', 'content' => $serialized]);
 
         Event::assertDispatched('cart.stored');
     }
@@ -860,7 +860,7 @@ class CartTest extends TestCase
 
         $this->assertItemsInCart(1, $cart);
 
-        $this->assertDatabaseMissing('shoppingcart', ['identifier' => $identifier, 'instance' => 'default']);
+        $this->assertDatabaseMissing('shopping_cart', ['identifier' => $identifier, 'instance' => 'default']);
 
         Event::assertDispatched('cart.restored');
     }
