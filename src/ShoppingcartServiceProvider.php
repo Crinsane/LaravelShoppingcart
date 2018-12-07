@@ -30,7 +30,7 @@ class ShoppingcartServiceProvider extends ServiceProvider
         });
 
         $this->publishes([
-            realpath(__DIR__.'/../databaase/migrations') => $this->app->databasePath().'/migrations'
+            realpath(__DIR__.'/../database/migrations') => $this->app->databasePath().'/migrations'
         ]);
     }
 }
