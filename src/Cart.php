@@ -398,9 +398,7 @@ class Cart
         $this->session->put($this->instance, $content);
 
         $this->instance($currentInstance);
-
-        $this->getConnection()->table($this->getTableName())
-            ->where('identifier', $identifier)->delete();
+       
     }
 
     
