@@ -858,9 +858,7 @@ class CartTest extends TestCase
 
         $cart->restore($identifier);
 
-        $this->assertItemsInCart(1, $cart);
-
-        $this->assertDatabaseMissing('shoppingcart', ['identifier' => $identifier, 'instance' => 'default']);
+        $this->assertItemsInCart(1, $cart);       
 
         Event::assertDispatched('cart.restored');
     }
