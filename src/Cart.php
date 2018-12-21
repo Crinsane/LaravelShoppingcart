@@ -406,7 +406,7 @@ class Cart
      * 
      * @param float $discount
      */
-    public function setGlobalTax(float $taxRate)
+    public function setGlobalTax($taxRate)
     {
         $this->taxRate = $taxRate;
         if ($this->content && $this->content->count()) {
@@ -442,7 +442,7 @@ class Cart
      * 
      * @param float $discount
      */
-    public function setGlobalDiscount(float $discount)
+    public function setGlobalDiscount($discount)
     {
         $this->discount = $discount;
         if ($this->content && $this->content->count()) {
