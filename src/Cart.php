@@ -42,7 +42,7 @@ class Cart
      * 
      * @var float
      */
-    private $discount;
+    private $discount = 0;
 
     /**
      * Cart constructor.
@@ -54,7 +54,6 @@ class Cart
     {
         $this->session = $session;
         $this->events = $events;
-        $this->discount = 0;
 
         $this->instance(self::DEFAULT_INSTANCE);
     }
@@ -349,13 +348,39 @@ class Cart
     }
 
     /**
-     * Set the global discount percentage for the cart
+     * Set the discount rate for the cart item with the given rowId.
+     *
+     * @param string    $rowId
+     * @param int|float $taxRate
+     * @return void
+     */
+    public function setDiscount($rowId, $discount)
+    {
+        $cartItem = $this->get($rowId);
+
+        $cartItem->setDiscountRate($discount);
+
+        $content = $this->getContent();
+
+        $content->put($cartItem->rowId, $cartItem);
+
+        $this->session->put($this->instance, $content);
+    }
+
+    /**
+     * Set the global discount percentage for the cart.
+     * This will set the discount for all cart items.
      * 
      * @param float $discount
      */
-    public function setDiscount(float $discount)
+    public function setGlobalDiscount(float $discount)
     {
         $this->discount = $discount;
+        if ($this->content && $this->content->count()) {
+            $this->content->each(function ($item, $key) {
+                $item->setDiscountRate($this->discount);
+            });
+        }
     }
 
     /**
@@ -480,7 +505,7 @@ class Cart
         }
 
         $cartItem->setTaxRate(config('cart.tax'));
-        $cartItem->setDiscountRate( $this->discount * 100 );
+        $cartItem->setDiscountRate( $this->discount );
 
         return $cartItem;
     }

@@ -779,7 +779,7 @@ class CartTest extends TestCase
     {
         $this->setConfigFormat(2, ',', '');
 
-        $cart = $this->getCartDiscount( 0.5 );
+        $cart = $this->getCartDiscount( 50 );
 
         $cart->add(new BuyableProduct(1, 'Some title', 2000.00), 2);
 
@@ -887,7 +887,7 @@ class CartTest extends TestCase
     /** @test */
     public function it_can_calculate_all_values()
     {
-        $cart = $this->getCartDiscount(0.5);
+        $cart = $this->getCartDiscount( 50 );
 
         $cart->add(new BuyableProduct(1, 'First item', 10.00), 2);
 
@@ -941,7 +941,7 @@ class CartTest extends TestCase
     private function getCartDiscount( float $discount = 0 )
     {
         $cart = $this->getCart();
-        $cart->setDiscount( 0.5 );
+        $cart->setGlobalDiscount( 50 );
 
         return $cart;
     }
