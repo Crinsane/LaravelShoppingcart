@@ -253,7 +253,7 @@ class Cart
         $content = $this->getContent();
 
         $total = $content->reduce(function ($total, CartItem $cartItem) {
-            return $total + ($cartItem->qty * $cartItem->priceTax);
+            return $total + $cartItem->total;
         }, 0);
 
         return $this->numberFormat($total, $decimals, $decimalPoint, $thousandSeperator);
@@ -272,7 +272,7 @@ class Cart
         $content = $this->getContent();
 
         $tax = $content->reduce(function ($tax, CartItem $cartItem) {
-            return $tax + ($cartItem->qty * $cartItem->tax);
+            return $tax + $cartItem->taxTotal;
         }, 0);
 
         return $this->numberFormat($tax, $decimals, $decimalPoint, $thousandSeperator);
@@ -291,10 +291,48 @@ class Cart
         $content = $this->getContent();
 
         $subTotal = $content->reduce(function ($subTotal, CartItem $cartItem) {
-            return $subTotal + ($cartItem->qty * $cartItem->price);
+            return $subTotal + $cartItem->subtotal;
         }, 0);
 
         return $this->numberFormat($subTotal, $decimals, $decimalPoint, $thousandSeperator);
+    }
+
+    /**
+     * Get the subtotal (total - tax) of the items in the cart.
+     *
+     * @param int    $decimals
+     * @param string $decimalPoint
+     * @param string $thousandSeperator
+     * @return float
+     */
+    public function discount($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+    {
+        $content = $this->getContent();
+
+        $discount = $content->reduce(function ($discount, CartItem $cartItem) {
+            return $discount + $cartItem->discountTotal;
+        }, 0);
+
+        return $this->numberFormat($discount, $decimals, $decimalPoint, $thousandSeperator);
+    }
+
+    /**
+     * Get the subtotal (total - tax) of the items in the cart.
+     *
+     * @param int    $decimals
+     * @param string $decimalPoint
+     * @param string $thousandSeperator
+     * @return float
+     */
+    public function initial($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+    {
+        $content = $this->getContent();
+
+        $initial = $content->reduce(function ($initial, CartItem $cartItem) {
+            return $initial + ($cartItem->qty * $cartItem->price);
+        }, 0);
+
+        return $this->numberFormat($initial, $decimals, $decimalPoint, $thousandSeperator);
     }
 
     /**
