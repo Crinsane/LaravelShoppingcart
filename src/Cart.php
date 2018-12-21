@@ -46,6 +46,13 @@ class Cart
     private $discount = 0;
 
     /**
+     * Defines the discount percentage.
+     * 
+     * @var float
+     */
+    private $taxRate = 0;
+
+    /**
      * Cart constructor.
      *
      * @param \Illuminate\Session\SessionManager      $session
@@ -55,6 +62,7 @@ class Cart
     {
         $this->session = $session;
         $this->events = $events;
+        $this->taxRate = config('cart.tax');
 
         $this->instance(self::DEFAULT_INSTANCE);
     }
@@ -393,6 +401,22 @@ class Cart
     }
 
     /**
+     * Set the global tax rate for the cart.
+     * This will set the tax rate for all items.
+     * 
+     * @param float $discount
+     */
+    public function setGlobalTax(float $taxRate)
+    {
+        $this->taxRate = $taxRate;
+        if ($this->content && $this->content->count()) {
+            $this->content->each(function ($item, $key) {
+                $item->setTaxRate($this->taxRate);
+            });
+        }
+    }
+
+    /**
      * Set the discount rate for the cart item with the given rowId.
      *
      * @param string    $rowId
@@ -549,7 +573,7 @@ class Cart
             $cartItem->setQuantity($qty);
         }
 
-        $cartItem->setTaxRate(config('cart.tax'));
+        $cartItem->setTaxRate($this->taxRate);
         $cartItem->setDiscountRate( $this->discount );
 
         return $cartItem;

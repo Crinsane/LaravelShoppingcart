@@ -1,11 +1,11 @@
 ## LaravelShoppingcart
-[![Build Status](https://travis-ci.org/Crinsane/LaravelShoppingcart.png?branch=master)](https://travis-ci.org/Crinsane/LaravelShoppingcart)
-[![Total Downloads](https://poser.pugx.org/gloudemans/shoppingcart/downloads.png)](https://packagist.org/packages/gloudemans/shoppingcart)
-[![Latest Stable Version](https://poser.pugx.org/gloudemans/shoppingcart/v/stable)](https://packagist.org/packages/gloudemans/shoppingcart)
-[![Latest Unstable Version](https://poser.pugx.org/gloudemans/shoppingcart/v/unstable)](https://packagist.org/packages/gloudemans/shoppingcart)
-[![License](https://poser.pugx.org/gloudemans/shoppingcart/license)](https://packagist.org/packages/gloudemans/shoppingcart)
+[![Build Status](https://travis-ci.org/bumbummen99/LaravelShoppingcart.png?branch=master)](https://travis-ci.org/bumbummen99/LaravelShoppingcart)
+[![Total Downloads](https://poser.pugx.org/gloudemans/shoppingcart/downloads.png)](https://packagist.org/packages/bumbummen99/shoppingcart)
+[![Latest Stable Version](https://poser.pugx.org/gloudemans/shoppingcart/v/stable)](https://packagist.org/packages/bumbummen99/shoppingcart)
+[![Latest Unstable Version](https://poser.pugx.org/gloudemans/shoppingcart/v/unstable)](https://packagist.org/packages/bumbummen99/shoppingcart)
+[![License](https://poser.pugx.org/gloudemans/shoppingcart/license)](https://packagist.org/packages/bumbummen99/shoppingcart)
 
-A simple shoppingcart implementation for Laravel by gloudemans, updated to work with laravel 5.7. This repository and composer package will be removed when gloudemans decides to update the original repository.
+This is a fork of [Crisane's LaravelShoppingcart](https://github.com/Crinsane/LaravelShoppingcart) extended with minor features compatible with Laravel 5.7.
 
 ## Installation
 
@@ -13,7 +13,7 @@ Install the package through [Composer](http://getcomposer.org/).
 
 Run the Composer require command from the Terminal:
 
-    composer require gloudemans/shoppingcart
+    composer require bumbummen99/shoppingcart
     
 If you're using Laravel 5.5, this is all there is to do. 
 
@@ -217,12 +217,49 @@ You can set the default number format in the config file.
 
 **If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the subtotal property `$cart->subtotal`**
 
+### Cart::discount()
+
+The `discount()` method can be used to get the total discount of all items in the cart. 
+
+```php
+Cart::discount();
+```
+
+The method will automatically format the result, which you can tweak using the three optional parameters
+
+```php
+Cart::discount($decimals, $decimalSeperator, $thousandSeperator);
+```
+
+You can set the default number format in the config file.
+
+**If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the subtotal property `$cart->discount`**
+
+### Cart::initial()
+
+The `initial()` method can be used to get the total price of all items in the cart before discount. 
+
+```php
+Cart::initial();
+```
+
+The method will automatically format the result, which you can tweak using the three optional parameters
+
+```php
+Cart::initial($decimals, $decimalSeperator, $thousandSeperator);
+```
+
+You can set the default number format in the config file.
+
+**If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the subtotal property `$cart->initial`**
+
 ### Cart::count()
 
 If you want to know how many items there are in your cart, you can use the `count()` method. This method will return the total number of items in the cart. So if you've added 2 books and 1 shirt, it will return 3 items.
 
 ```php
 Cart::count();
+$cart->count();
 ```
 
 ### Cart::search()
@@ -246,6 +283,42 @@ As you can see the Closure will receive two parameters. The first is the CartIte
 **The method will return a Collection containing all CartItems that where found**
 
 This way of searching gives you total control over the search process and gives you the ability to create very precise and specific searches.
+
+### Cart::setTax($rowId, $taxRate)
+
+You can use the `setTax()` method to change the tax rate that applies to the CartItem. This will overwrite the value set in the config file.
+
+```php
+Cart::setTax($rowId, 21);
+$cart->setTax($rowId, 21);
+```
+
+### Cart::setGlobalTax($taxRate)
+
+You can use the `setGlobalTax()` method to change the tax rate for all items in the cart. New items will receive the setGlobalTax as well.
+
+```php
+Cart::setGlobalDiscount(21);
+$cart->setGlobalDiscount(21);
+```
+
+### Cart::setGlobalDiscount($discountRate)
+
+You can use the `setGlobalDiscount()` method to change the discount rate for all items in the cart. New items will receive the discount as well.
+
+```php
+Cart::setGlobalDiscount(21);
+$cart->setGlobalDiscount(21);
+```
+
+### Cart::setDiscount($rowId, $taxRate)
+
+You can use the `setDiscount()` method to change the discount rate that applies a CartItem. Keep in mind that this value will be changed if you set the global discount for the Cart afterwards.
+
+```php
+Cart::setDiscount($rowId, 21);
+$cart->setDiscount($rowId, 21);
+```
 
 ## Collections
 
@@ -288,6 +361,48 @@ Cart::instance('shopping')->content();
 
 // And the count of the 'wishlist' cart again
 Cart::instance('wishlist')->count();
+```
+
+You can also use the `InstanceIdentifier` Contract to extend a desired Model to assign / create a Cart instance for it. This also allows to directly set the global discount.
+```
+<?php
+
+namespace App;
+...
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Gloudemans\Shoppingcart\Contracts\InstanceIdentifier;
+
+class User extends Authenticatable implements InstanceIdentifier
+{
+	...
+
+	/**
+     * Get the unique identifier to load the Cart from
+     *
+     * @return int|string
+     */
+    public function getInstanceIdentifier($options = null)
+    {
+        return $this->email;
+    }
+
+    /**
+     * Get the unique identifier to load the Cart from
+     *
+     * @return int|string
+     */
+    public function getInstanceGlobalDiscount($options = null)
+    {
+        return $this->discountRate ?: 0;
+    }
+}
+
+// Inside Controller
+$user = \Auth::user();
+$cart = Cart::instance($user);
+
+
+
 ```
 
 **N.B. Keep in mind that the cart stays in the last set instance for as long as you don't set a different one during script execution.**
