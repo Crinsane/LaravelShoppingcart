@@ -72,7 +72,7 @@ class Cart
         if ($instance instanceof InstanceIdentifier)
         {
             $this->discount = $instance->getInstanceGlobalDiscount();
-            $this->instance = $instance->getInstanceIdentifier();
+            $instance = $instance->getInstanceIdentifier();
         }
 
         $this->instance = sprintf('%s.%s', 'cart', $instance);
