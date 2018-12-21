@@ -480,7 +480,7 @@ class Cart
         }
 
         $cartItem->setTaxRate(config('cart.tax'));
-        $cartItem->setDiscountRate( $this->discount );
+        $cartItem->setDiscountRate( $this->discount * 100 );
 
         return $cartItem;
     }

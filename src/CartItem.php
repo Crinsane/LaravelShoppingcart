@@ -192,7 +192,7 @@ class CartItem implements Arrayable, Jsonable
     }
 
     /**
-     * Returns the formatted tax.
+     * Returns the formatted discount.
      *
      * @param int    $decimals
      * @param string $decimalPoint
@@ -205,7 +205,7 @@ class CartItem implements Arrayable, Jsonable
     }
 
     /**
-     * Returns the formatted tax.
+     * Returns the formatted total discount for this cart item.
      *
      * @param int    $decimals
      * @param string $decimalPoint

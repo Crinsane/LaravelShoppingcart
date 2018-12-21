@@ -779,18 +779,21 @@ class CartTest extends TestCase
     {
         $this->setConfigFormat(2, ',', '');
 
-        $cart = $this->getCart();
+        $cart = $this->getCartDiscount( 0.5 );
 
         $cart->add(new BuyableProduct(1, 'Some title', 2000.00), 2);
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
         $this->assertEquals('2000,00', $cartItem->price());
-        $this->assertEquals('2420,00', $cartItem->priceTax());
-        $this->assertEquals('4000,00', $cartItem->subtotal());
-        $this->assertEquals('4840,00', $cartItem->total());
-        $this->assertEquals('420,00', $cartItem->tax());
-        $this->assertEquals('840,00', $cartItem->taxTotal());
+        $this->assertEquals('1000,00', $cartItem->discount());
+        $this->assertEquals('2000,00', $cartItem->discountTotal());
+        $this->assertEquals('1000,00', $cartItem->priceTarget());
+        $this->assertEquals('2000,00', $cartItem->subtotal());
+        $this->assertEquals('210,00', $cartItem->tax());
+        $this->assertEquals('420,00', $cartItem->taxTotal());
+        $this->assertEquals('1210,00', $cartItem->priceTax());
+        $this->assertEquals('2420,00', $cartItem->total());
     }
 
     /** @test */
@@ -884,7 +887,7 @@ class CartTest extends TestCase
     /** @test */
     public function it_can_calculate_all_values()
     {
-        $cart = $this->getCart();
+        $cart = $this->getCartDiscount(0.5);
 
         $cart->add(new BuyableProduct(1, 'First item', 10.00), 2);
 
@@ -893,15 +896,14 @@ class CartTest extends TestCase
         $cart->setTax('027c91341fd5cf4d2579b49c4b6a90da', 19);
 
         $this->assertEquals(10.00, $cartItem->price(2));
-        $this->assertEquals(11.90, $cartItem->priceTax(2));
-        $this->assertEquals(20.00, $cartItem->subtotal(2));
-        $this->assertEquals(23.80, $cartItem->total(2));
-        $this->assertEquals(1.90, $cartItem->tax(2));
-        $this->assertEquals(3.80, $cartItem->taxTotal(2));
-
-        $this->assertEquals(20.00, $cart->subtotal(2));
-        $this->assertEquals(23.80, $cart->total(2));
-        $this->assertEquals(3.80, $cart->tax(2));
+        $this->assertEquals(5.00, $cartItem->discount(2));
+        $this->assertEquals(10.00, $cartItem->discountTotal(2));
+        $this->assertEquals(5.00, $cartItem->priceTarget(2));
+        $this->assertEquals(10.00, $cartItem->subtotal(2));
+        $this->assertEquals(0.95, $cartItem->tax(2));
+        $this->assertEquals(1.90, $cartItem->taxTotal(2));
+        $this->assertEquals(5.95, $cartItem->priceTax(2));
+        $this->assertEquals(11.90, $cartItem->total(2));
     }
 
     /** @test */
@@ -929,6 +931,19 @@ class CartTest extends TestCase
         $events = $this->app->make('events');
 
         return new Cart($session, $events);
+    }
+
+    /**
+     * Get an instance of the cart with discount
+     *
+     * @return \Gloudemans\Shoppingcart\Cart
+     */
+    private function getCartDiscount( float $discount = 0 )
+    {
+        $cart = $this->getCart();
+        $cart->setDiscount( 0.5 );
+
+        return $cart;
     }
 
     /**
