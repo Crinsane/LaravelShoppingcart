@@ -938,7 +938,7 @@ class CartTest extends TestCase
      *
      * @return \Gloudemans\Shoppingcart\Cart
      */
-    private function getCartDiscount( float $discount = 0 )
+    private function getCartDiscount( $discount = 0 )
     {
         $cart = $this->getCart();
         $cart->setGlobalDiscount( 50 );
