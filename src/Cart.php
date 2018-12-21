@@ -11,6 +11,7 @@ use Gloudemans\Shoppingcart\Contracts\Buyable;
 use Gloudemans\Shoppingcart\Exceptions\UnknownModelException;
 use Gloudemans\Shoppingcart\Exceptions\InvalidRowIDException;
 use Gloudemans\Shoppingcart\Exceptions\CartAlreadyStoredException;
+use Gloudemans\Shoppingcart\Contracts\InstanceIdentifier;
 
 class Cart
 {
@@ -67,6 +68,12 @@ class Cart
     public function instance($instance = null)
     {
         $instance = $instance ?: self::DEFAULT_INSTANCE;
+
+        if ($instance instanceof InstanceIdentifier)
+        {
+            $this->discount = $instance->getInstanceGlobalDiscount();
+            $this->instance = $instance->getInstanceIdentifier();
+        }
 
         $this->instance = sprintf('%s.%s', 'cart', $instance);
 
