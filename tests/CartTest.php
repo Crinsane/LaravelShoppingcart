@@ -488,6 +488,7 @@ class CartTest extends TestCase
                 'tax' => 2.10,
                 'subtotal' => 10.0,
                 'options' => [],
+                'discount' => 0.0
             ],
             '370d08585360f5c568b18d1f2e4ca1df' => [
                 'rowId' => '370d08585360f5c568b18d1f2e4ca1df',
@@ -498,6 +499,7 @@ class CartTest extends TestCase
                 'tax' => 2.10,
                 'subtotal' => 10.0,
                 'options' => [],
+                'discount' => 0.0
             ]
         ], $content->toArray());
     }
@@ -913,7 +915,7 @@ class CartTest extends TestCase
 
         $user = Mockery::mock(Authenticatable::class);
 
-        event(new Logout($user));
+        event(new Logout(\Auth::guard('web'), $user));
     }
 
     /**

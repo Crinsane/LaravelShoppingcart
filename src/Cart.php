@@ -38,6 +38,13 @@ class Cart
     private $instance;
 
     /**
+     * Defines the discount percentage.
+     * 
+     * @var float
+     */
+    private $discount;
+
+    /**
      * Cart constructor.
      *
      * @param \Illuminate\Session\SessionManager      $session
@@ -47,6 +54,7 @@ class Cart
     {
         $this->session = $session;
         $this->events = $events;
+        $this->discount = 0;
 
         $this->instance(self::DEFAULT_INSTANCE);
     }
@@ -341,6 +349,16 @@ class Cart
     }
 
     /**
+     * Set the global discount percentage for the cart
+     * 
+     * @param float $discount
+     */
+    public function setDiscount(float $discount)
+    {
+        $this->discount = $discount;
+    }
+
+    /**
      * Store an the current instance of the cart.
      *
      * @param mixed $identifier
@@ -462,6 +480,7 @@ class Cart
         }
 
         $cartItem->setTaxRate(config('cart.tax'));
+        $cartItem->setDiscountRate( $this->discount );
 
         return $cartItem;
     }
