@@ -251,12 +251,9 @@ class Cart
     /**
      * Get the total price of the items in the cart.
      *
-     * @param int    $decimals
-     * @param string $decimalPoint
-     * @param string $thousandSeperator
-     * @return string
+     * @return float
      */
-    public function total($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+    public function totalFloat()
     {
         $content = $this->getContent();
 
@@ -264,18 +261,28 @@ class Cart
             return $total + $cartItem->total;
         }, 0);
 
-        return $this->numberFormat($total, $decimals, $decimalPoint, $thousandSeperator);
+        return $total;
+    }
+
+    /**
+     * Get the total price of the items in the cart as formatted string.
+     *
+     * @param int    $decimals
+     * @param string $decimalPoint
+     * @param string $thousandSeperator
+     * @return string
+     */
+    public function total($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+    {
+        return $this->numberFormat($this->totalFloat(), $decimals, $decimalPoint, $thousandSeperator);
     }
 
     /**
      * Get the total tax of the items in the cart.
      *
-     * @param int    $decimals
-     * @param string $decimalPoint
-     * @param string $thousandSeperator
      * @return float
      */
-    public function tax($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+    public function taxFloat()
     {
         $content = $this->getContent();
 
@@ -283,18 +290,28 @@ class Cart
             return $tax + $cartItem->taxTotal;
         }, 0);
 
-        return $this->numberFormat($tax, $decimals, $decimalPoint, $thousandSeperator);
+        return $tax;
+    }
+
+    /**
+     * Get the total tax of the items in the cart as formatted string.
+     *
+     * @param int    $decimals
+     * @param string $decimalPoint
+     * @param string $thousandSeperator
+     * @return string
+     */
+    public function tax($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+    {
+        return $this->numberFormat($this->taxFloat(), $decimals, $decimalPoint, $thousandSeperator);
     }
 
     /**
      * Get the subtotal (total - tax) of the items in the cart.
      *
-     * @param int    $decimals
-     * @param string $decimalPoint
-     * @param string $thousandSeperator
      * @return float
      */
-    public function subtotal($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+    public function subtotalFloat()
     {
         $content = $this->getContent();
 
@@ -302,18 +319,28 @@ class Cart
             return $subTotal + $cartItem->subtotal;
         }, 0);
 
-        return $this->numberFormat($subTotal, $decimals, $decimalPoint, $thousandSeperator);
+        return $subTotal;
+    }
+
+    /**
+     * Get the subtotal (total - tax) of the items in the cart as formatted string.
+     *
+     * @param int    $decimals
+     * @param string $decimalPoint
+     * @param string $thousandSeperator
+     * @return string
+     */
+    public function subtotal($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+    {
+        return $this->numberFormat($this->subtotalFloat(), $decimals, $decimalPoint, $thousandSeperator);
     }
 
     /**
      * Get the subtotal (total - tax) of the items in the cart.
      *
-     * @param int    $decimals
-     * @param string $decimalPoint
-     * @param string $thousandSeperator
      * @return float
      */
-    public function discount($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+    public function discountFloat()
     {
         $content = $this->getContent();
 
@@ -321,18 +348,28 @@ class Cart
             return $discount + $cartItem->discountTotal;
         }, 0);
 
-        return $this->numberFormat($discount, $decimals, $decimalPoint, $thousandSeperator);
+        return $discount;
+    }
+
+    /**
+     * Get the subtotal (total - tax) of the items in the cart as formatted string.
+     *
+     * @param int    $decimals
+     * @param string $decimalPoint
+     * @param string $thousandSeperator
+     * @return string
+     */
+    public function discount($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+    {
+        return $this->numberFormat($this->discountFloat(), $decimals, $decimalPoint, $thousandSeperator);
     }
 
     /**
      * Get the subtotal (total - tax) of the items in the cart.
      *
-     * @param int    $decimals
-     * @param string $decimalPoint
-     * @param string $thousandSeperator
      * @return float
      */
-    public function initial($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+    public function initialFloat()
     {
         $content = $this->getContent();
 
@@ -340,7 +377,20 @@ class Cart
             return $initial + ($cartItem->qty * $cartItem->price);
         }, 0);
 
-        return $this->numberFormat($initial, $decimals, $decimalPoint, $thousandSeperator);
+        return $initial;
+    }
+
+    /**
+     * Get the subtotal (total - tax) of the items in the cart as formatted string.
+     *
+     * @param int    $decimals
+     * @param string $decimalPoint
+     * @param string $thousandSeperator
+     * @return string
+     */
+    public function initial($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+    {
+        return $this->numberFormat($this->initialFloat(), $decimals, $decimalPoint, $thousandSeperator);
     }
 
     /**
