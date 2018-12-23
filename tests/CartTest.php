@@ -920,6 +920,47 @@ class CartTest extends TestCase
         event(new Logout(\Auth::guard('web'), $user));
     }
 
+    /** @test */
+    public function can_change_tax_globally()
+    {
+        $cart = $this->getCart();
+
+        $cart->add( new BuyableProduct(1, 'Item', 10.00), 2);
+
+        $cart->setGlobalTax(0);
+
+        $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
+
+        $this->assertEquals('20.00', $cartItem->total(2));
+    }
+
+    /** @test */
+    public function can_change_discount_globally()
+    {
+        $cart = $this->getCart();
+
+        $cart->add( new BuyableProduct(1, 'Item', 10.00), 2);
+
+        $cart->setGlobalTax(0);
+        $cart->setGlobalDiscount(50);
+
+        $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
+
+        $this->assertEquals('10.00', $cartItem->total(2));
+    }
+
+    /** @test */
+    public function cart_hast_no_rounding_errors()
+    {
+        $cart = $this->getCart();
+
+        $cart->add( new BuyableProduct(1, 'Item', 10.004), 2);
+
+        $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
+
+        $this->assertEquals('24.21', $cartItem->total(2));
+    }
+
     /**
      * Get an instance of the cart.
      *

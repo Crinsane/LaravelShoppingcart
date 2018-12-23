@@ -459,8 +459,10 @@ class Cart
     public function setGlobalTax($taxRate)
     {
         $this->taxRate = $taxRate;
-        if ($this->content && $this->content->count()) {
-            $this->content->each(function ($item, $key) {
+        
+        $content = $this->getContent();
+        if ($content && $content->count()) {
+            $content->each(function ($item, $key) {
                 $item->setTaxRate($this->taxRate);
             });
         }
@@ -495,8 +497,10 @@ class Cart
     public function setGlobalDiscount($discount)
     {
         $this->discount = $discount;
-        if ($this->content && $this->content->count()) {
-            $this->content->each(function ($item, $key) {
+
+        $content = $this->getContent();
+        if ($content && $content->count()) {
+            $content->each(function ($item, $key) {
                 $item->setDiscountRate($this->discount);
             });
         }
