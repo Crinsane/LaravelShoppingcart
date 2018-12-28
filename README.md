@@ -481,8 +481,8 @@ foreach(Cart::content() as $row) {
 ## Database
 
 - [Config](#configuration)
-- [Storing the cart](#save-cart-to-database)
-- [Restoring the cart](#retrieve-cart-from-database)
+- [Storing the cart](#storing-the-cart)
+- [Restoring the cart](#restoring-the-cart)
 
 ### Configuration
 To save cart into the database so you can retrieve it later, the package needs to know which database connection to use and what the name of the table is.
