@@ -456,7 +456,7 @@ class CartItem implements Arrayable, Jsonable
         }
 
         if (is_null($thousandSeperator)){
-            $thousandSeperator = is_null(config('cart.format.thousand_seperator')) ? ',' : config('cart.format.thousand_seperator');
+            $thousandSeperator = is_null(config('cart.format.thousand_separator')) ? ',' : config('cart.format.thousand_separator');
         }
 
         return number_format($value, $decimals, $decimalPoint, $thousandSeperator);
