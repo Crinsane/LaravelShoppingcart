@@ -345,7 +345,7 @@ namespace App\Models;
 use Gloudemans\Shoppingcart\Contracts\Buyable;
 use Illuminate\Database\Eloquent\Model;
 
-class Product exends Model implements Buyable {
+class Product extends Model implements Buyable {
     public function getBuyableIdentifier($options = null) {
         return $this->id;
     }
