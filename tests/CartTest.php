@@ -961,6 +961,42 @@ class CartTest extends TestCase
         $this->assertEquals('24.21', $cartItem->total(2));
     }
 
+    /** @test */
+    public function it_can_merge_multiple_carts()
+    {
+        $this->artisan('migrate', [
+            '--database' => 'testing',
+        ]);
+
+        Event::fake();
+
+        $cart = $this->getCartDiscount(50);
+        $cart->add( new BuyableProduct(1, 'Item', 10.00), 1);
+        $cart->add( new BuyableProduct(2, 'Item 2', 10.00), 1);
+        $cart->store('test');
+
+        $cart2 = $this->getCart();
+        $cart2->instance('test2');
+        $cart2->setGlobalTax(0);
+        $cart2->setGlobalDiscount(0);
+
+        $this->assertEquals('0', $cart2->countInstances());
+
+        $cart2->merge('test');
+        
+        $this->assertEquals('2', $cart2->countInstances());
+        $this->assertEquals(20, $cart2->totalFloat());
+
+        $cart3 = $this->getCart();
+        $cart3->instance('test3');
+        $cart3->setGlobalTax(0);
+        $cart3->setGlobalDiscount(0);
+
+        $cart3->merge('test', true);
+
+        $this->assertEquals(10, $cart3->totalFloat());
+    }
+
     /**
      * Get an instance of the cart.
      *

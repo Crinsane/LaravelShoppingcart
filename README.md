@@ -477,6 +477,12 @@ If you want to retrieve the cart from the database and restore it, all you have 
     // To restore a cart instance named 'wishlist'
     Cart::instance('wishlist')->restore('username');
 
+### Merge the cart
+If you want to merge the cart with another one from the database, all you have to do is call the  `merge($identifier)` where `$identifier` is the key you specified for the `store` method. You can also define if you want to keep the discount and tax rates of the items.
+     
+    // Merge the contents of 'savedcart' into 'username'.
+    Cart::instance('username')->merge('savedcart', $keepDiscount, $keepTaxrate);
+
 ## Exceptions
 
 The Cart package will throw exceptions if something goes wrong. This way it's easier to debug your code using the Cart package or to handle the error based on the type of exceptions. The Cart packages can throw the following exceptions:

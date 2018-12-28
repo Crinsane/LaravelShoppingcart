@@ -118,19 +118,38 @@ class Cart
 
         $cartItem = $this->createCartItem($id, $name, $qty, $price, $options);
 
+        return $this->addCartItem($cartItem);;
+    }
+
+    /**
+     * Add an item to the cart.
+     *
+     * @param \Gloudemans\Shoppingcart\CartItem    $item Item to add to the Cart
+     * @param bool    $keepDiscount Keep the discount rate of the Item
+     * @param bool    $keepTax Keep the Tax rate of the Item
+     * @return \Gloudemans\Shoppingcart\CartItem The CartItem
+     */
+    public function addCartItem( $item, $keepDiscount = false, $keepTax = false )
+    {
+        if (!$keepDiscount)
+            $item->setDiscountRate( $this->discount );
+
+        if (!$keepTax)
+            $item->setTaxRate( $this->taxRate );
+
         $content = $this->getContent();
 
-        if ($content->has($cartItem->rowId)) {
-            $cartItem->qty += $content->get($cartItem->rowId)->qty;
+        if ($content->has($item->rowId)) {
+            $item->qty += $content->get($item->rowId)->qty;
         }
 
-        $content->put($cartItem->rowId, $cartItem);
+        $content->put($item->rowId, $item);
         
-        $this->events->fire('cart.added', $cartItem);
+        $this->events->fire('cart.added', $item);
 
         $this->session->put($this->instance, $content);
 
-        return $cartItem;
+        return $item;
     }
 
     /**
@@ -246,6 +265,18 @@ class Cart
         $content = $this->getContent();
 
         return $content->sum('qty');
+    }
+
+    /**
+     * Get the number of items instances in the cart.
+     *
+     * @return int|float
+     */
+    public function countInstances()
+    {
+        $content = $this->getContent();
+
+        return $content->count();
     }
 
     /**
@@ -567,6 +598,30 @@ class Cart
     }
 
     /**
+     * Merges the contents of another cart into this cart.
+     *
+     * @param mixed $identifier Identifier of the Cart to merge with.
+     * @param bool $keepDiscount Keep the discount of the CartItems.
+     * @param bool $keepTax Keep the tax of the CartItems.
+     * @return void
+     */
+    public function merge( $identifier, $keepDiscount = false, $keepTax = false )
+    {
+        if( ! $this->storedCartWithIdentifierExists($identifier)) {
+            return;
+        }
+
+        $stored = $this->getConnection()->table($this->getTableName())
+            ->where('identifier', $identifier)->first();
+
+        $storedContent = unserialize($stored->content);
+
+        foreach ($storedContent as $cartItem) {
+            $this->addCartItem($cartItem, $keepDiscount, $keepTax);
+        }
+    }
+
+    /**
      * Magic method to make accessing the total, tax and subtotal properties possible.
      *
      * @param string $attribute
@@ -626,9 +681,6 @@ class Cart
             $cartItem = CartItem::fromAttributes($id, $name, $price, $options);
             $cartItem->setQuantity($qty);
         }
-
-        $cartItem->setTaxRate($this->taxRate);
-        $cartItem->setDiscountRate( $this->discount );
 
         return $cartItem;
     }
