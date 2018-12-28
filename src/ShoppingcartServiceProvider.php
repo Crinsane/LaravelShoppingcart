@@ -18,10 +18,10 @@ class ShoppingcartServiceProvider extends ServiceProvider
     {
         $this->app->bind('cart', 'Gloudemans\Shoppingcart\Cart');
 
-        $config = __DIR__ . '/../config/cart.php';
+        $config = __DIR__ . '/Config/cart.php';
         $this->mergeConfigFrom($config, 'cart');
 
-        $this->publishes([__DIR__ . '/../config/cart.php' => config_path('cart.php')], 'config');
+        $this->publishes([__DIR__ . '/Config/cart.php' => config_path('cart.php')], 'config');
 
         $this->app['events']->listen(Logout::class, function () {
             if ($this->app['config']->get('cart.destroy_on_logout')) {
@@ -30,7 +30,7 @@ class ShoppingcartServiceProvider extends ServiceProvider
         });
 
         $this->publishes([
-            realpath(__DIR__.'/../database/migrations') => $this->app->databasePath().'/migrations'
+            realpath(__DIR__.'/Database/migrations') => $this->app->databasePath().'/migrations'
         ]);
     }
 }
