@@ -21,7 +21,7 @@ class Cart
      *
      * @var \Illuminate\Session\SessionManager
      */
-    private $session;
+    protected $session;
 
     /**
      * Instance of the event dispatcher.
