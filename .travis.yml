@@ -6,14 +6,13 @@ php:
 
 before_script:
   - composer self-update
-  - composer update --prefer-source --no-interaction
-
+  - composer install --prefer-source --no-interaction
 
 script: 
 - vendor/bin/phpunit --coverage-clover=coverage.xml
 
-# Submit coverage report to https://codecov.io
 after_success:
+# Submit coverage report to https://codecov.io
 - bash <(curl -s https://codecov.io/bash)
 
 # Monitor only these branches
@@ -24,4 +23,4 @@ branches:
 # You can delete the cache using travis-ci web interface
 cache:
   directories:
-  - $HOME/.composer/cache
+- $HOME/.composer/cache
