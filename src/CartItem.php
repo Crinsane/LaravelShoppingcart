@@ -44,6 +44,13 @@ class CartItem implements Arrayable, Jsonable
     public $price;
 
     /**
+     * The weight of the product.
+     *
+     * @var float
+     */
+    public $weight;
+
+    /**
      * The options for this cart item.
      *
      * @var array
@@ -79,7 +86,7 @@ class CartItem implements Arrayable, Jsonable
      * @param float      $price
      * @param array      $options
      */
-    public function __construct($id, $name, $price, array $options = [])
+    public function __construct($id, $name, $price, $weight = 0, array $options = [])
     {
         if(empty($id)) {
             throw new \InvalidArgumentException('Please supply a valid identifier.');
@@ -94,6 +101,7 @@ class CartItem implements Arrayable, Jsonable
         $this->id           = $id;
         $this->name         = $name;
         $this->price        = floatval($price);
+        $this->weight   = floatval($weight);
         $this->options      = new CartItemOptions($options);
         $this->rowId        = $this->generateRowId($id, $options);
     }
@@ -218,6 +226,19 @@ class CartItem implements Arrayable, Jsonable
     }
 
     /**
+     * Returns the formatted weight.
+     *
+     * @param int    $decimals
+     * @param string $decimalPoint
+     * @param string $thousandSeperator
+     * @return string
+     */
+    public function weight($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+    {
+        return $this->numberFormat($this->weight, $decimals, $decimalPoint, $thousandSeperator);
+    }
+
+    /**
      * Set the quantity for this cart item.
      *
      * @param int|float $qty
@@ -256,6 +277,7 @@ class CartItem implements Arrayable, Jsonable
         $this->qty      = array_get($attributes, 'qty', $this->qty);
         $this->name     = array_get($attributes, 'name', $this->name);
         $this->price    = array_get($attributes, 'price', $this->price);
+        $this->weight   = array_get($attributes, 'weight', $this->weight);
         $this->priceTax = $this->price + $this->tax;
         $this->options  = new CartItemOptions(array_get($attributes, 'options', $this->options));
 
@@ -345,6 +367,10 @@ class CartItem implements Arrayable, Jsonable
             return $this->discount * $this->qty;
         }
 
+        if($attribute === 'weightTotal') {
+            return $this->qty * $this->weight;
+        }
+
         if($attribute === 'model' && isset($this->associatedModel)) {
             return with(new $this->associatedModel)->find($this->id);
         }
@@ -361,7 +387,7 @@ class CartItem implements Arrayable, Jsonable
      */
     public static function fromBuyable(Buyable $item, array $options = [])
     {
-        return new self($item->getBuyableIdentifier($options), $item->getBuyableDescription($options), $item->getBuyablePrice($options), $options);
+        return new self($item->getBuyableIdentifier($options), $item->getBuyableDescription($options), $item->getBuyablePrice($options), $item->getBuyableWeight($options), $options);
     }
 
     /**
@@ -386,9 +412,9 @@ class CartItem implements Arrayable, Jsonable
      * @param array      $options
      * @return \Gloudemans\Shoppingcart\CartItem
      */
-    public static function fromAttributes($id, $name, $price, array $options = [])
+    public static function fromAttributes($id, $name, $price, $weight = 0, array $options = [])
     {
-        return new self($id, $name, $price, $options);
+        return new self($id, $name, $price, $weight, $options);
     }
 
     /**
@@ -418,6 +444,7 @@ class CartItem implements Arrayable, Jsonable
             'name'     => $this->name,
             'qty'      => $this->qty,
             'price'    => $this->price,
+            'weight'   => $this->weight,
             'options'  => $this->options->toArray(),
             'discount' => $this->discount,
             'tax'      => $this->tax,

@@ -425,6 +425,33 @@ class Cart
     }
 
     /**
+     * Get the total weight of the items in the cart.
+     *
+     * @return float
+     */
+    public function weightFloat()
+    {
+        $content = $this->getContent();
+        $total = $content->reduce(function ($total, CartItem $cartItem) {
+            return $total + ($cartItem->qty * $cartItem->weight);
+        }, 0);
+        return $total;
+    }
+
+    /**
+     * Get the total weight of the items in the cart.
+     *
+     * @param int    $decimals
+     * @param string $decimalPoint
+     * @param string $thousandSeperator
+     * @return string
+     */
+    public function weight($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+    {
+        return $this->numberFormat($this->weightFloat(), $decimals, $decimalPoint, $thousandSeperator);
+    }
+
+    /**
      * Search the cart content for a cart item matching the given search closure.
      *
      * @param \Closure $search
@@ -603,12 +630,12 @@ class Cart
      * @param mixed $identifier Identifier of the Cart to merge with.
      * @param bool $keepDiscount Keep the discount of the CartItems.
      * @param bool $keepTax Keep the tax of the CartItems.
-     * @return void
+     * @return bool
      */
     public function merge( $identifier, $keepDiscount = false, $keepTax = false )
     {
         if( ! $this->storedCartWithIdentifierExists($identifier)) {
-            return;
+            return false;
         }
 
         $stored = $this->getConnection()->table($this->getTableName())
@@ -619,6 +646,8 @@ class Cart
         foreach ($storedContent as $cartItem) {
             $this->addCartItem($cartItem, $keepDiscount, $keepTax);
         }
+
+        return true;
     }
 
     /**
