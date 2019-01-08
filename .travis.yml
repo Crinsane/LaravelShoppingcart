@@ -6,8 +6,7 @@ php:
 
 before_script:
   - composer self-update
-  - composer update --no-suggest
-  - composer install --no-interaction
+  - composer install --prefer-source --no-interaction
 
 script: 
 - vendor/bin/phpunit --coverage-clover=coverage.xml
