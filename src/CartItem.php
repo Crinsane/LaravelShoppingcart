@@ -335,47 +335,43 @@ class CartItem implements Arrayable, Jsonable
             return $this->{$attribute};
         }
 
-        if($attribute === 'discount') {
-            return $this->price * ($this->discountRate / 100);
-        }
+        switch($attribute)
+        {
+            case 'discount':
+                return $this->price * ($this->discountRate / 100);
 
-        if($attribute === 'priceTarget') {
-            return $this->price - $this->discount;
-        }
+            case 'priceTarget':
+                return $this->price - $this->discount;
 
-        if($attribute === 'subtotal') {
-            return $this->qty * $this->priceTarget;
-        }
+            case 'subtotal':
+                return $this->priceTarget * $this->qty;
 
-        if($attribute === 'tax') {
-            return $this->priceTarget * ($this->taxRate / 100);
-        }
+            case 'tax':
+                return $this->priceTarget * ($this->taxRate / 100);
 
-        if($attribute === 'priceTax') {
-            return $this->priceTarget + $this->tax;
-        }
-        
-        if($attribute === 'total') {
-            return $this->qty * $this->priceTax;
-        }
-        
-        if($attribute === 'taxTotal') {
-            return $this->tax * $this->qty;
-        }
+            case 'priceTax':
+                return $this->priceTarget + $this->tax;
 
-        if($attribute === 'discountTotal') {
-            return $this->discount * $this->qty;
-        }
+            case 'total':
+                return $this->priceTax * $this->qty;
 
-        if($attribute === 'weightTotal') {
-            return $this->qty * $this->weight;
-        }
+            case 'taxTotal':
+                return $this->tax * $this->qty;
 
-        if($attribute === 'model' && isset($this->associatedModel)) {
-            return with(new $this->associatedModel)->find($this->id);
-        }
+            case 'discountTotal':
+                return $this->discount * $this->qty;
 
-        return null;
+            case 'weightTotal':
+                return $this->weight * $this->qty;
+            
+            case 'model':
+                if (isset($this->associatedModel))
+                    return with(new $this->associatedModel)->find($this->id);
+                return null;
+            
+            default:
+                return null;
+        }
     }
 
     /**
@@ -474,17 +470,14 @@ class CartItem implements Arrayable, Jsonable
      */
     private function numberFormat($value, $decimals, $decimalPoint, $thousandSeperator)
     {
-        if (is_null($decimals)){
-            $decimals = is_null(config('cart.format.decimals')) ? 2 : config('cart.format.decimals');
-        }
+        if (is_null($decimals))
+            $decimals = config('cart.format.decimals', 2);
 
-        if (is_null($decimalPoint)){
-            $decimalPoint = is_null(config('cart.format.decimal_point')) ? '.' : config('cart.format.decimal_point');
-        }
+        if (is_null($decimalPoint))
+            $decimalPoint = config('cart.format.decimal_point', '.');
 
-        if (is_null($thousandSeperator)){
-            $thousandSeperator = is_null(config('cart.format.thousand_separator')) ? ',' : config('cart.format.thousand_separator');
-        }
+        if (is_null($thousandSeperator))
+            $thousandSeperator = config('cart.format.thousand_separator', ',');
 
         return number_format($value, $decimals, $decimalPoint, $thousandSeperator);
     }
