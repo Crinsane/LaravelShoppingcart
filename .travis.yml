@@ -1,13 +1,18 @@
 language: php
 
 php:
-  - 5.6
-  - 7.0
+  - 7.1
   - 7.2
 
+env:
+  matrix:
+    - PREFER_LOWEST="--prefer-lowest"
+    - PREFER_LOWEST=""
+
 before_script:
-  - composer self-update
+  - composer self-update $PREFER_LOWEST
   - composer install --prefer-source --no-interaction
+
 
 script: 
 - vendor/bin/phpunit --coverage-clover=coverage.xml
