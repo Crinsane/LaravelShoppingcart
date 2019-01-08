@@ -18,8 +18,8 @@ before_script:
 script: 
 - vendor/bin/phpunit --coverage-clover=coverage.xml
 
-after_success:
 # Submit coverage report to https://codecov.io
+after_success:
 - bash <(curl -s https://codecov.io/bash)
 
 # Monitor only these branches
