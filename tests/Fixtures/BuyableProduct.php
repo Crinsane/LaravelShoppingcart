@@ -28,12 +28,11 @@ class BuyableProduct implements Buyable
      * @param string     $name
      * @param float      $price
      */
-    public function __construct($id = 1, $name = 'Item name', $price = 10.00, $weight = 0)
+    public function __construct($id = 1, $name = 'Item name', $price = 10.00)
     {
         $this->id = $id;
         $this->name = $name;
         $this->price = $price;
-        $this->weight = $weight;
     }
 
     /**
@@ -64,15 +63,5 @@ class BuyableProduct implements Buyable
     public function getBuyablePrice($options = null)
     {
         return $this->price;
-    }
-
-    /**
-     * Get the price of the Buyable item.
-     *
-     * @return float
-     */
-    public function getBuyableWeight($options = null)
-    {
-        return $this->weight;
     }
 }

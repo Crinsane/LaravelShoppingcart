@@ -24,11 +24,4 @@ interface Buyable
      * @return float
      */
     public function getBuyablePrice($options = null);
-
-    /**
-     * Get the weight of the Buyable item.
-     *
-     * @return float
-     */
-    public function getBuyableWeight($options = null);
 }

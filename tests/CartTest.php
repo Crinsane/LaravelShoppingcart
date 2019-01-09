@@ -488,8 +488,7 @@ class CartTest extends TestCase
                 'tax' => 2.10,
                 'subtotal' => 10.0,
                 'options' => [],
-                'discount' => 0.0,
-                'weight' => 0.0
+                'discount' => 0.0
             ],
             '370d08585360f5c568b18d1f2e4ca1df' => [
                 'rowId' => '370d08585360f5c568b18d1f2e4ca1df',
@@ -500,8 +499,7 @@ class CartTest extends TestCase
                 'tax' => 2.10,
                 'subtotal' => 10.0,
                 'options' => [],
-                'discount' => 0.0,
-                'weight' => 0.0
+                'discount' => 0.0
             ]
         ], $content->toArray());
     }
@@ -997,101 +995,6 @@ class CartTest extends TestCase
         $cart3->merge('test', true);
 
         $this->assertEquals(10, $cart3->totalFloat());
-    }
-
-    /** @test */
-    public function it_cant_merge_non_existing_cart()
-    {
-        $this->artisan('migrate', [
-            '--database' => 'testing',
-        ]);
-
-        Event::fake();
-
-        $cart = $this->getCartDiscount(50);
-        $cart->add( new BuyableProduct(1, 'Item', 10.00), 1);
-        $cart->add( new BuyableProduct(2, 'Item 2', 10.00), 1);
-
-        $this->assertEquals(false, $cart->merge('doesNotExist'));
-        $this->assertEquals(2, $cart->countInstances());
-    }
-
-    /** @test */
-    public function cart_can_calculate_all_values()
-    {
-        $cart = $this->getCartDiscount( 50 );
-
-        $cart->add(new BuyableProduct(1, 'First item', 10.00), 1);
-
-        $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
-
-        $cart->setTax('027c91341fd5cf4d2579b49c4b6a90da', 19);
-
-        $this->assertEquals('10.00', $cart->initial(2));
-        $this->assertEquals(10.00, $cart->initialFloat());
-        $this->assertEquals('5.00', $cart->discount(2));
-        $this->assertEquals(5.00, $cart->discountFloat());
-        $this->assertEquals('5.00', $cart->subtotal(2));
-        $this->assertEquals(5.00, $cart->subtotalFloat());
-        $this->assertEquals('0.95', $cart->tax(2));
-        $this->assertEquals(0.95, $cart->taxFloat());
-        $this->assertEquals('5.95', $cart->total(2));
-        $this->assertEquals(5.95, $cart->totalFloat());
-    }
-
-    /** @test */
-    public function can_access_cart_item_propertys()
-    {
-        $cart = $this->getCartDiscount( 50 );
-
-        $cart->add(new BuyableProduct(1, 'First item', 10.00), 1);
-
-        $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
-
-        $this->assertEquals(50, $cartItem->discountRate);
-    }
-
-    /** @test */
-    public function cant_access_non_existant_propertys()
-    {
-        $cart = $this->getCartDiscount( 50 );
-
-        $cart->add(new BuyableProduct(1, 'First item', 10.00), 1);
-
-        $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
-
-        $this->assertEquals(null, $cartItem->doesNotExist);
-        $this->assertEquals(null, $cart->doesNotExist);
-    }
-
-    /** @test */
-    public function can_set_cart_item_discount()
-    {
-        $cart = $this->getCart();
-
-        $cart->add(new BuyableProduct(1, 'First item', 10.00), 1);
-
-        $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
-
-        $cart->setDiscount('027c91341fd5cf4d2579b49c4b6a90da', 50);
-
-        $this->assertEquals(50, $cartItem->discountRate);
-    }
-
-    /** @test */
-    public function can_set_cart_item_weight_and_calculate_total_weight()
-    {
-        $cart = $this->getCart();
-
-        $cart->add(new BuyableProduct(1, 'First item', 10.00, 250), 2);
-
-        $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
-
-        $cart->setDiscount('027c91341fd5cf4d2579b49c4b6a90da', 50);
-
-        $this->assertEquals('500.00', $cart->weight(2));
-        $this->assertEquals(500.00, $cart->weightFloat());
-        $this->assertEquals(500.00, $cartItem->weightTotal);
     }
 
     /**
