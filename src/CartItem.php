@@ -44,6 +44,13 @@ class CartItem implements Arrayable, Jsonable
     public $price;
 
     /**
+     * The weight of the product.
+     *
+     * @var float
+     */
+    public $weight;
+
+    /**
      * The options for this cart item.
      *
      * @var array
@@ -79,7 +86,7 @@ class CartItem implements Arrayable, Jsonable
      * @param float      $price
      * @param array      $options
      */
-    public function __construct($id, $name, $price, array $options = [])
+    public function __construct($id, $name, $price, $weight = 0, array $options = [])
     {
         if(empty($id)) {
             throw new \InvalidArgumentException('Please supply a valid identifier.');
@@ -94,8 +101,22 @@ class CartItem implements Arrayable, Jsonable
         $this->id           = $id;
         $this->name         = $name;
         $this->price        = floatval($price);
+        $this->weight       = floatval($weight);
         $this->options      = new CartItemOptions($options);
         $this->rowId        = $this->generateRowId($id, $options);
+    }
+
+    /**
+     * Returns the formatted weight.
+     *
+     * @param int    $decimals
+     * @param string $decimalPoint
+     * @param string $thousandSeperator
+     * @return string
+     */
+    public function weight($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+    {
+        return $this->numberFormat($this->weight, $decimals, $decimalPoint, $thousandSeperator);
     }
 
     /**
@@ -256,6 +277,7 @@ class CartItem implements Arrayable, Jsonable
         $this->qty      = array_get($attributes, 'qty', $this->qty);
         $this->name     = array_get($attributes, 'name', $this->name);
         $this->price    = array_get($attributes, 'price', $this->price);
+        $this->weight   = array_get($attributes, 'weight', $this->weight);
         $this->priceTax = $this->price + $this->tax;
         $this->options  = new CartItemOptions(array_get($attributes, 'options', $this->options));
 
@@ -312,44 +334,36 @@ class CartItem implements Arrayable, Jsonable
         if(property_exists($this, $attribute)) {
             return $this->{$attribute};
         }
-
-        if($attribute === 'discount') {
-            return $this->price * ($this->discountRate / 100);
-        }
-
-        if($attribute === 'priceTarget') {
-            return $this->price - $this->discount;
-        }
-
-        if($attribute === 'subtotal') {
-            return $this->qty * $this->priceTarget;
-        }
-
-        if($attribute === 'tax') {
-            return $this->priceTarget * ($this->taxRate / 100);
-        }
-
-        if($attribute === 'priceTax') {
-            return $this->priceTarget + $this->tax;
-        }
         
-        if($attribute === 'total') {
-            return $this->qty * $this->priceTax;
+        switch($attribute)
+        {
+            case 'discount':
+                return $this->price * ($this->discountRate / 100);
+            case 'priceTarget':
+                return $this->price - $this->discount;
+            case 'subtotal':
+                return $this->priceTarget * $this->qty;
+            case 'tax':
+                return $this->priceTarget * ($this->taxRate / 100);
+            case 'priceTax':
+                return $this->priceTarget + $this->tax;
+            case 'total':
+                return $this->priceTax * $this->qty;
+            case 'taxTotal':
+                return $this->tax * $this->qty;
+            case 'discountTotal':
+                return $this->discount * $this->qty;
+            case 'weightTotal':
+                return $this->weight * $this->qty;
+            
+            case 'model':
+                if (isset($this->associatedModel))
+                    return with(new $this->associatedModel)->find($this->id);
+                return null;
+            
+            default:
+                return null;
         }
-        
-        if($attribute === 'taxTotal') {
-            return $this->tax * $this->qty;
-        }
-
-        if($attribute === 'discountTotal') {
-            return $this->discount * $this->qty;
-        }
-
-        if($attribute === 'model' && isset($this->associatedModel)) {
-            return with(new $this->associatedModel)->find($this->id);
-        }
-
-        return null;
     }
 
     /**
@@ -361,7 +375,7 @@ class CartItem implements Arrayable, Jsonable
      */
     public static function fromBuyable(Buyable $item, array $options = [])
     {
-        return new self($item->getBuyableIdentifier($options), $item->getBuyableDescription($options), $item->getBuyablePrice($options), $options);
+        return new self($item->getBuyableIdentifier($options), $item->getBuyableDescription($options), $item->getBuyablePrice($options), $item->getBuyableWeight($options), $options);
     }
 
     /**
@@ -374,7 +388,7 @@ class CartItem implements Arrayable, Jsonable
     {
         $options = array_get($attributes, 'options', []);
 
-        return new self($attributes['id'], $attributes['name'], $attributes['price'], $options);
+        return new self($attributes['id'], $attributes['name'], $attributes['price'], $attributes['weight'], $options);
     }
 
     /**
@@ -386,9 +400,9 @@ class CartItem implements Arrayable, Jsonable
      * @param array      $options
      * @return \Gloudemans\Shoppingcart\CartItem
      */
-    public static function fromAttributes($id, $name, $price, array $options = [])
+    public static function fromAttributes($id, $name, $price, $weight, array $options = [])
     {
-        return new self($id, $name, $price, $options);
+        return new self($id, $name, $price, $weight, $options);
     }
 
     /**
@@ -418,6 +432,7 @@ class CartItem implements Arrayable, Jsonable
             'name'     => $this->name,
             'qty'      => $this->qty,
             'price'    => $this->price,
+            'weight'   => $this->weight,
             'options'  => $this->options->toArray(),
             'discount' => $this->discount,
             'tax'      => $this->tax,
@@ -447,17 +462,14 @@ class CartItem implements Arrayable, Jsonable
      */
     private function numberFormat($value, $decimals, $decimalPoint, $thousandSeperator)
     {
-        if (is_null($decimals)){
-            $decimals = is_null(config('cart.format.decimals')) ? 2 : config('cart.format.decimals');
-        }
+        if (is_null($decimals))
+            $decimals = config('cart.format.decimals', 2);
 
-        if (is_null($decimalPoint)){
-            $decimalPoint = is_null(config('cart.format.decimal_point')) ? '.' : config('cart.format.decimal_point');
-        }
+        if (is_null($decimalPoint))
+            $decimalPoint = config('cart.format.decimal_point', '.');
 
-        if (is_null($thousandSeperator)){
-            $thousandSeperator = is_null(config('cart.format.thousand_separator')) ? ',' : config('cart.format.thousand_separator');
-        }
+        if (is_null($thousandSeperator))
+            $thousandSeperator = config('cart.format.thousand_separator', ',');
 
         return number_format($value, $decimals, $decimalPoint, $thousandSeperator);
     }
