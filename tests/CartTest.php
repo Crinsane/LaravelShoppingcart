@@ -15,6 +15,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Gloudemans\Shoppingcart\ShoppingcartServiceProvider;
 use Gloudemans\Tests\Shoppingcart\Fixtures\ProductModel;
 use Gloudemans\Tests\Shoppingcart\Fixtures\BuyableProduct;
+use Gloudemans\Tests\Shoppingcart\Fixtures\Identifiable;
 
 class CartTest extends TestCase
 {
@@ -1066,6 +1067,33 @@ class CartTest extends TestCase
         $this->assertEquals('500.00', $cart->weight(2));
         $this->assertEquals(500.00, $cart->weightFloat());
         $this->assertEquals(500.00, $cartItem->weightTotal);
+        $this->assertEquals('250.00', $cartItem->weight(2));
+    }
+
+    /** @test */
+    public function cart_can_create_and_restore_from_instance_identifier()
+    {
+        $this->artisan('migrate', [
+            '--database' => 'testing',
+        ]);
+
+        Event::fake();
+
+        $identifier = new Identifiable('User1', 0);
+        $cart = $this->getCart();
+
+        $cart->instance($identifier);
+        $this->assertEquals('User1', $cart->currentInstance());
+
+        $cart->add(new BuyableProduct(1, 'First item', 10.00, 250), 2);
+        $this->assertItemsInCart(2, $cart);
+
+        $cart->store($identifier);
+        $cart->destroy();
+        $this->assertItemsInCart(0, $cart);
+
+        $cart->restore($identifier);
+        $this->assertItemsInCart(2, $cart);
     }
 
     /**

@@ -547,6 +547,9 @@ class Cart
     {
         $content = $this->getContent();
 
+        if ($identifier instanceof InstanceIdentifier)
+            $identifier = $identifier->getInstanceIdentifier();
+
         if ($this->storedCartWithIdentifierExists($identifier))
             throw new CartAlreadyStoredException("A cart with identifier {$identifier} was already stored.");
 
@@ -567,6 +570,9 @@ class Cart
      */
     public function restore($identifier)
     {
+        if ($identifier instanceof InstanceIdentifier)
+            $identifier = $identifier->getInstanceIdentifier();
+            
         if( ! $this->storedCartWithIdentifierExists($identifier))
             return;
 
