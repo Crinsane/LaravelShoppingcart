@@ -4,9 +4,14 @@ php:
   - 7.1
   - 7.2
 
+env:
+  matrix:
+    - PREFER_LOWEST="--prefer-lowest"
+    - PREFER_LOWEST=""
+
 before_script:
   - composer self-update
-  - composer update --no-suggest
+  - composer update --no-suggest $PREFER_LOWEST
   - composer install --no-interaction
 
 script: 
