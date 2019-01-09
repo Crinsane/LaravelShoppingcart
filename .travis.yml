@@ -10,8 +10,7 @@ env:
     - PREFER_LOWEST=""
 
 before_script:
-  - composer self-update
-  - composer update $PREFER_LOWEST
+  - composer self-update $PREFER_LOWEST
   - composer install --prefer-source --no-interaction
 
 
