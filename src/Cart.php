@@ -262,7 +262,9 @@ class Cart
      */
     public function count()
     {
-        return $this->getContent()->sum('qty');
+        $content = $this->getContent();
+
+        return $content->sum('qty');
     }
 
     /**
@@ -272,7 +274,9 @@ class Cart
      */
     public function countInstances()
     {
-        return $this->getContent()->count();
+        $content = $this->getContent();
+
+        return $content->count();
     }
 
     /**
@@ -282,9 +286,13 @@ class Cart
      */
     public function totalFloat()
     {
-        return $this->getContent()->reduce(function ($total, CartItem $cartItem) {
+        $content = $this->getContent();
+
+        $total = $content->reduce(function ($total, CartItem $cartItem) {
             return $total + $cartItem->total;
         }, 0);
+
+        return $total;
     }
 
     /**
@@ -307,9 +315,13 @@ class Cart
      */
     public function taxFloat()
     {
-        return $this->getContent()->reduce(function ($tax, CartItem $cartItem) {
+        $content = $this->getContent();
+
+        $tax = $content->reduce(function ($tax, CartItem $cartItem) {
             return $tax + $cartItem->taxTotal;
         }, 0);
+
+        return $tax;
     }
 
     /**
@@ -332,9 +344,13 @@ class Cart
      */
     public function subtotalFloat()
     {
-        return $this->getContent()->reduce(function ($subTotal, CartItem $cartItem) {
+        $content = $this->getContent();
+
+        $subTotal = $content->reduce(function ($subTotal, CartItem $cartItem) {
             return $subTotal + $cartItem->subtotal;
         }, 0);
+
+        return $subTotal;
     }
 
     /**
@@ -357,9 +373,13 @@ class Cart
      */
     public function discountFloat()
     {
-        return $this->getContent()->reduce(function ($discount, CartItem $cartItem) {
+        $content = $this->getContent();
+
+        $discount = $content->reduce(function ($discount, CartItem $cartItem) {
             return $discount + $cartItem->discountTotal;
         }, 0);
+
+        return $discount;
     }
 
     /**
@@ -382,9 +402,13 @@ class Cart
      */
     public function initialFloat()
     {
-        return $this->getContent()->reduce(function ($initial, CartItem $cartItem) {
+        $content = $this->getContent();
+
+        $initial = $content->reduce(function ($initial, CartItem $cartItem) {
             return $initial + ($cartItem->qty * $cartItem->price);
         }, 0);
+
+        return $initial;
     }
 
     /**
@@ -407,9 +431,11 @@ class Cart
      */
     public function weightFloat()
     {
-        return $this->getContent()->reduce(function ($total, CartItem $cartItem) {
+        $content = $this->getContent();
+        $total = $content->reduce(function ($total, CartItem $cartItem) {
             return $total + ($cartItem->qty * $cartItem->weight);
         }, 0);
+        return $total;
     }
 
     /**
@@ -433,7 +459,9 @@ class Cart
      */
     public function search(Closure $search)
     {
-        return $this->getContent()->filter($search);
+        $content = $this->getContent();
+
+        return $content->filter($search);
     }
 
     /**
