@@ -148,7 +148,7 @@ class Cart
         }
 
         $content->put($item->rowId, $item);
-        
+
         $this->events->fire('cart.added', $item);
 
         $this->session->put($this->instance, $content);
@@ -232,7 +232,7 @@ class Cart
     {
         $content = $this->getContent();
 
-        if ( ! $content->has($rowId)) {
+        if (!$content->has($rowId)) {
             throw new InvalidRowIDException("The cart does not contain rowId {$rowId}.");
         }
 
@@ -461,7 +461,7 @@ class Cart
      */
     public function associate($rowId, $model)
     {
-        if(is_string($model) && ! class_exists($model)) {
+        if(is_string($model) && !class_exists($model)) {
             throw new UnknownModelException("The supplied model {$model} does not exist.");
         }
 
@@ -539,7 +539,7 @@ class Cart
     /**
      * Set the global discount percentage for the cart.
      * This will set the discount for all cart items.
-     * 
+     *
      * @param float $discount
      *
      * @return void
@@ -597,7 +597,7 @@ class Cart
             $identifier = $identifier->getInstanceIdentifier();
         }
             
-        if( ! $this->storedCartWithIdentifierExists($identifier)) {
+        if(!$this->storedCartWithIdentifierExists($identifier)) {
             return;
         }
 
@@ -637,7 +637,7 @@ class Cart
      */
     public function merge($identifier, $keepDiscount = false, $keepTax = false)
     {
-        if( ! $this->storedCartWithIdentifierExists($identifier)) {
+        if(!$this->storedCartWithIdentifierExists($identifier)) {
             return false;
         }
 
@@ -724,7 +724,7 @@ class Cart
      */
     private function isMulti($item)
     {
-        if ( ! is_array($item)) {
+        if (!is_array($item)) {
             return false;
         }
         return is_array(head($item)) || head($item) instanceof Buyable;
@@ -787,11 +787,11 @@ class Cart
         if (is_null($decimals)) {
             $decimals = config('cart.format.decimals', 2);
         }
-        
+
         if (is_null($decimalPoint)) {
             $decimalPoint = config('cart.format.decimal_point', '.');
         }
-        
+
         if (is_null($thousandSeperator)) {
             $thousandSeperator = config('cart.format.thousand_separator', ',');
         }

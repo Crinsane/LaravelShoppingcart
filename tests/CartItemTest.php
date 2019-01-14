@@ -2,9 +2,9 @@
 
 namespace Gloudemans\Tests\Shoppingcart;
 
-use Orchestra\Testbench\TestCase;
 use Gloudemans\Shoppingcart\CartItem;
 use Gloudemans\Shoppingcart\ShoppingcartServiceProvider;
+use Orchestra\Testbench\TestCase;
 
 class CartItemTest extends TestCase
 {

@@ -8,7 +8,6 @@ use Illuminate\Support\ServiceProvider;
 
 class ShoppingcartServiceProvider extends ServiceProvider
 {
-
     /**
      * Register the service provider.
      *
@@ -18,10 +17,10 @@ class ShoppingcartServiceProvider extends ServiceProvider
     {
         $this->app->bind('cart', 'Gloudemans\Shoppingcart\Cart');
 
-        $config = __DIR__ . '/Config/cart.php';
+        $config = __DIR__.'/Config/cart.php';
         $this->mergeConfigFrom($config, 'cart');
 
-        $this->publishes([__DIR__ . '/Config/cart.php' => config_path('cart.php')], 'config');
+        $this->publishes([__DIR__.'/Config/cart.php' => config_path('cart.php')], 'config');
 
         $this->app['events']->listen(Logout::class, function () {
             if ($this->app['config']->get('cart.destroy_on_logout')) {

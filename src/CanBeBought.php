@@ -60,5 +60,4 @@ trait CanBeBought
 
         return 0;
     }
-
 }
