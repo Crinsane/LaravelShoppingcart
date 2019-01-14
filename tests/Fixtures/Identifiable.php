@@ -30,7 +30,7 @@ class Identifiable implements InstanceIdentifier
     }
 
     /**
-     * Get the unique identifier to load the Cart from
+     * Get the unique identifier to load the Cart from.
      *
      * @return int|string
      */
@@ -40,7 +40,7 @@ class Identifiable implements InstanceIdentifier
     }
 
     /**
-     * Get the unique identifier to load the Cart from
+     * Get the unique identifier to load the Cart from.
      *
      * @return int|string
      */

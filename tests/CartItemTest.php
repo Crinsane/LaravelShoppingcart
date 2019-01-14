@@ -12,6 +12,7 @@ class CartItemTest extends TestCase
      * Set the package service provider.
      *
      * @param \Illuminate\Foundation\Application $app
+     *
      * @return array
      */
     protected function getPackageProviders($app)
@@ -26,19 +27,19 @@ class CartItemTest extends TestCase
         $cartItem->setQuantity(2);
 
         $this->assertEquals([
-            'id' => 1,
-            'name' => 'Some item',
-            'price' => 10.00,
-            'rowId' => '07d5da5550494c62daf9993cf954303f',
-            'qty' => 2,
+            'id'      => 1,
+            'name'    => 'Some item',
+            'price'   => 10.00,
+            'rowId'   => '07d5da5550494c62daf9993cf954303f',
+            'qty'     => 2,
             'options' => [
-                'size' => 'XL',
-                'color' => 'red'
+                'size'  => 'XL',
+                'color' => 'red',
             ],
-            'tax' => 0,
+            'tax'      => 0,
             'subtotal' => 20.00,
             'discount' => 0.0,
-            'weight' => 550.0
+            'weight'   => 550.0,
         ], $cartItem->toArray());
     }
 
