@@ -329,7 +329,20 @@ $cart->setDiscount($rowId, 21);
 
 ### Buyable
 
-For the convenience of faster adding items to cart and their automatic association, your model can implement `Buyable` interface. To do so, it must implement such functions:
+For the convenience of faster adding items to cart and their automatic association, your model has to implement the `Buyable` interface. You can use the `CanBeBought` trait to implement the required methods but keep in mind that these will use predefined fields on your model for the required values.
+```php
+<?php
+namespace App\Models;
+
+use Gloudemans\Shoppingcart\Contracts\Buyable;
+use Illuminate\Database\Eloquent\Model;
+
+class Product extends Model implements Buyable {
+    use Gloudemans\Shoppingcart\CanBeNought;
+}
+```
+
+If the trait does not work for on the model or you wan't to map the fields manually the model has to implement the `Buyable` interface methods. To do so, it must implement such functions:
 
 ```php
     public function getBuyableIdentifier(){
@@ -340,6 +353,9 @@ For the convenience of faster adding items to cart and their automatic associati
     }
     public function getBuyablePrice(){
         return $this->price;
+    }
+    public function getBuyableWeight(){
+        return $this->weight;
     }
 ```
 

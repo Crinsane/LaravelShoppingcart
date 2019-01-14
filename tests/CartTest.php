@@ -16,6 +16,7 @@ use Gloudemans\Shoppingcart\ShoppingcartServiceProvider;
 use Gloudemans\Tests\Shoppingcart\Fixtures\ProductModel;
 use Gloudemans\Tests\Shoppingcart\Fixtures\BuyableProduct;
 use Gloudemans\Tests\Shoppingcart\Fixtures\Identifiable;
+use Gloudemans\Tests\Shoppingcart\Fixtures\BuyableProductTrait;
 
 class CartTest extends TestCase
 {
@@ -1094,6 +1095,28 @@ class CartTest extends TestCase
 
         $cart->restore($identifier);
         $this->assertItemsInCart(2, $cart);
+    }
+
+    /** @test */
+    public function cart_can_create_items_from_models_using_the_canbebought_trait()
+    {
+        $cart = $this->getCartDiscount( 50 );
+
+        $cart->add(new BuyableProductTrait(1, 'First item', 10.00), 2);
+
+        $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
+
+        $cart->setTax('027c91341fd5cf4d2579b49c4b6a90da', 19);
+
+        $this->assertEquals(10.00, $cartItem->price(2));
+        $this->assertEquals(5.00, $cartItem->discount(2));
+        $this->assertEquals(10.00, $cartItem->discountTotal(2));
+        $this->assertEquals(5.00, $cartItem->priceTarget(2));
+        $this->assertEquals(10.00, $cartItem->subtotal(2));
+        $this->assertEquals(0.95, $cartItem->tax(2));
+        $this->assertEquals(1.90, $cartItem->taxTotal(2));
+        $this->assertEquals(5.95, $cartItem->priceTax(2));
+        $this->assertEquals(11.90, $cartItem->total(2));
     }
 
     /**
