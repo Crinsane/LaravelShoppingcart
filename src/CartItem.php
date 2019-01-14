@@ -73,7 +73,7 @@ class CartItem implements Arrayable, Jsonable
 
     /**
      * The discount rate for the cart item.
-     * 
+     *
      * @var float
      */
     private $discountRate = 0;
@@ -94,7 +94,7 @@ class CartItem implements Arrayable, Jsonable
         if (empty($name)) {
             throw new \InvalidArgumentException('Please supply a valid name.');
         }
-        if (strlen($price) < 0 || ! is_numeric($price)) {
+        if (strlen($price) < 0 ||!is_numeric($price)) {
             throw new \InvalidArgumentException('Please supply a valid price.');
         }
 
@@ -147,7 +147,7 @@ class CartItem implements Arrayable, Jsonable
     {
         return $this->numberFormat($this->priceTarget, $decimals, $decimalPoint, $thousandSeperator);
     }
-    
+
     /**
      * Returns the formatted price with TAX.
      *
@@ -176,7 +176,7 @@ class CartItem implements Arrayable, Jsonable
     {
         return $this->numberFormat($this->subtotal, $decimals, $decimalPoint, $thousandSeperator);
     }
-    
+
     /**
      * Returns the formatted total.
      * Total is price for whole CartItem with TAX.
@@ -205,7 +205,7 @@ class CartItem implements Arrayable, Jsonable
     {
         return $this->numberFormat($this->tax, $decimals, $decimalPoint, $thousandSeperator);
     }
-    
+
     /**
      * Returns the formatted tax.
      *
@@ -255,8 +255,9 @@ class CartItem implements Arrayable, Jsonable
      */
     public function setQuantity($qty)
     {
-        if(empty($qty) || ! is_numeric($qty))
+        if (empty($qty) || !is_numeric($qty)) {
             throw new \InvalidArgumentException('Please supply a valid quantity.');
+        }
 
         $this->qty = $qty;
     }
@@ -270,9 +271,9 @@ class CartItem implements Arrayable, Jsonable
      */
     public function updateFromBuyable(Buyable $item)
     {
-        $this->id       = $item->getBuyableIdentifier($this->options);
-        $this->name     = $item->getBuyableDescription($this->options);
-        $this->price    = $item->getBuyablePrice($this->options);
+        $this->id = $item->getBuyableIdentifier($this->options);
+        $this->name = $item->getBuyableDescription($this->options);
+        $this->price = $item->getBuyablePrice($this->options);
         $this->priceTax = $this->price + $this->tax;
     }
 
@@ -285,13 +286,13 @@ class CartItem implements Arrayable, Jsonable
      */
     public function updateFromArray(array $attributes)
     {
-        $this->id       = array_get($attributes, 'id', $this->id);
-        $this->qty      = array_get($attributes, 'qty', $this->qty);
-        $this->name     = array_get($attributes, 'name', $this->name);
-        $this->price    = array_get($attributes, 'price', $this->price);
-        $this->weight   = array_get($attributes, 'weight', $this->weight);
+        $this->id = array_get($attributes, 'id', $this->id);
+        $this->qty = array_get($attributes, 'qty', $this->qty);
+        $this->name = array_get($attributes, 'name', $this->name);
+        $this->price = array_get($attributes, 'price', $this->price);
+        $this->weight = array_get($attributes, 'weight', $this->weight);
         $this->priceTax = $this->price + $this->tax;
-        $this->options  = new CartItemOptions(array_get($attributes, 'options', $this->options));
+        $this->options = new CartItemOptions(array_get($attributes, 'options', $this->options));
 
         $this->rowId = $this->generateRowId($this->id, $this->options->all());
     }
@@ -306,7 +307,7 @@ class CartItem implements Arrayable, Jsonable
     public function associate($model)
     {
         $this->associatedModel = is_string($model) ? $model : get_class($model);
-        
+
         return $this;
     }
 
@@ -320,7 +321,7 @@ class CartItem implements Arrayable, Jsonable
     public function setTaxRate($taxRate)
     {
         $this->taxRate = $taxRate;
-        
+
         return $this;
     }
 
@@ -334,7 +335,7 @@ class CartItem implements Arrayable, Jsonable
     public function setDiscountRate($discountRate)
     {
         $this->discountRate = $discountRate;
-        
+
         return $this;
     }
 
@@ -347,12 +348,11 @@ class CartItem implements Arrayable, Jsonable
      */
     public function __get($attribute)
     {
-        if(property_exists($this, $attribute)) {
+        if (property_exists($this, $attribute)) {
             return $this->{$attribute};
         }
-        
-        switch($attribute)
-        {
+
+        switch ($attribute) {
             case 'discount':
                 return $this->price * ($this->discountRate / 100);
             case 'priceTarget':
@@ -373,12 +373,13 @@ class CartItem implements Arrayable, Jsonable
                 return $this->weight * $this->qty;
             
             case 'model':
-                if (isset($this->associatedModel))
+                if (isset($this->associatedModel)) {
                     return with(new $this->associatedModel)->find($this->id);
-                return null;
+                }
+                return;
             
             default:
-                return null;
+                return;
         }
     }
 
@@ -436,7 +437,7 @@ class CartItem implements Arrayable, Jsonable
     {
         ksort($options);
 
-        return md5($id . serialize($options));
+        return md5($id.serialize($options));
     }
 
     /**
@@ -456,7 +457,7 @@ class CartItem implements Arrayable, Jsonable
             'options'  => $this->options->toArray(),
             'discount' => $this->discount,
             'tax'      => $this->tax,
-            'subtotal' => $this->subtotal
+            'subtotal' => $this->subtotal,
         ];
     }
 

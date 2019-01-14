@@ -189,6 +189,7 @@ class Cart
 
         if ($cartItem->qty <= 0) {
             $this->remove($cartItem->rowId);
+
             return;
         } else {
             $content->put($cartItem->rowId, $cartItem);
@@ -461,7 +462,7 @@ class Cart
      */
     public function associate($rowId, $model)
     {
-        if(is_string($model) && !class_exists($model)) {
+        if (is_string($model) && !class_exists($model)) {
             throw new UnknownModelException("The supplied model {$model} does not exist.");
         }
 
@@ -597,7 +598,7 @@ class Cart
             $identifier = $identifier->getInstanceIdentifier();
         }
             
-        if(!$this->storedCartWithIdentifierExists($identifier)) {
+        if (!$this->storedCartWithIdentifierExists($identifier)) {
             return;
         }
 
@@ -637,7 +638,7 @@ class Cart
      */
     public function merge($identifier, $keepDiscount = false, $keepTax = false)
     {
-        if(!$this->storedCartWithIdentifierExists($identifier)) {
+        if (!$this->storedCartWithIdentifierExists($identifier)) {
             return false;
         }
 
