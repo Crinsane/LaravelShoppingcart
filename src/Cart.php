@@ -501,13 +501,13 @@ class Cart
     /**
      * Set the global tax rate for the cart.
      * This will set the tax rate for all items.
-     * 
+     *
      * @param float $discount
      */
     public function setGlobalTax($taxRate)
     {
         $this->taxRate = $taxRate;
-        
+
         $content = $this->getContent();
         if ($content && $content->count()) {
             $content->each(function ($item, $key) {
@@ -597,7 +597,7 @@ class Cart
         if ($identifier instanceof InstanceIdentifier) {
             $identifier = $identifier->getInstanceIdentifier();
         }
-            
+
         if (!$this->storedCartWithIdentifierExists($identifier)) {
             return;
         }
@@ -685,6 +685,7 @@ class Cart
         if ($this->session->has($this->instance)) {
             return $this->session->get($this->instance);
         }
+
         return new Collection();
     }
 
@@ -728,6 +729,7 @@ class Cart
         if (!is_array($item)) {
             return false;
         }
+
         return is_array(head($item)) || head($item) instanceof Buyable;
     }
 

@@ -94,7 +94,7 @@ class CartItem implements Arrayable, Jsonable
         if (empty($name)) {
             throw new \InvalidArgumentException('Please supply a valid name.');
         }
-        if (strlen($price) < 0 ||!is_numeric($price)) {
+        if (strlen($price) < 0 || !is_numeric($price)) {
             throw new \InvalidArgumentException('Please supply a valid price.');
         }
 
@@ -371,13 +371,14 @@ class CartItem implements Arrayable, Jsonable
                 return $this->discount * $this->qty;
             case 'weightTotal':
                 return $this->weight * $this->qty;
-            
+
             case 'model':
                 if (isset($this->associatedModel)) {
-                    return with(new $this->associatedModel)->find($this->id);
+                    return with(new $this->associatedModel())->find($this->id);
                 }
+
                 return;
-            
+
             default:
                 return;
         }
