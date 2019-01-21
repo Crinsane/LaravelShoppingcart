@@ -1125,6 +1125,24 @@ class CartTest extends TestCase
         $this->assertEquals(11.90, $cartItem->total(2));
     }
 
+    /** @test */
+    public function it_does_calculate_correct_results_with_rational_qtys()
+    {
+        // https://github.com/Crinsane/LaravelShoppingcart/issues/544
+        $cart = $this->getCart();
+
+        $cart->add(new BuyableProductTrait(1, 'First item', 10.00), 0.5);
+
+        $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
+
+        $cart->setGlobalTax(50);
+
+        $this->assertEquals(10.00, $cartItem->price(2));
+        $this->assertEquals(5.00, $cart->subtotal(2)); //0.5 qty
+        $this->assertEquals(7.50, $cart->total(2)); // plus tax
+        $this->assertEquals(2.50, $cart->tax(2)); // tax of 5 Bucks
+    }
+
     /**
      * Get an instance of the cart.
      *
