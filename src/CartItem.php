@@ -274,24 +274,24 @@ class CartItem implements Arrayable, Jsonable
             return $this->{$attribute};
         }
 
-        if($attribute === 'priceTax') {
-            return $this->numberFormat( ($this->price + $this->tax) );
-        }
-        
-        if($attribute === 'subtotal') {
-            return $this->numberFormat( ($this->qty * $this->price) );
-        }
-        
-        if($attribute === 'total') {
-            return $this->numberFormat( ($this->qty * $this->priceTax) );
+        if ($attribute === 'priceTax') {
+            return number_format(($this->price + $this->tax), 2, '.', '');
         }
 
-        if($attribute === 'tax') {
-            return $this->numberFormat( ($this->price * ($this->taxRate / 100)) );
+        if ($attribute === 'subtotal') {
+            return number_format(($this->qty * $this->price), 2, '.', '');
         }
-        
-        if($attribute === 'taxTotal') {
-            return $this->numberFormat( ($this->tax * $this->qty) );
+
+        if ($attribute === 'total') {
+            return number_format(($this->qty * $this->priceTax), 2, '.', '');
+        }
+
+        if ($attribute === 'tax') {
+            return number_format(($this->price * ($this->taxRate / 100)), 2, '.', '');
+        }
+
+        if ($attribute === 'taxTotal') {
+            return number_format(($this->tax * $this->qty), 2, '.', '');
         }
 
         if($attribute === 'model' && isset($this->associatedModel)) {
