@@ -369,7 +369,7 @@ class Cart
      * @param mixed $identifier
      * @return void
      */
-    public function restore($identifier)
+    public function restore($identifier, $deleteRecord=true)
     {
         if( ! $this->storedCartWithIdentifierExists($identifier)) {
             return;
@@ -395,9 +395,10 @@ class Cart
         $this->session->put($this->instance, $content);
 
         $this->instance($currentInstance);
-
-        $this->getConnection()->table($this->getTableName())
+        if($deleteRecord){
+            $this->getConnection()->table($this->getTableName())
             ->where('identifier', $identifier)->delete();
+        }
     }
 
     /**
