@@ -21,7 +21,7 @@ Now you're ready to start using the shoppingcart in your application.
 
 **As of version 2 of this package it's possibly to use dependency injection to inject an instance of the Cart class into your controller or other class**
 
-## Overview
+## Table of Contents
 Look at one of the following topics to learn more about LaravelShoppingcart
 
 * [Usage](#usage)
