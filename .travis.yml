@@ -15,11 +15,6 @@ after_success:
 # Submit coverage report to https://codecov.io
 - bash <(curl -s https://codecov.io/bash)
 
-# Monitor only these branches
-branches:
-  only:
-  - master
-
 # You can delete the cache using travis-ci web interface
 cache:
   directories:
