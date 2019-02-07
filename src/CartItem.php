@@ -255,23 +255,23 @@ class CartItem implements Arrayable, Jsonable
         }
 
         if($attribute === 'priceTax') {
-            return $this->price + $this->tax;
+            return $this->numberFormat( ($this->price + $this->tax) );
         }
         
         if($attribute === 'subtotal') {
-            return $this->qty * $this->price;
+            return $this->numberFormat( ($this->qty * $this->price) );
         }
         
         if($attribute === 'total') {
-            return $this->qty * ($this->priceTax);
+            return $this->numberFormat( ($this->qty * ($this->priceTax)) );
         }
 
         if($attribute === 'tax') {
-            return $this->price * ($this->taxRate / 100);
+            return $this->numberFormat( ($this->price * ($this->taxRate / 100)) );
         }
         
         if($attribute === 'taxTotal') {
-            return $this->tax * $this->qty;
+            return $this->numberFormat( ($this->tax * $this->qty) );
         }
 
         if($attribute === 'model' && isset($this->associatedModel)) {
@@ -373,7 +373,7 @@ class CartItem implements Arrayable, Jsonable
      * @param string $thousandSeperator
      * @return string
      */
-    private function numberFormat($value, $decimals, $decimalPoint, $thousandSeperator)
+    private function numberFormat($value, $decimals = null, $decimalPoint = null, $thousandSeperator = null)
     {
         if (is_null($decimals)){
             $decimals = is_null(config('cart.format.decimals')) ? 2 : config('cart.format.decimals');
