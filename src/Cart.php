@@ -581,7 +581,7 @@ class Cart
             'instance'   => $this->currentInstance(),
             'content'    => serialize($content),
             'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s')
+            'updated_at' => date('Y-m-d H:i:s'),
         ]);
 
         $this->events->fire('cart.stored');
