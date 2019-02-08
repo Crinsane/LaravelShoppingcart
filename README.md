@@ -71,7 +71,7 @@ Maybe you prefer to add the item using an array? As long as the array contains t
 Cart::add(['id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 9.99, 'options' => ['size' => 'large']]);
 ```
 
-New in version 2 of the package is the possibility to work with the `Buyable` interface. The way this works is that you have a model implement the `Buyable` interface, which will make you implement a few methods so the package knows how to get the id, name and price from your model. 
+New in version 2 of the package is the possibility to work with the [Buyable](#buyable) interface. The way this works is that you have a model implement the `Buyable` interface, which will make you implement a few methods so the package knows how to get the id, name and price from your model. 
 This way you can just pass the `add()` method a model and the quantity and it will automatically add it to the cart. 
 
 **As an added bonus it will automatically associate the model with the CartItem**
@@ -325,6 +325,51 @@ foreach(Cart::content() as $row) {
 	echo 'You have ' . $row->qty . ' items of ' . $row->model->name . ' with description: "' . $row->model->description . '" in your cart.';
 }
 ```
+
+### Buyable
+
+For the convenience of faster adding items to cart and their automatic association, your model can implement `Buyable` interface. To do so, it must implement such functions:
+
+```php
+    public function getBuyableIdentifier(){
+        return $this->id;
+    }
+
+    public function getBuyableDescription(){
+        return $this->name;
+    }
+
+    public function getBuyablePrice(){
+        return $this->price;
+    }
+```
+
+Example:
+
+```php
+<?php
+
+namespace App\Models;
+
+use Gloudemans\Shoppingcart\Contracts\Buyable;
+use Illuminate\Database\Eloquent\Model;
+
+class Product extends Model implements Buyable {
+    public function getBuyableIdentifier($options = null) {
+        return $this->id;
+    }
+
+    public function getBuyableDescription($options = null) {
+        return $this->name;
+    }
+
+    public function getBuyablePrice($options = null) {
+        return $this->price;
+    }
+}
+```
+
+
 ## Database
 
 - [Config](#configuration)
