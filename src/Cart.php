@@ -2,6 +2,7 @@
 
 namespace Gloudemans\Shoppingcart;
 
+use Carbon\Carbon;
 use Closure;
 use Gloudemans\Shoppingcart\Contracts\Buyable;
 use Gloudemans\Shoppingcart\Contracts\InstanceIdentifier;
@@ -12,7 +13,6 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Session\SessionManager;
 use Illuminate\Support\Collection;
-use Carbon\Carbon;
 
 class Cart
 {
@@ -40,15 +40,15 @@ class Cart
     private $instance;
 
     /**
-     * Holds the creation date of the cart
-     * 
+     * Holds the creation date of the cart.
+     *
      * @var mixed
      */
     private $createdAt;
 
     /**
-     * Holds the update date of the cart
-     * 
+     * Holds the update date of the cart.
+     *
      * @var mixed
      */
     private $updatedAt;
