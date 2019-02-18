@@ -12,6 +12,7 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Session\SessionManager;
 use Illuminate\Support\Collection;
+use Carbon\Carbon;
 
 class Cart
 {
@@ -37,6 +38,20 @@ class Cart
      * @var string
      */
     private $instance;
+
+    /**
+     * Holds the creation date of the cart
+     * 
+     * @var mixed
+     */
+    private $createdAt;
+
+    /**
+     * Holds the update date of the cart
+     * 
+     * @var mixed
+     */
+    private $updatedAt;
 
     /**
      * Defines the discount percentage.
@@ -580,7 +595,7 @@ class Cart
             'identifier' => $identifier,
             'instance'   => $this->currentInstance(),
             'content'    => serialize($content),
-            'created_at' => date('Y-m-d H:i:s'),
+            'created_at' => $this->createdAt ?: date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
 
@@ -624,6 +639,9 @@ class Cart
         $this->session->put($this->instance, $content);
 
         $this->instance($currentInstance);
+
+        $this->createdAt = Carbon::parse(data_get($stored, 'created_at'));
+        $this->updatedAt = Carbon::parse(data_get($stored, 'updated_at'));
 
         $this->getConnection()->table($this->getTableName())
             ->where('identifier', $identifier)->delete();
@@ -802,5 +820,25 @@ class Cart
         }
 
         return number_format($value, $decimals, $decimalPoint, $thousandSeperator);
+    }
+
+    /**
+     * Get the creation date of the cart (db context).
+     *
+     * @return \Carbon\Carbon|null
+     */
+    private function createdAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * Get the lats update date of the cart (db context).
+     *
+     * @return \Carbon\Carbon|null
+     */
+    private function updatedAt()
+    {
+        return $this->createdAt;
     }
 }
