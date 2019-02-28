@@ -934,12 +934,12 @@ class CartTest extends TestCase
      * 
      * @param int    $decimals
      * @param string $decimalPoint
-     * @param string $thousandSeperator
+     * @param string $thousandSeparator
      */
-    private function setConfigFormat($decimals, $decimalPoint, $thousandSeperator)
+    private function setConfigFormat($decimals, $decimalPoint, $thousandSeparator)
     {
         $this->app['config']->set('cart.format.decimals', $decimals);
         $this->app['config']->set('cart.format.decimal_point', $decimalPoint);
-        $this->app['config']->set('cart.format.thousand_seperator', $thousandSeperator);
+        $this->app['config']->set('cart.format.thousand_separator', $thousandSeparator);
     }
 }
