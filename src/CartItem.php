@@ -377,7 +377,10 @@ class CartItem implements Arrayable, Jsonable
                     return with(new $this->associatedModel())->find($this->id);
                 }
 
-                return;
+            case 'modelFQCN':
+                if (isset($this->associatedModel)) {
+                    return $this->associatedModel;
+                }
 
             default:
                 return;
