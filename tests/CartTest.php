@@ -56,7 +56,7 @@ class CartTest extends TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp():void
     {
         parent::setUp();
 
@@ -212,11 +212,12 @@ class CartTest extends TestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Please supply a valid identifier.
      */
     public function it_will_validate_the_identifier()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Please supply a valid identifier.');
+
         $cart = $this->getCart();
 
         $cart->add(null, 'Some title', 1, 10.00);
@@ -224,11 +225,12 @@ class CartTest extends TestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Please supply a valid name.
      */
     public function it_will_validate_the_name()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Please supply a valid name.');
+
         $cart = $this->getCart();
 
         $cart->add(1, null, 1, 10.00);
@@ -236,11 +238,12 @@ class CartTest extends TestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Please supply a valid quantity.
      */
     public function it_will_validate_the_quantity()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Please supply a valid quantity.');
+
         $cart = $this->getCart();
 
         $cart->add(1, 'Some title', 'invalid', 10.00);
@@ -248,11 +251,12 @@ class CartTest extends TestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Please supply a valid price.
      */
     public function it_will_validate_the_price()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Please supply a valid price.');
+
         $cart = $this->getCart();
 
         $cart->add(1, 'Some title', 1, 'invalid');
@@ -340,10 +344,11 @@ class CartTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Gloudemans\Shoppingcart\Exceptions\InvalidRowIDException
      */
     public function it_will_throw_an_exception_if_a_rowid_was_not_found()
     {
+        $this->expectException(\Gloudemans\Shoppingcart\Exceptions\InvalidRowIDException::class);
+
         $cart = $this->getCart();
 
         $cart->add(new BuyableProduct);
@@ -620,11 +625,12 @@ class CartTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Gloudemans\Shoppingcart\Exceptions\UnknownModelException
-     * @expectedExceptionMessage The supplied model SomeModel does not exist.
      */
     public function it_will_throw_an_exception_when_a_non_existing_model_is_being_associated()
     {
+        $this->expectException(\Gloudemans\Shoppingcart\Exceptions\UnknownModelException::class);
+        $this->expectExceptionMessage('The supplied model SomeModel does not exist.');
+
         $cart = $this->getCart();
 
         $cart->add(1, 'Test item', 1, 10.00);
@@ -815,11 +821,12 @@ class CartTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Gloudemans\Shoppingcart\Exceptions\CartAlreadyStoredException
-     * @expectedExceptionMessage A cart with identifier 123 was already stored.
      */
     public function it_will_throw_an_exception_when_a_cart_was_already_stored_using_the_specified_identifier()
     {
+        $this->expectException(\Gloudemans\Shoppingcart\Exceptions\CartAlreadyStoredException::class);
+        $this->expectExceptionMessage('A cart with identifier 123 was already stored.');
+
         $this->artisan('migrate', [
             '--database' => 'testing',
         ]);
