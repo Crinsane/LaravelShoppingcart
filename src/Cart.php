@@ -25,7 +25,7 @@ class Cart
 
     /**
      * Instance of the event dispatcher.
-     * 
+     *
      * @var \Illuminate\Contracts\Events\Dispatcher
      */
     private $events;
@@ -103,8 +103,8 @@ class Cart
         }
 
         $content->put($cartItem->rowId, $cartItem);
-        
-        $this->events->fire('cart.added', $cartItem);
+
+        $this->events->dispatch('cart.added', $cartItem);
 
         $this->session->put($this->instance, $content);
 
@@ -148,7 +148,7 @@ class Cart
             $content->put($cartItem->rowId, $cartItem);
         }
 
-        $this->events->fire('cart.updated', $cartItem);
+        $this->events->dispatch('cart.updated', $cartItem);
 
         $this->session->put($this->instance, $content);
 
@@ -169,7 +169,7 @@ class Cart
 
         $content->pull($cartItem->rowId);
 
-        $this->events->fire('cart.removed', $cartItem);
+        $this->events->dispatch('cart.removed', $cartItem);
 
         $this->session->put($this->instance, $content);
     }
@@ -349,8 +349,8 @@ class Cart
     public function store($identifier)
     {
         $content = $this->getContent();
-        
-        
+
+
         $this->getConnection()
              ->table($this->getTableName())
              ->where('identifier', $identifier)
@@ -363,7 +363,7 @@ class Cart
             'content' => serialize($content)
         ]);
 
-        $this->events->fire('cart.stored');
+        $this->events->dispatch('cart.stored');
     }
 
     /**
@@ -393,16 +393,16 @@ class Cart
             $content->put($cartItem->rowId, $cartItem);
         }
 
-        $this->events->fire('cart.restored');
+        $this->events->dispatch('cart.restored');
 
         $this->session->put($this->instance, $content);
 
         $this->instance($currentInstance);
-       
+
     }
 
-    
-    
+
+
     /**
      * Deletes the stored cart with given identifier
      *
@@ -414,9 +414,9 @@ class Cart
              ->where('identifier', $identifier)
              ->delete();
     }
-    
-    
-    
+
+
+
     /**
      * Magic method to make accessing the total, tax and subtotal properties possible.
      *
