@@ -1155,7 +1155,7 @@ class CartTest extends TestCase
         // https://github.com/bumbummen99/LaravelShoppingcart/pull/5
         $cart = $this->getCart();
 
-        $cartItem  = $cart->add('293ad', 'Product 1', 1, 9.99, 550, ['size' => 'large']);
+        $cartItem = $cart->add('293ad', 'Product 1', 1, 9.99, 550, ['size' => 'large']);
 
         $this->assertEquals(550, $cartItem->weight);
         $this->assertTrue($cartItem->options->has('size'));
