@@ -1149,6 +1149,19 @@ class CartTest extends TestCase
         $this->assertEquals(2.50, $cart->tax(2)); // tax of 5 Bucks
     }
 
+    /** @test */
+    public function it_does_allow_adding_cart_items_with_weight_and_options()
+    {
+        // https://github.com/bumbummen99/LaravelShoppingcart/pull/5
+        $cart = $this->getCart();
+
+        $cartItem = $cart->add('293ad', 'Product 1', 1, 9.99, 550, ['size' => 'large']);
+
+        $this->assertEquals(550, $cartItem->weight);
+        $this->assertTrue($cartItem->options->has('size'));
+        $this->assertEquals('large', $cartItem->options->size);
+    }
+
     /**
      * Get an instance of the cart.
      *

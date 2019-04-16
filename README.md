@@ -41,16 +41,16 @@ The shoppingcart gives you the following methods to use:
 
 Adding an item to the cart is really simple, you just use the `add()` method, which accepts a variety of parameters.
 
-In its most basic form you can specify the id, name, quantity, price of the product you'd like to add to the cart.
+In its most basic form you can specify the id, name, quantity, price and weight of the product you'd like to add to the cart.
 
 ```php
-Cart::add('293ad', 'Product 1', 1, 9.99);
+Cart::add('293ad', 'Product 1', 1, 9.99, 550);
 ```
 
 As an optional fifth parameter you can pass it options, so you can add multiple items with the same id, but with (for instance) a different size.
 
 ```php
-Cart::add('293ad', 'Product 1', 1, 9.99, 'weight' => 550, ['size' => 'large']);
+Cart::add('293ad', 'Product 1', 1, 9.99, 550, ['size' => 'large']);
 ```
 
 **The `add()` method will return an CartItem instance of the item you just added to the cart.**
