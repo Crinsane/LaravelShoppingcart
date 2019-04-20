@@ -94,6 +94,12 @@ class Cart
             }, $id);
         }
 
+        if ($id instanceof CartItem) {
+            $cartItem = $id;
+        } else {
+            $cartItem = $this->createCartItem($id, $name, $qty, $price, $options);
+        }
+
         $cartItem = $this->createCartItem($id, $name, $qty, $price, $options);
 
         $content = $this->getContent();
