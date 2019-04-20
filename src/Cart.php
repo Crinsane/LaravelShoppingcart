@@ -100,8 +100,6 @@ class Cart
             $cartItem = $this->createCartItem($id, $name, $qty, $price, $options);
         }
 
-        $cartItem = $this->createCartItem($id, $name, $qty, $price, $options);
-
         $content = $this->getContent();
 
         if ($content->has($cartItem->rowId)) {
