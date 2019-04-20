@@ -360,7 +360,8 @@ class Cart
         $this->getConnection()->table($this->getTableName())->insert([
             'identifier' => $identifier,
             'instance' => $this->currentInstance(),
-            'content' => serialize($content)
+            'content' => serialize($content),
+            'created_at'=> new \DateTime()
         ]);
 
         $this->events->dispatch('cart.stored');
