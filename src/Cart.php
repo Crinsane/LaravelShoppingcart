@@ -83,10 +83,11 @@ class Cart
      * @param mixed     $name
      * @param int|float $qty
      * @param float     $price
+     * @param int|float $weight
      * @param array     $options
      * @return \Gloudemans\Shoppingcart\CartItem
      */
-    public function add($id, $name = null, $qty = null, $price = null, array $options = [])
+    public function add($id, $name = null, $qty = null, $price = null, $weight = null, array $options = [])
     {
         if ($this->isMulti($id)) {
             return array_map(function ($item) {
@@ -94,7 +95,7 @@ class Cart
             }, $id);
         }
 
-        $cartItem = $this->createCartItem($id, $name, $qty, $price, $options);
+        $cartItem = $this->createCartItem($id, $name, $qty, $price, $weight, $options);
 
         $content = $this->getContent();
 
@@ -243,6 +244,22 @@ class Cart
         }, 0);
 
         return $this->numberFormat($total, $decimals, $decimalPoint, $thousandSeperator);
+    }
+    
+    /** 
+     * This modify by rangga darmajati (added new function)
+     * Get the total weight of the items in the cart.
+     * @return string
+     */
+    public function total_weight()
+    {
+        $content = $this->getContent();
+
+        $weight = $content->reduce(function ($weight, CartItem $cartItem) {
+            return $weight + ($cartItem->qty * $cartItem->weight);
+        }, 0);
+
+        return $weight;
     }
 
     /**
@@ -447,7 +464,7 @@ class Cart
      * @param array     $options
      * @return \Gloudemans\Shoppingcart\CartItem
      */
-    private function createCartItem($id, $name, $qty, $price, array $options)
+    private function createCartItem($id, $name, $qty, $price, $weight, array $options)
     {
         if ($id instanceof Buyable) {
             $cartItem = CartItem::fromBuyable($id, $qty ?: []);
@@ -457,7 +474,7 @@ class Cart
             $cartItem = CartItem::fromArray($id);
             $cartItem->setQuantity($id['qty']);
         } else {
-            $cartItem = CartItem::fromAttributes($id, $name, $price, $options);
+            $cartItem = CartItem::fromAttributes($id, $name, $price, $weight, $options);
             $cartItem->setQuantity($qty);
         }
 
