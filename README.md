@@ -348,19 +348,20 @@ This will place a `shoppingcart` table's migration file into `database/migration
 
 ### Storing the cart    
 To store your cart instance into the database, you have to call the `store($identifier) ` method. Where `$identifier` is a random key, for instance the id or username of the user.
-
+```php
     Cart::store('username');
     
     // To store a cart instance named 'wishlist'
     Cart::instance('wishlist')->store('username');
-
+```
 ### Restoring the cart
 If you want to retrieve the cart from the database and restore it, all you have to do is call the  `restore($identifier)` where `$identifier` is the key you specified for the `store` method.
- 
+ ```php
     Cart::restore('username');
     
     // To restore a cart instance named 'wishlist'
-    Cart::instance('wishlist')->restore('username');
+    Cart::instance('wishlist')->restore('username'); 
+```
 
 ## Exceptions
 
