@@ -83,10 +83,11 @@ class Cart
      * @param mixed     $name
      * @param int|float $qty
      * @param float     $price
+     * @param int       $taxRate
      * @param array     $options
      * @return \Gloudemans\Shoppingcart\CartItem
      */
-    public function add($id, $name = null, $qty = null, $price = null, array $options = [])
+    public function add($id, $name = null, $qty = null, $price = null, $taxRate = null, array $options = [])
     {
         if ($this->isMulti($id)) {
             return array_map(function ($item) {
@@ -94,7 +95,7 @@ class Cart
             }, $id);
         }
 
-        $cartItem = $this->createCartItem($id, $name, $qty, $price, $options);
+        $cartItem = $this->createCartItem($id, $name, $qty, $price, $taxRate, $options);
 
         $content = $this->getContent();
 
@@ -444,10 +445,11 @@ class Cart
      * @param mixed     $name
      * @param int|float $qty
      * @param float     $price
+     * @param int       $taxRate
      * @param array     $options
      * @return \Gloudemans\Shoppingcart\CartItem
      */
-    private function createCartItem($id, $name, $qty, $price, array $options)
+    private function createCartItem($id, $name, $qty, $price, $taxRate, array $options)
     {
         if ($id instanceof Buyable) {
             $cartItem = CartItem::fromBuyable($id, $qty ?: []);
@@ -457,11 +459,11 @@ class Cart
             $cartItem = CartItem::fromArray($id);
             $cartItem->setQuantity($id['qty']);
         } else {
-            $cartItem = CartItem::fromAttributes($id, $name, $price, $options);
+            $cartItem = CartItem::fromAttributes($id, $name, $price, $taxRate, $options);
             $cartItem->setQuantity($qty);
         }
 
-        $cartItem->setTaxRate(config('cart.tax'));
+        // $cartItem->setTaxRate(config('cart.tax'));
 
         return $cartItem;
     }
