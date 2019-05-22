@@ -103,8 +103,8 @@ class Cart
         }
 
         $content->put($cartItem->rowId, $cartItem);
-        
-        $this->events->fire('cart.added', $cartItem);
+
+        event('cart.added', $cartItem);
 
         $this->session->put($this->instance, $content);
 
@@ -148,7 +148,7 @@ class Cart
             $content->put($cartItem->rowId, $cartItem);
         }
 
-        $this->events->fire('cart.updated', $cartItem);
+        event('cart.updated', $cartItem);
 
         $this->session->put($this->instance, $content);
 
@@ -169,7 +169,7 @@ class Cart
 
         $content->pull($cartItem->rowId);
 
-        $this->events->fire('cart.removed', $cartItem);
+        event('cart.removed', $cartItem);
 
         $this->session->put($this->instance, $content);
     }
@@ -360,7 +360,7 @@ class Cart
             'content' => serialize($content)
         ]);
 
-        $this->events->fire('cart.stored');
+        event('cart.stored');
     }
 
     /**
@@ -390,7 +390,7 @@ class Cart
             $content->put($cartItem->rowId, $cartItem);
         }
 
-        $this->events->fire('cart.restored');
+        event('cart.restored');
 
         $this->session->put($this->instance, $content);
 
