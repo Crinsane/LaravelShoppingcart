@@ -24,4 +24,11 @@ interface Buyable
      * @return float
      */
     public function getBuyablePrice($options = null);
+
+    /**
+     * Get the tax rate of the Buyable item.
+     *
+     * @return float
+     */
+    public function getBuyableTaxRate($options = null);
 }
