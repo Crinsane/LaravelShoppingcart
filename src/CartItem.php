@@ -72,7 +72,7 @@ class CartItem implements Arrayable, Jsonable
      * @param float      $price
      * @param array      $options
      */
-    public function __construct($id, $name, $price, array $options = [])
+    public function __construct($id, $name, $price, $taxRate, array $options = [])
     {
         if(empty($id)) {
             throw new \InvalidArgumentException('Please supply a valid identifier.');
@@ -80,12 +80,16 @@ class CartItem implements Arrayable, Jsonable
         if(empty($name)) {
             throw new \InvalidArgumentException('Please supply a valid name.');
         }
+        if(empty($taxRate)) {
+            throw new \InvalidArgumentException('Please supply a valid taxRate.');
+        }
         if(strlen($price) < 0 || ! is_numeric($price)) {
             throw new \InvalidArgumentException('Please supply a valid price.');
         }
 
         $this->id       = $id;
         $this->name     = $name;
+        $this->taxRate  = $taxRate;
         $this->price    = floatval($price);
         $this->options  = new CartItemOptions($options);
         $this->rowId = $this->generateRowId($id, $options);
@@ -195,6 +199,7 @@ class CartItem implements Arrayable, Jsonable
         $this->id       = $item->getBuyableIdentifier($this->options);
         $this->name     = $item->getBuyableDescription($this->options);
         $this->price    = $item->getBuyablePrice($this->options);
+        $this->taxRate  = $item->getBuyableTaxRate();
         $this->priceTax = $this->price + $this->tax;
     }
 
@@ -210,6 +215,7 @@ class CartItem implements Arrayable, Jsonable
         $this->qty      = array_get($attributes, 'qty', $this->qty);
         $this->name     = array_get($attributes, 'name', $this->name);
         $this->price    = array_get($attributes, 'price', $this->price);
+        $this->taxRate  = array_get($attributes, 'taxRate', $this->taxRate);
         $this->priceTax = $this->price + $this->tax;
         $this->options  = new CartItemOptions(array_get($attributes, 'options', $this->options));
 
@@ -274,6 +280,10 @@ class CartItem implements Arrayable, Jsonable
             return $this->tax * $this->qty;
         }
 
+        if($attribute === 'taxRate') {
+            return $this->taxRate;
+        }
+
         if($attribute === 'model' && isset($this->associatedModel)) {
             return with(new $this->associatedModel)->find($this->id);
         }
@@ -290,7 +300,7 @@ class CartItem implements Arrayable, Jsonable
      */
     public static function fromBuyable(Buyable $item, array $options = [])
     {
-        return new self($item->getBuyableIdentifier($options), $item->getBuyableDescription($options), $item->getBuyablePrice($options), $options);
+        return new self($item->getBuyableIdentifier($options), $item->getBuyableDescription($options), $item->getBuyablePrice($options), $item->getBuyableTaxRate($options), $options);
     }
 
     /**
@@ -303,7 +313,7 @@ class CartItem implements Arrayable, Jsonable
     {
         $options = array_get($attributes, 'options', []);
 
-        return new self($attributes['id'], $attributes['name'], $attributes['price'], $options);
+        return new self($attributes['id'], $attributes['name'], $attributes['price'], $attributes['taxRate'], $options);
     }
 
     /**
@@ -315,9 +325,9 @@ class CartItem implements Arrayable, Jsonable
      * @param array      $options
      * @return \Gloudemans\Shoppingcart\CartItem
      */
-    public static function fromAttributes($id, $name, $price, array $options = [])
+    public static function fromAttributes($id, $name, $price, $taxRate, array $options = [])
     {
-        return new self($id, $name, $price, $options);
+        return new self($id, $name, $price, $taxRate, $options);
     }
 
     /**
@@ -349,7 +359,8 @@ class CartItem implements Arrayable, Jsonable
             'price'    => $this->price,
             'options'  => $this->options->toArray(),
             'tax'      => $this->tax,
-            'subtotal' => $this->subtotal
+            'subtotal' => $this->subtotal,
+            'taxRate'  => $this->taxRate,
         ];
     }
 
