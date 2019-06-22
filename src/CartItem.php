@@ -97,7 +97,7 @@ class CartItem implements Arrayable, Jsonable
         if (strlen($price) < 0 || !is_numeric($price)) {
             throw new \InvalidArgumentException('Please supply a valid price.');
         }
-        if (strlen($weight) < 0 || !is_numeric($weight)) {
+        if (!is_numeric($weight)) {
             throw new \InvalidArgumentException('Please supply a valid weight.');
         }
 
