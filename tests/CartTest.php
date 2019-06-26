@@ -263,7 +263,7 @@ class CartTest extends TestCase
 
         $cart->add(1, 'Some title', 1, 'invalid');
     }
-    
+
     /**
      * @test
      */
