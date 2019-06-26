@@ -6,11 +6,13 @@
     "authors": [
         {
             "name": "Rob Gloudemans",
-            "email": "info@robgloudemans.nl"
+            "email": "info@robgloudemans.nl",
+            "homepage": "http://robgloudemans.nl/"
         },
         {
             "name": "Patrick Henninger",
-            "email": "privat@skyraptor.eu"
+            "email": "privat@skyraptor.eu",
+            "homepage": "https://skyraptor.eu/"
         }
     ],
     "require": {

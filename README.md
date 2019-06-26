@@ -306,8 +306,8 @@ $cart->setTax($rowId, 21);
 You can use the `setGlobalTax()` method to change the tax rate for all items in the cart. New items will receive the setGlobalTax as well.
 
 ```php
-Cart::setGlobalDiscount(21);
-$cart->setGlobalDiscount(21);
+Cart::setGlobalTax(21);
+$cart->setGlobalTax(21);
 ```
 
 ### Cart::setGlobalDiscount($discountRate)
@@ -315,8 +315,8 @@ $cart->setGlobalDiscount(21);
 You can use the `setGlobalDiscount()` method to change the discount rate for all items in the cart. New items will receive the discount as well.
 
 ```php
-Cart::setGlobalDiscount(21);
-$cart->setGlobalDiscount(21);
+Cart::setGlobalDiscount(50);
+$cart->setGlobalDiscount(50);
 ```
 
 ### Cart::setDiscount($rowId, $taxRate)

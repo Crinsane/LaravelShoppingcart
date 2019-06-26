@@ -110,7 +110,7 @@ class Cart
      *
      * @return \Gloudemans\Shoppingcart\CartItem
      */
-    public function add($id, $name = null, $qty = null, $price = null, $weight = null, array $options = [])
+    public function add($id, $name = null, $qty = null, $price = null, $weight = 0, array $options = [])
     {
         if ($this->isMulti($id)) {
             return array_map(function ($item) {
