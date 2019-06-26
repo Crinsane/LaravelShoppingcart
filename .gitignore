@@ -2,3 +2,5 @@
 composer.phar
 composer.lock
 .DS_Store
+coverage.xml
+.phpunit.result.cache

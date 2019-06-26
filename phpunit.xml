@@ -7,11 +7,20 @@
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          processIsolation="false"
-         stopOnFailure="false"
-         syntaxCheck="false">
+         stopOnFailure="false">
     <testsuites>
-        <testsuite name="Package Test Suite">
+        <testsuite name="Test Suite">
             <directory suffix=".php">./tests/</directory>
         </testsuite>
     </testsuites>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./src</directory>
+            <exclude>
+                <file>./src/CanBeBought.php</file>
+                <directory suffix=".php">./src/Facades</directory>
+                <directory suffix=".php">./src/Database/migrations</directory>
+            </exclude>
+        </whitelist>
+    </filter>
 </phpunit>

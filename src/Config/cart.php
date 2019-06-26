@@ -49,7 +49,7 @@ return [
     | Default number format
     |--------------------------------------------------------------------------
     |
-    | This defaults will be used for the formated numbers if you don't
+    | This defaults will be used for the formatted numbers if you don't
     | set them in the method call.
     |
     */
@@ -60,7 +60,7 @@ return [
 
         'decimal_point' => '.',
 
-        'thousand_seperator' => ','
+        'thousand_separator' => ',',
 
     ],
 
