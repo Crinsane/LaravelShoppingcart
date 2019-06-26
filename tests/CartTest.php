@@ -263,6 +263,19 @@ class CartTest extends TestCase
 
         $cart->add(1, 'Some title', 1, 'invalid');
     }
+    
+    /**
+     * @test
+     */
+    public function it_will_validate_the_weight()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Please supply a valid weight');
+
+        $cart = $this->getCart();
+
+        $cart->add(1, 'Some title', 1, 10.00, 'invalid');
+    }
 
     /** @test */
     public function it_will_update_the_cart_if_the_item_already_exists_in_the_cart()
