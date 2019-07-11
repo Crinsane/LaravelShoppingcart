@@ -339,7 +339,7 @@ use Gloudemans\Shoppingcart\Contracts\Buyable;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model implements Buyable {
-    use Gloudemans\Shoppingcart\CanBeNought;
+    use Gloudemans\Shoppingcart\CanBeBought;
 }
 ```
 
