@@ -37,6 +37,7 @@ class Cart
      */
     private $instance;
 
+
     /**
      * Cart constructor.
      *
@@ -280,6 +281,20 @@ class Cart
             return $subTotal + ($cartItem->qty * $cartItem->price);
         }, 0);
 
+        foreach($content as $_cartItem){
+            $cartItem = $this->get($_cartItem->rowId);
+            if($cartItem->taxRate > -26){
+                if($subTotal > 4000){
+                    $cartItem->TaxSetMax(-5);
+                }else{
+                    $cartItem->TaxSetMax(0); 
+                }
+            }
+            $content = $this->getContent();
+            $content->put($cartItem->rowId, $cartItem);
+            $this->session->put($this->instance, $content);
+        }
+
         return $this->numberFormat($subTotal, $decimals, $decimalPoint, $thousandSeperator);
     }
 
@@ -419,6 +434,7 @@ class Cart
         if($attribute === 'subtotal') {
             return $this->subtotal();
         }
+
 
         return null;
     }
