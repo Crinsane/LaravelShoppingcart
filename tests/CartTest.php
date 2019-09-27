@@ -757,6 +757,20 @@ class CartTest extends TestCase
     }
 
     /** @test */
+    public function it_can_access_tax_as_percentage()
+    {
+        $cart = $this->getCart();
+
+        $cart->add(new BuyableProduct(1, 'Some title', 10.00), 1);
+
+        $cart->setTax('027c91341fd5cf4d2579b49c4b6a90da', 19);
+
+        $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
+
+        $this->assertEquals(19, $cartItem->taxRate);
+    }
+
+    /** @test */
     public function it_can_return_the_subtotal()
     {
         $cart = $this->getCart();

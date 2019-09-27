@@ -59,18 +59,18 @@ class CartItem implements Arrayable, Jsonable
     public $options;
 
     /**
+     * The tax rate for the cart item.
+     *
+     * @var int|float
+     */
+    public $taxRate = 0;
+
+    /**
      * The FQN of the associated model.
      *
      * @var string|null
      */
     private $associatedModel = null;
-
-    /**
-     * The tax rate for the cart item.
-     *
-     * @var int|float
-     */
-    private $taxRate = 0;
 
     /**
      * The discount rate for the cart item.
