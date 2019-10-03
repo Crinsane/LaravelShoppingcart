@@ -329,9 +329,10 @@ class CartItem implements Arrayable, Jsonable
      */
     protected function generateRowId($id, array $options)
     {
-        ksort($options);
+        //ksort($options);
 
-        return md5($id . serialize($options));
+        //return md5($id . serialize($options));
+        return $id;
     }
 
     /**
