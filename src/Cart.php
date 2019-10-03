@@ -189,6 +189,22 @@ class Cart
 
         return $content->get($rowId);
     }
+    
+    /**
+     * Сhecks if the item is in the cart
+     *
+     * @param string $rowId
+     * @return bool
+     */
+    public function has($rowId)
+    {
+        $content = $this->getContent();
+        
+        if ($content->has($rowId))
+            return true;
+            
+        return false;
+    }
 
     /**
      * Destroy the current cart instance.
