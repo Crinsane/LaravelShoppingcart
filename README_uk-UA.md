@@ -7,77 +7,76 @@
 [![Latest Unstable Version](https://poser.pugx.org/bumbummen99/shoppingcart/v/unstable)](https://packagist.org/packages/bumbummen99/shoppingcart)
 [![License](https://poser.pugx.org/bumbummen99/shoppingcart/license)](https://packagist.org/packages/bumbummen99/shoppingcart)
 
-This is a fork of [Crisane's LaravelShoppingcart](https://github.com/Crinsane/LaravelShoppingcart) extended with minor features compatible with Laravel 6.
+Цей репозиторій є відгалуженням [Crisane's LaravelShoppingcart](https://github.com/Crinsane/LaravelShoppingcart) з додатковими незначними фічамиб сумісними з Laravel 6.
 
-## Installation
+## Встановлення
 
-Install the [package](https://packagist.org/packages/bumbummen99/shoppingcart) through [Composer](http://getcomposer.org/). 
+Встановіть [пакет](https://packagist.org/packages/bumbummen99/shoppingcart) скориставшись [Завантажувачем](http://getcomposer.org/). 
 
-Run the Composer require command from the Terminal:
+Для запуску Завантажувача, скористайтеся командою у Терміналі:
 
     composer require bumbummen99/shoppingcart
 
-Now you're ready to start using the shoppingcart in your application.
+Тепер ви готові розпочати користуватися кошиком у вашому застосунку.
 
-**As of version 2 of this package it's possibly to use dependency injection to inject an instance of the Cart class into your controller or other class**
+**Починаючи з версії 2 даного пакету з'явилася можливість впровадження залежності для впровадження екземплера класу Кошик (Cart) до вашого контролера або іншого класу**
 
-## Overview
-Look at one of the following topics to learn more about LaravelShoppingcart
+## Огляд
+Щоб детальніше ознайомитися LaravelShoppingcart, можете пройти за посиланнями
 
-* [Usage](#usage)
-* [Collections](#collections)
-* [Instances](#instances)
-* [Models](#models)
-* [Database](#database)
-* [Exceptions](#exceptions)
-* [Events](#events)
-* [Example](#example)
+* [Застосування](#usage)
+* [Колекції](#collections)
+* [Екземпляри](#instances)
+* [Моделі](#models)
+* [База даних](#database)
+* [Винятки](#exceptions)
+* [Події](#events)
+* [Приклад](#example)
 
-## Usage
+## Застосування
 
-The shoppingcart gives you the following methods to use:
+Кошик (Cart) дозволяє вам скористатися наступними методами:
 
 ### Cart::add()
 
-Adding an item to the cart is really simple, you just use the `add()` method, which accepts a variety of parameters.
+Додавати покупки у кошик дуже зручно - достатньо лише скористатися методом `add()`, який приймає різноманітні параметри.
 
-In its most basic form you can specify the id, name, quantity, price and weight of the product you'd like to add to the cart.
+У найпростішій формі метода достатньо вказати ідентифікатор, назву, кількість, ціну та вагу товару, який ви хочете додати у кошик.
 
 ```php
 Cart::add('293ad', 'Product 1', 1, 9.99, 550);
 ```
 
-As an optional fifth parameter you can pass it options, so you can add multiple items with the same id, but with (for instance) a different size.
+У якості додаткового п'ятого параметра можна задати варіанти, наприклад, щоб додати декілька одиниць з однаковим ідентифікатором, але різного розміру.
 
 ```php
 Cart::add('293ad', 'Product 1', 1, 9.99, 550, ['size' => 'large']);
 ```
 
-**The `add()` method will return an CartItem instance of the item you just added to the cart.**
+**Метод `add()` повертає екземпляр CartItems того товару, який ви щойно додали у кошик.**
 
-Maybe you prefer to add the item using an array? As long as the array contains the required keys, you can pass it to the method. The options key is optional.
+Можливо, вам більше до вподоби додавати товари, використовуючи масив? Якщо масив містить усі необхідні поля, ви можете передавати масив у цей метод. Поле із додатковими варіантами є необов'язковим.
 
 ```php
 Cart::add(['id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 9.99, 'weight' => 550, 'options' => ['size' => 'large']]);
 ```
 
-New in version 2 of the package is the possibility to work with the [Buyable](#buyable) interface. The way this works is that you have a model implement the [Buyable](#buyable) interface, which will make you implement a few methods so the package knows how to get the id, name and price from your model. 
-This way you can just pass the `add()` method a model and the quantity and it will automatically add it to the cart. 
+У версії 2 пакета з'явилася нова можливість для роботи з інтерфейсом [Buyable](#buyable). Такий функціонал з'являється за рахунок того, що модель запускає інтерфейс [Buyable](#buyable), який дозволить імплементувати декілька методів, з яких пакет знатиме як отримати ідентифікатор, назву та ціну з вашої моделі. 
+Таким чином, ви можете передати метод `add()` та кількість одиниць товару до моделі, а вона автоматично додасть їх до кошика. 
 
-**As an added bonus it will automatically associate the model with the CartItem**
+**Додатковий бонус інтерфейсу - автоматичне об'єднання моделі з CartItems**
 
 ```php
 Cart::add($product, 1, ['size' => 'large']);
 ```
-As an optional third parameter you can add options.
+У якості додаткового параметра, ви можете додати варіанти.
 ```php
 Cart::add($product, 1, ['size' => 'large']);
 ```
 
-Finally, you can also add multipe items to the cart at once.
-You can just pass the `add()` method an array of arrays, or an array of Buyables and they will be added to the cart. 
+Нарешті, ви також можете додавати до кошика декілька одиниць водночас. Для цього потрібно передати у `add()` масив масивів або масив Покупні, і їх буде додано в кошик. 
 
-**When adding multiple items to the cart, the `add()` method will return an array of CartItems.**
+**Під час додавання декількох одиниць товару в кошик, метод `add()` повертає масив CartItems.**
 
 ```php
 Cart::add([
@@ -91,10 +90,10 @@ Cart::add([$product1, $product2]);
 
 ### Cart::update()
 
-To update an item in the cart, you'll first need the rowId of the item.
-Next you can use the `update()` method to update it.
+Щоб оновити товар у кошику, вам знадобиться ідентифікатор рядка (rowId) даного товару.
+Далі ви можете скористатися методом `update()` для того, щоб оновити його.
 
-If you simply want to update the quantity, you'll pass the update method the rowId and the new quantity:
+Якщо ви просто хочете оновити кількість товару, вам потрібно передати у метод `update()` rowId і оновлену кількість:
 
 ```php
 $rowId = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
@@ -102,7 +101,7 @@ $rowId = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
 Cart::update($rowId, 2); // Will update the quantity
 ```
 
-If you want to update more attributes of the item, you can either pass the update method an array or a `Buyable` as the second parameter. This way you can update all information of the item with the given rowId.
+Якщо ви хочете оновити більше атрибутів товару, вам потрібно або передати у метод `update()` масив або `Buyable` у якості другого параметра. Таким чином, ви можете оновити всю інформацію про товар за заданим rowId.
 
 ```php
 Cart::update($rowId, ['name' => 'Product 1']); // Will update the name
@@ -113,7 +112,7 @@ Cart::update($rowId, $product); // Will update the id, name and price
 
 ### Cart::remove()
 
-To remove an item for the cart, you'll again need the rowId. This rowId you simply pass to the `remove()` method and it will remove the item from the cart.
+Щоб вилучити товар з кошика, вам знову знадобиться rowId. Такий rowId потрібно передати у метод `remove()`, який автоматично вилучить товар із кошика.
 
 ```php
 $rowId = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
@@ -123,7 +122,7 @@ Cart::remove($rowId);
 
 ### Cart::get()
 
-If you want to get an item from the cart using its rowId, you can simply call the `get()` method on the cart and pass it the rowId.
+Якщо ви хочете отримати товар із кошика, використовуючи його rowId, вам потрібно застосувати метод `get()` щодо кошика і передати в нього rowId.
 
 ```php
 $rowId = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
@@ -133,13 +132,13 @@ Cart::get($rowId);
 
 ### Cart::content()
 
-Of course you also want to get the carts content. This is where you'll use the `content` method. This method will return a Collection of CartItems which you can iterate over and show the content to your customers.
+Звісно, вам також може знадобитися отримати інформацію про вміст кошика. Для цього вам потрібно скористатися методом `content`. Такий метод повертає колекцію CartItems, ви можете перебирати вміст такої колекції і відобразити вміст кошика для ваших клієнтів.
 
 ```php
 Cart::content();
 ```
 
-This method will return the content of the current cart instance, if you want the content of another instance, simply chain the calls.
+Даний метод повертає вміст поточного екземпляра кошика, якщо ви хочете вміст іншого екземпляра, вам потрібно зв'язати виклики.
 
 ```php
 Cart::instance('wishlist')->content();
@@ -147,7 +146,7 @@ Cart::instance('wishlist')->content();
 
 ### Cart::destroy()
 
-If you want to completely remove the content of a cart, you can call the destroy method on the cart. This will remove all CartItems from the cart for the current cart instance.
+Якщо ви хочете остаточно вилучити вміст кошика, ви можете застосувати метод `destroy()` щодо кошика. Даний метод вилучить всі CartItems з кошика для поточного екземпляра кошика.
 
 ```php
 Cart::destroy();
@@ -155,115 +154,115 @@ Cart::destroy();
 
 ### Cart::weight()
 
-The `weight()` method can be used to get the weight total of all items in the cart, given there weight and quantity.
+Метод `weight()` можна застосувати, щоб отримати розрахунок ваги усіх товарів у кошику, за умови, що задано вагу і кількість одиниць.
 
 ```php
 Cart::weight();
 ```
 
-The method will automatically format the result, which you can tweak using the three optional parameters
+Даний метод автоматично відформатує результат, який ви можете поправити за допомогою трьох додаткових параметрів.
 
 ```php
 Cart::weight($decimals, $decimalSeperator, $thousandSeperator);
 ```
 
-You can set the default number format in the config file.
+Ви можете задати формат чисел за замовчуванням у файлі з конфігураціями.
 
-**If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the total property `$cart->weight`**
+**Якщо ви не використовуєте Фасад, але застосовуєте впровадження залежності, наприклад, у вашому Контролері, ви також можете отримати інформацію про вагу товарів через `$cart->weight`**
 
 ### Cart::total()
 
-The `total()` method can be used to get the calculated total of all items in the cart, given there price and quantity.
+Метод `total()` можна застосовувати, щоб отримати розрахунок вартості усіх товарів у кошику, за умови, що задані ціна і кількість одиниць.
 
 ```php
 Cart::total();
 ```
 
-The method will automatically format the result, which you can tweak using the three optional parameters
+Даний метод автоматично відформатує результат, який ви можете поправити за допомогою трьох додаткових параметрів.
 
 ```php
 Cart::total($decimals, $decimalSeparator, $thousandSeparator);
 ```
 
-You can set the default number format in the config file.
+Ви можете задати формат чисел за замовчуванням у файлі з конфігураціями.
 
-**If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the total property `$cart->total`**
+**Якщо ви не використовуєте Фасад, але застосовуєте впровадження залежності, наприклад, у вашому Контролері, ви також можете отримати інформацію про вартість товарів через `$cart->total`**
 
 ### Cart::tax()
 
-The `tax()` method can be used to get the calculated amount of tax for all items in the cart, given there price and quantity.
+Метод `tax()` можна застосовувати, щоб отримати розрахунок суми податків для усіх товарів у кошику, за умови, що задані ціна і кількість одиниць.
 
 ```php
 Cart::tax();
 ```
 
-The method will automatically format the result, which you can tweak using the three optional parameters
+Даний метод автоматично відформатує результат, який ви можете поправити за допомогою трьох додаткових параметрів.
 
 ```php
 Cart::tax($decimals, $decimalSeparator, $thousandSeparator);
 ```
 
-You can set the default number format in the config file.
+Ви можете задати формат чисел за замовчуванням у файлі з конфігураціями.
 
-**If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the tax property `$cart->tax`**
+**Якщо ви не використовуєте Фасад, але застосовуєте впровадження залежності, наприклад, у вашому Контролері, ви також можете отримати інформацію про суму податку на товари через `$cart->tax`**
 
 ### Cart::subtotal()
 
-The `subtotal()` method can be used to get the total of all items in the cart, minus the total amount of tax. 
+Метод `subtotal()` можна застосовувати, щоб отримати розрахунок вартості усіх товарів у кошику, без урахування суми податку. 
 
 ```php
 Cart::subtotal();
 ```
 
-The method will automatically format the result, which you can tweak using the three optional parameters
+Даний метод автоматично відформатує результат, який ви можете поправити за допомогою трьох додаткових параметрів.
 
 ```php
 Cart::subtotal($decimals, $decimalSeparator, $thousandSeparator);
 ```
 
-You can set the default number format in the config file.
+Ви можете задати формат чисел за замовчуванням у файлі з конфігураціями.
 
-**If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the subtotal property `$cart->subtotal`**
+**Якщо ви не використовуєте Фасад, але застосовуєте впровадження залежності, наприклад, у вашому Контролері, ви також можете отримати інформацію про вартість усіх товарів без урахування суми податків через `$cart->subtotal`**
 
 ### Cart::discount()
 
-The `discount()` method can be used to get the total discount of all items in the cart. 
+Метод `discount()` можна застосовувати, щоб отримати розрахунок знижки на усі товари у кошику. 
 
 ```php
 Cart::discount();
 ```
 
-The method will automatically format the result, which you can tweak using the three optional parameters
+Даний метод автоматично відформатує результат, який ви можете поправити за допомогою трьох додаткових параметрів.
 
 ```php
 Cart::discount($decimals, $decimalSeparator, $thousandSeparator);
 ```
 
-You can set the default number format in the config file.
+Ви можете задати формат чисел за замовчуванням у файлі з конфігураціями.
 
-**If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the subtotal property `$cart->discount`**
+**Якщо ви не використовуєте Фасад, але застосовуєте впровадження залежності, наприклад, у вашому Контролері, ви також можете отримати інформацію про вартість усіх товарів з урахуванням знижки `$cart->discount`**
 
 ### Cart::initial()
 
-The `initial()` method can be used to get the total price of all items in the cart before discount. 
+Метод `initial()` можна застосовувати, щоб отримати розрахунок вартості усіх товарів до застосування знижки. 
 
 ```php
 Cart::initial();
 ```
 
-The method will automatically format the result, which you can tweak using the three optional parameters
+Даний метод автоматично відформатує результат, який ви можете поправити за допомогою трьох додаткових параметрів.
 
 ```php
 Cart::initial($decimals, $decimalSeparator, $thousandSeparator);
 ```
 
-You can set the default number format in the config file.
+Ви можете задати формат чисел за замовчуванням у файлі з конфігураціями.
 
-**If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the subtotal property `$cart->initial`**
+**Якщо ви не використовуєте Фасад, але застосовуєте впровадження залежності, наприклад, у вашому Контролері, ви також можете отримати інформацію про вартість усіх товарів до застосування знижки `$cart->initial`**
 
 ### Cart::count()
 
-If you want to know how many items there are in your cart, you can use the `count()` method. This method will return the total number of items in the cart. So if you've added 2 books and 1 shirt, it will return 3 items.
+Метод `count()` можна застосовувати, щоб дізнатися кількість одиниць товарів у кошику. Даний метод повертає загальну кількість одиниць товарів у кошику. Тобто якщо ви додали 2 книжки і 1 сорочку, цей метод поверне 3 одиниці.
 
 ```php
 Cart::count();
@@ -272,13 +271,13 @@ $cart->count();
 
 ### Cart::search()
 
-To find an item in the cart, you can use the `search()` method.
+Метод `search()` можна застосовувати, щоб знайти одиницю товару у кошику.
 
-**This method was changed on version 2**
+**Даний метод було змінено у версії 2**
 
-Behind the scenes, the method simply uses the filter method of the Laravel Collection class. This means you must pass it a Closure in which you'll specify you search terms.
+У своїй імплементації, цей метод застосовує метод фільтрування з класу Laravel Collection. Це означає, що вам потрібно передати замикання (Closure) для даного методу, де ви зазначите умови для пошуку.
 
-If you for instance want to find all items with an id of 1:
+Наприклад, якщо ви хочете знайти всі одиниці товару з ідентифікатором 1:
 
 ```php
 $cart->search(function ($cartItem, $rowId) {
@@ -286,15 +285,15 @@ $cart->search(function ($cartItem, $rowId) {
 });
 ```
 
-As you can see the Closure will receive two parameters. The first is the CartItem to perform the check against. The second parameter is the rowId of this CartItem.
+Як ви можете побачити, замикання отримає 2 параметра. Перший - CartItem для здійснення перевірки щодо нього. Другий параметр - rowId даного CartItem.
 
-**The method will return a Collection containing all CartItems that where found**
+**Даний метод повертає колекцію, яка вміщує всі CartItems, які було знайдено**
 
-This way of searching gives you total control over the search process and gives you the ability to create very precise and specific searches.
+Такий спосіб пошуку надає вам повний контроль над процесом пошуку та дозволяє здійснювати дуже точні та конкретні пошуки.
 
 ### Cart::setTax($rowId, $taxRate)
 
-You can use the `setTax()` method to change the tax rate that applies to the CartItem. This will overwrite the value set in the config file.
+Метод `setTax()` можна застосовувати, щоб змінювати ставку оподаткування, яка застосовується до CartItem. Така операція перезапише значення встановлене у файлі з конфігураціями.
 
 ```php
 Cart::setTax($rowId, 21);
@@ -303,7 +302,7 @@ $cart->setTax($rowId, 21);
 
 ### Cart::setGlobalTax($taxRate)
 
-You can use the `setGlobalTax()` method to change the tax rate for all items in the cart. New items will receive the setGlobalTax as well.
+Метод `setGlobalTax()` можна застосовувати, щоб змінити ставку оподаткування для усіх найменувать у кошику. Нові найменування отримають значення setGlobalTax також.
 
 ```php
 Cart::setGlobalTax(21);
@@ -312,7 +311,7 @@ $cart->setGlobalTax(21);
 
 ### Cart::setGlobalDiscount($discountRate)
 
-You can use the `setGlobalDiscount()` method to change the discount rate for all items in the cart. New items will receive the discount as well.
+Метод `setGlobalDiscount()` можна застосовувати для заміни ставки знижки щодо усіх найменувань у кошику. Нові найменування також отримуватимуть таку знижку.
 
 ```php
 Cart::setGlobalDiscount(50);
@@ -321,7 +320,7 @@ $cart->setGlobalDiscount(50);
 
 ### Cart::setDiscount($rowId, $taxRate)
 
-You can use the `setDiscount()` method to change the discount rate that applies a CartItem. Keep in mind that this value will be changed if you set the global discount for the Cart afterwards.
+Застосування методу `setDiscount()` полягає у заміні ставки знижки, яка застосовується до CartItem. Зверніть увагу, що дане значення ставки знижки буде змінено, якщо ви згодом встановите глобальну знижку для Кошика (Cart).
 
 ```php
 Cart::setDiscount($rowId, 21);
@@ -330,7 +329,7 @@ $cart->setDiscount($rowId, 21);
 
 ### Buyable
 
-For the convenience of faster adding items to cart and their automatic association, your model has to implement the `Buyable` interface. You can use the `CanBeBought` trait to implement the required methods but keep in mind that these will use predefined fields on your model for the required values.
+Для зручності швидкого додавання товарів до кошика та їхнього автоматичної об'єднання, ваша модель повинна запустити інтерфейс  `Buyable`. Ви можете застосовувати `CanBeBought` трейт для імплементації необхідних методів, але майте на увазі, що такі методи застосовуватимуть попередньо визначені поля у вашій моделі для необхідних значень.
 ```php
 <?php
 namespace App\Models;
@@ -343,7 +342,7 @@ class Product extends Model implements Buyable {
 }
 ```
 
-If the trait does not work for on the model or you wan't to map the fields manually the model has to implement the `Buyable` interface methods. To do so, it must implement such functions:
+Якщо трейт не працює на вашій моделі або ви хочете вручну перенести (мапувати) поля, модель повинна запустити методи інтерфейсу `Buyable`. Для цього, модель повинна умплементувати наступні функції:
 
 ```php
     public function getBuyableIdentifier(){
@@ -360,7 +359,7 @@ If the trait does not work for on the model or you wan't to map the fields manua
     }
 ```
 
-Example:
+Приклад:
 
 ```php
 <?php
@@ -382,30 +381,30 @@ class Product extends Model implements Buyable {
 }
 ```
 
-## Collections
+## Колекції
 
-On multiple instances the Cart will return to you a Collection. This is just a simple Laravel Collection, so all methods you can call on a Laravel Collection are also available on the result.
+Щодо багатьох екземплярів Кошик (Cart) повертає Колекцію, яка є простим видом Laravel Collection. Таким чином усі методи, які ви можете застосовувати щодо Laravel Collection, є також доступними у результаті операції.
 
-As an example, you can quicky get the number of unique products in a cart:
+Наприклад, ви можете швидко отримати кількість унікальних товарів у кошику:
 
 ```php
 Cart::content()->count();
 ```
 
-Or you can group the content by the id of the products:
+Або групувати вміст за ідентифікатором товару:
 
 ```php
 Cart::content()->groupBy('id');
 ```
 
-## Instances
+## Екземпляри
 
-The packages supports multiple instances of the cart. The way this works is like this:
+Пакет підтримує декілька екземплярів кошика. Як це працює:
 
-You can set the current instance of the cart by calling `Cart::instance('newInstance')`. From this moment, the active instance of the cart will be `newInstance`, so when you add, remove or get the content of the cart, you're work with the `newInstance` instance of the cart.
-If you want to switch instances, you just call `Cart::instance('otherInstance')` again, and you're working with the `otherInstance` again.
+Ви можете встановити поточний екземпляр кошика через виклик `Cart::instance('newInstance')`. З цього моменту, активний екземляр кошика буде `newInstance`, тому коли ви додаєте, вилучаєте або отримуєте інформацію щодо вмісту кошика, ви працюєте з екземпляром `newInstance` кошика.
+Якщо ви хочете переключитися між екзмеплярами, ви можете викликати `Cart::instance('otherInstance')` ще раз, і ви знову працюватимете з `otherInstance`.
 
-So a little example:
+Невеликий приклад:
 
 ```php
 Cart::instance('shopping')->add('192ao12', 'Product 1', 1, 9.99, 550);
@@ -425,7 +424,7 @@ Cart::instance('shopping')->content();
 Cart::instance('wishlist')->count();
 ```
 
-You can also use the `InstanceIdentifier` Contract to extend a desired Model to assign / create a Cart instance for it. This also allows to directly set the global discount.
+Ви також можете використати Контракт `InstanceIdentifier` для розширення бажаної моделі можливістю призначення / створення екземпляру Кошика (Cart) для неї. Така дія також дозволить напряму встановлювати глобальну знижку.
 ```
 <?php
 
@@ -467,21 +466,21 @@ $cart = Cart::instance($user);
 
 ```
 
-**N.B. Keep in mind that the cart stays in the last set instance for as long as you don't set a different one during script execution.**
+**N.B. Зверніть увагу, що кошик залишається у стані останнього призначеного екземпляра, доки ви не встановите інший екземпляр протягом виконання скрипта.**
 
-**N.B.2 The default cart instance is called `default`, so when you're not using instances,`Cart::content();` is the same as `Cart::instance('default')->content()`.**
+**N.B.2 За замовчуванням екземпляр кошика називається `default`, тому коли ви не використовуєте екземпляри, `Cart::content();` залишається таким самим як і `Cart::instance('default')->content()`.**
 
-## Models
+## Моделі
 
-Because it can be very convenient to be able to directly access a model from a CartItem is it possible to associate a model with the items in the cart. Let's say you have a `Product` model in your application. With the `associate()` method, you can tell the cart that an item in the cart, is associated to the `Product` model. 
+Через те, що це може бути дуже зручно мати можливість прямого доступу до моделі з CartItem, виникає питання чи можливо об'єднати модель із товарами у кошику. Скажімо, у вашому застосунку є модель `Product`. Завдяки методу `associate()` ви можете вказати кошику, що товар у кошику об'єднаний з моделлю `Product`. 
 
-That way you can access your model right from the `CartItem`!
+Таким чином ви можете отримати доступ до вашої моделі одразу з `CartItem`!
 
-The model can be accessed via the `model` property on the CartItem.
+Доступ до моделі також можна отримати через властивість CartItem `model`.
 
-**If your model implements the `Buyable` interface and you used your model to add the item to the cart, it will associate automatically.**
+**Якщо ваша модель запускає інтерфейс `Buyable` і ви використовували вашу модель для додавання товару до кошика, вони будуть об'єднані автоматично.**
 
-Here is an example:
+Ось приклад:
 
 ```php
 
@@ -502,74 +501,74 @@ foreach(Cart::content() as $row) {
 	echo 'You have ' . $row->qty . ' items of ' . $row->model->name . ' with description: "' . $row->model->description . '" in your cart.';
 }
 ```
-## Database
+## База даних
 
-- [Config](#configuration)
-- [Storing the cart](#storing-the-cart)
-- [Restoring the cart](#restoring-the-cart)
+- [Конфігурації](#configuration)
+- [Збереження кошика](#storing-the-cart)
+- [Відновлення кошика](#restoring-the-cart)
 
-### Configuration
-To save cart into the database so you can retrieve it later, the package needs to know which database connection to use and what the name of the table is.
-By default the package will use the default database connection and use a table named `shoppingcart`.
-If you want to change these options, you'll have to publish the `config` file.
+### Конфігурація
+Для збереження кошика в базу даних, щоб ви могли отримати його пізніше, пакет повинен знати яке підключення до бази даних використовувати і яка назва окремої таблиці.
+За замовчуванням, пакет використовуватиме підключення до бази даних, яке вказане за замовчуванням, та використовуватиме таблицію `shoppingcart`.
+Якщо ви хочете змінити ці значення, вам потрібно буде опублікувати файл з конфігураціями `config`.
 
     php artisan vendor:publish --provider="Gloudemans\Shoppingcart\ShoppingcartServiceProvider" --tag="config"
 
-This will give you a `cart.php` config file in which you can make the changes.
+Така дія надасть вам файл з конфігураціями `cart.php`, в якому ви можете внести бажані зміни.
 
-To make your life easy, the package also includes a ready to use `migration` which you can publish by running:
+Щоб спростити ваше життя, пакет також включає готову до вжитку `migration`, яку можна опублікувати через запуск настпої команди:
 
     php artisan vendor:publish --provider="Gloudemans\Shoppingcart\ShoppingcartServiceProvider" --tag="migrations"
     
-This will place a `shoppingcart` table's migration file into `database/migrations` directory. Now all you have to do is run `php artisan migrate` to migrate your database.
+Така дія розмістить файл з міграцією таблиці `shoppingcart` в директорію `database/migrations`. Все що вам залишається зробити, це запустити `php artisan migrate` для міграції вашої бази даних.
 
-### Storing the cart    
-To store your cart instance into the database, you have to call the `store($identifier) ` method. Where `$identifier` is a random key, for instance the id or username of the user.
+### Збереження кошика    
+Для збереження екземпляра кошика до бази даних, вам потрібно викликати метод `store($identifier) `. Де `$identifier` є випадковим ключем, наприклад, ідентифікатор або ім'я користувача.
 
     Cart::store('username');
     
     // To store a cart instance named 'wishlist'
     Cart::instance('wishlist')->store('username');
 
-### Restoring the cart
-If you want to retrieve the cart from the database and restore it, all you have to do is call the  `restore($identifier)` where `$identifier` is the key you specified for the `store` method.
+### Відновлення кошика
+Якщо ви хочете отримати кошик із бази даних і відновити його, вам знадобиться викликати метод `restore($identifier)`, де `$identifier` - це ключ, який ви зазначили у методі `store`.
  
     Cart::restore('username');
     
     // To restore a cart instance named 'wishlist'
     Cart::instance('wishlist')->restore('username');
 
-### Merge the cart
-If you want to merge the cart with another one from the database, all you have to do is call the  `merge($identifier)` where `$identifier` is the key you specified for the `store` method. You can also define if you want to keep the discount and tax rates of the items.
+### Злиття кошика
+Якщо ви хочете злити кошик із іншим у базі даних, вам знадобиться викликати метод `merge($identifier)`, де `$identifier` - це ключ, який ви зазначили у методі`store`. Ви також можете визначити чи хочете ви зберегти знижку і ставку оподаткування для товарів.
      
     // Merge the contents of 'savedcart' into 'username'.
     Cart::instance('username')->merge('savedcart', $keepDiscount, $keepTaxrate);
 
-## Exceptions
+## Винятки
 
-The Cart package will throw exceptions if something goes wrong. This way it's easier to debug your code using the Cart package or to handle the error based on the type of exceptions. The Cart packages can throw the following exceptions:
+Пакет Кошик (Cart) видаватиме винятки у разі, якщо щось відбувається не за планом. Таким чином, вам буде простіше відлагоджувати (debug) ваш код, використовуючи пакет Кошик, або обробляти помилку за типом винятку. Пакети Кошика (Cart) можуть видавати наступні вийнятки:
 
-| Exception                    | Reason                                                                             |
+| Виняток                    | Пояснення                                                                             |
 | ---------------------------- | ---------------------------------------------------------------------------------- |
-| *CartAlreadyStoredException* | When trying to store a cart that was already stored using the specified identifier |
-| *InvalidRowIDException*      | When the rowId that got passed doesn't exists in the current cart instance         |
-| *UnknownModelException*      | When you try to associate an none existing model to a CartItem.                    |
+| *CartAlreadyStoredException* | ВинятокКошикВжеЗбережено Коли ви намагаєтеся зберегти кошик, який вже було збережено, застосовуючи вказаний ідентифікатор |
+| *InvalidRowIDException*      | ВинятокНеправильнийІдРядка Коли rowId, який було передано, не існує у поточному екземплярі кошика         |
+| *UnknownModelException*      | ВинятокНевідомаМодель Коли ви намагаєтеся об'єднати неіснуючу модель до CartItem.                    |
 
-## Events
+## Події
 
-The cart also has events build in. There are five events available for you to listen for.
+Кошик також має вбудовані події. Існує п'ять подій, до яких варто прислухатися.
 
-| Event         | Fired                                    | Parameter                        |
+| Подія         | Видано                                    | Параметр                        |
 | ------------- | ---------------------------------------- | -------------------------------- |
-| cart.added    | When an item was added to the cart.      | The `CartItem` that was added.   |
-| cart.updated  | When an item in the cart was updated.    | The `CartItem` that was updated. |
-| cart.removed  | When an item is removed from the cart.   | The `CartItem` that was removed. |
-| cart.stored   | When the content of a cart was stored.   | -                                |
-| cart.restored | When the content of a cart was restored. | -                                |
+| cart.added    | Коли товар додано до кошика.      | `CartItem`, який було додано.   |
+| cart.updated  | Коли товар оновлено у кошику.    | `CartItem`, який було оновлено. |
+| cart.removed  | Коли товар вилучено з кошика.   | `CartItem`, який було вилучено. |
+| cart.stored   | Коли вміст кошика було збережено.   | -                                |
+| cart.restored | Коли вміст кошика було відновлено. | -                                |
 
-## Example
+## Приклад
 
-Below is a little example of how to list the cart content in a table:
+Нижче невеликий приклад як відобразити вміст кошика у таблиці:
 
 ```php
 
