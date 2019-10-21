@@ -85,6 +85,7 @@ class CartItem implements Arrayable, Jsonable
      * @param int|string $id
      * @param string     $name
      * @param float      $price
+     * @param float      $weight
      * @param array      $options
      */
     public function __construct($id, $name, $price, $weight = 0, array $options = [])
@@ -98,7 +99,7 @@ class CartItem implements Arrayable, Jsonable
         if (strlen($price) < 0 || !is_numeric($price)) {
             throw new \InvalidArgumentException('Please supply a valid price.');
         }
-        if (strlen($price) < 0 || !is_numeric($weight)) {
+        if (strlen($weight) < 0 || !is_numeric($weight)) {
             throw new \InvalidArgumentException('Please supply a valid weight.');
         }
 
