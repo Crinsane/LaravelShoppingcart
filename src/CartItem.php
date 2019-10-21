@@ -85,6 +85,7 @@ class CartItem implements Arrayable, Jsonable
      * @param int|string $id
      * @param string     $name
      * @param float      $price
+     * @param float      $weight
      * @param array      $options
      */
     public function __construct($id, $name, $price, $weight = 0, array $options = [])
