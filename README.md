@@ -7,22 +7,22 @@
 [![Latest Unstable Version](https://poser.pugx.org/bumbummen99/shoppingcart/v/unstable)](https://packagist.org/packages/bumbummen99/shoppingcart)
 [![License](https://poser.pugx.org/bumbummen99/shoppingcart/license)](https://packagist.org/packages/bumbummen99/shoppingcart)
 
-Ini adalah percabangan dari [Crisane's LaravelShoppingcart] (https://github.com/Crinsane/LaravelShoppingcart) dikembangkan dengan fitur-fitur minor yang kompatibel dengan Laravel 6
+This is a fork of [Crisane's LaravelShoppingcart](https://github.com/Crinsane/LaravelShoppingcart) extended with minor features compatible with Laravel 6.
 
-## Instalasi
+## Installation
 
-Install paket(https://packagist.org/packages/bumbummen99/shoppingcart) menggunakan [Composer](http://getcomposer.org/). 
+Install the [package](https://packagist.org/packages/bumbummen99/shoppingcart) through [Composer](http://getcomposer.org/). 
 
-Jalankan Composer dengan menggunakan perintah berikut:
+Run the Composer require command from the Terminal:
 
     composer require bumbummen99/shoppingcart
 
-Sekarang Anda siap untuk mulai menggunakan shoppingcart di aplikasi Anda.
+Now you're ready to start using the shoppingcart in your application.
 
-**Pada versi 2 dari paket ini memungkinkan untuk menggunakan injeksi dependensi untuk memasukkan instance Class Cart ke controller Anda atau Class lain**
+**As of version 2 of this package it's possibly to use dependency injection to inject an instance of the Cart class into your controller or other class**
 
-## Gambaran
-Lihat salah satu topik berikut untuk mempelajari lebih lanjut tentang LaravelShoppingcart
+## Overview
+Look at one of the following topics to learn more about LaravelShoppingcart
 
 * [Usage](#usage)
 * [Collections](#collections)
@@ -33,51 +33,51 @@ Lihat salah satu topik berikut untuk mempelajari lebih lanjut tentang LaravelSho
 * [Events](#events)
 * [Example](#example)
 
-## Penggunaan
+## Usage
 
-Shoppingcart memberi Anda metode berikut untuk digunakan:
+The shoppingcart gives you the following methods to use:
 
 ### Cart::add()
 
-Menambahkan item ke troli sangat sederhana, Anda cukup menggunakan metode `add ()`, yang menerima berbagai parameter.
+Adding an item to the cart is really simple, you just use the `add()` method, which accepts a variety of parameters.
 
-Dalam bentuknya yang paling mendasar, Anda dapat menentukan id, nama, jumlah, harga, dan berat produk yang ingin Anda tambahkan ke troli.
+In its most basic form you can specify the id, name, quantity, price and weight of the product you'd like to add to the cart.
 
 ```php
 Cart::add('293ad', 'Product 1', 1, 9.99, 550);
 ```
 
-Sebagai opsional parameter kelima, Anda dapat memberikan opsi, sehingga Anda dapat menambahkan beberapa item dengan id yang sama, tetapi dengan (instance) ukuran yang berbeda.
+As an optional fifth parameter you can pass it options, so you can add multiple items with the same id, but with (for instance) a different size.
 
 ```php
 Cart::add('293ad', 'Product 1', 1, 9.99, 550, ['size' => 'large']);
 ```
 
-**Metode `add ()` akan mengembalikan instance CartItem dari item yang baru saja Anda tambahkan ke troli.**
+**The `add()` method will return an CartItem instance of the item you just added to the cart.**
 
-Mungkin Anda lebih suka menambahkan item menggunakan array? Selama array berisi kunci yang diperlukan, Anda bisa meneruskannya ke metode. Tombol opsi adalah opsional.
+Maybe you prefer to add the item using an array? As long as the array contains the required keys, you can pass it to the method. The options key is optional.
 
 ```php
 Cart::add(['id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 9.99, 'weight' => 550, 'options' => ['size' => 'large']]);
 ```
 
-Baru dalam versi 2 paket ini adalah kemungkinan untuk bekerja dengan antarmuka [Buyable] (#buyable). Cara kerjanya adalah bahwa Anda memiliki model yang mengimplementasikan antarmuka [Buyable] (#buyable), yang akan membuat Anda menerapkan beberapa metode sehingga paket tahu bagaimana cara mendapatkan id, nama, dan harga dari model Anda.
-Dengan cara ini Anda bisa meneruskan metode `add ()` model dan kuantitas dan secara otomatis akan menambahkannya ke troli.
+New in version 2 of the package is the possibility to work with the [Buyable](#buyable) interface. The way this works is that you have a model implement the [Buyable](#buyable) interface, which will make you implement a few methods so the package knows how to get the id, name and price from your model. 
+This way you can just pass the `add()` method a model and the quantity and it will automatically add it to the cart. 
 
-**Sebagai bonus tambahan, itu akan secara otomatis mengaitkan model dengan CartItem**
+**As an added bonus it will automatically associate the model with the CartItem**
 
 ```php
 Cart::add($product, 1, ['size' => 'large']);
 ```
-Sebagai parameter ketiga opsional, Anda dapat menambahkan opsi.
+As an optional third parameter you can add options.
 ```php
 Cart::add($product, 1, ['size' => 'large']);
 ```
 
-Terakhir, Anda juga dapat menambahkan banyak item ke troli sekaligus.
-Anda bisa meneruskan metode `add ()` sebuah array array, atau array yang dapat dibeli dan mereka akan ditambahkan ke troli. 
+Finally, you can also add multipe items to the cart at once.
+You can just pass the `add()` method an array of arrays, or an array of Buyables and they will be added to the cart. 
 
-**Saat menambahkan beberapa item ke troli, metode `add ()` akan mengembalikan array CartItems.**
+**When adding multiple items to the cart, the `add()` method will return an array of CartItems.**
 
 ```php
 Cart::add([
@@ -91,17 +91,18 @@ Cart::add([$product1, $product2]);
 
 ### Cart::update()
 
-Untuk memperbarui item di troli, Anda harus terlebih dahulu membutuhkan rowId item.
-Selanjutnya Anda dapat menggunakan metode `update ()` untuk memperbaruinya.
+To update an item in the cart, you'll first need the rowId of the item.
+Next you can use the `update()` method to update it.
 
-Jika Anda hanya ingin memperbarui kuantitas, Anda akan melewati metode pembaruan rowId dan kuantitas baru:
+If you simply want to update the quantity, you'll pass the update method the rowId and the new quantity:
 
 ```php
 $rowId = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
 
 Cart::update($rowId, 2); // Will update the quantity
 ```
-Jika Anda ingin memperbarui lebih banyak atribut dari item, Anda dapat melewati metode pembaruan array atau `Dapat Dibeli` sebagai parameter kedua. Dengan cara ini Anda dapat memperbarui semua informasi item dengan rowId yang diberikan.
+
+If you want to update more attributes of the item, you can either pass the update method an array or a `Buyable` as the second parameter. This way you can update all information of the item with the given rowId.
 
 ```php
 Cart::update($rowId, ['name' => 'Product 1']); // Will update the name
@@ -112,7 +113,7 @@ Cart::update($rowId, $product); // Will update the id, name and price
 
 ### Cart::remove()
 
-Untuk menghapus item untuk keranjang, Anda akan membutuhkan rowId lagi. Baris ini. Apakah Anda hanya meneruskan ke metode `hapus ()` dan itu akan menghapus item dari keranjang.
+To remove an item for the cart, you'll again need the rowId. This rowId you simply pass to the `remove()` method and it will remove the item from the cart.
 
 ```php
 $rowId = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
@@ -122,7 +123,7 @@ Cart::remove($rowId);
 
 ### Cart::get()
 
-Jika Anda ingin mendapatkan item dari troli menggunakan rowId-nya, Anda bisa memanggil metode `get ()` di troli dan meneruskannya dengan rowId.
+If you want to get an item from the cart using its rowId, you can simply call the `get()` method on the cart and pass it the rowId.
 
 ```php
 $rowId = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
@@ -132,12 +133,13 @@ Cart::get($rowId);
 
 ### Cart::content()
 
-Tentu saja Anda juga ingin mendapatkan konten gerobak. Di sinilah Anda akan menggunakan metode `konten`. Metode ini akan mengembalikan Koleksi CartItems yang dapat Anda ulangi dan tampilkan kontennya kepada pelanggan Anda.
+Of course you also want to get the carts content. This is where you'll use the `content` method. This method will return a Collection of CartItems which you can iterate over and show the content to your customers.
 
 ```php
 Cart::content();
 ```
-Metode ini akan mengembalikan konten instance keranjang saat ini, jika Anda ingin konten instance lain, cukup lakukan panggilan.
+
+This method will return the content of the current cart instance, if you want the content of another instance, simply chain the calls.
 
 ```php
 Cart::instance('wishlist')->content();
@@ -145,7 +147,7 @@ Cart::instance('wishlist')->content();
 
 ### Cart::destroy()
 
-Jika Anda ingin menghapus konten keranjang sepenuhnya, Anda dapat memanggil metode penghancuran di kereta. Ini akan menghapus semua CartItems dari troli untuk instance troli saat ini.
+If you want to completely remove the content of a cart, you can call the destroy method on the cart. This will remove all CartItems from the cart for the current cart instance.
 
 ```php
 Cart::destroy();
@@ -153,117 +155,115 @@ Cart::destroy();
 
 ### Cart::weight()
 
-Metode `weight ()` dapat digunakan untuk mendapatkan total berat semua item di troli, mengingat berat dan kuantitasnya.
-
+The `weight()` method can be used to get the weight total of all items in the cart, given there weight and quantity.
 
 ```php
 Cart::weight();
 ```
 
-Metode ini akan memformat hasilnya secara otomatis, yang dapat Anda atur menggunakan tiga parameter opsional
+The method will automatically format the result, which you can tweak using the three optional parameters
 
 ```php
 Cart::weight($decimals, $decimalSeperator, $thousandSeperator);
 ```
 
-Anda dapat mengatur format angka default dalam file konfigurasi.
+You can set the default number format in the config file.
 
-**Jika Anda tidak menggunakan Facade, tetapi menggunakan injeksi ketergantungan pada Pengontrol Anda (misalnya), Anda juga bisa mendapatkan total properti `$ cart-> weight`**
+**If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the total property `$cart->weight`**
 
 ### Cart::total()
 
-Maka `total ()` dapat digunakan untuk mendapatkan total yang dihitung dari semua item dalam troli, mengingat ada harga dan kuantitas.
+The `total()` method can be used to get the calculated total of all items in the cart, given there price and quantity.
 
 ```php
 Cart::total();
 ```
 
-Metode ini akan memformat hasilnya secara otomatis, yang dapat Anda atur menggunakan tiga parameter opsional
+The method will automatically format the result, which you can tweak using the three optional parameters
 
 ```php
 Cart::total($decimals, $decimalSeparator, $thousandSeparator);
 ```
 
-Anda dapat mengatur format angka default dalam file konfigurasi.
+You can set the default number format in the config file.
 
-
-**Jika Anda tidak menggunakan Facade, tetapi menggunakan injeksi ketergantungan pada Pengontrol Anda (misalnya), Anda juga bisa mendapatkan total properti `$ cart-> total`**
+**If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the total property `$cart->total`**
 
 ### Cart::tax()
 
-Maka `tax ()` dapat digunakan untuk mendapatkan jumlah pajak yang dihitung untuk semua item di troli, mengingat ada harga dan kuantitas.
+The `tax()` method can be used to get the calculated amount of tax for all items in the cart, given there price and quantity.
 
 ```php
 Cart::tax();
 ```
 
-Metode ini akan memformat hasilnya secara otomatis, yang dapat Anda atur menggunakan tiga parameter opsional
+The method will automatically format the result, which you can tweak using the three optional parameters
 
 ```php
 Cart::tax($decimals, $decimalSeparator, $thousandSeparator);
 ```
 
-Anda dapat mengatur format angka default dalam file konfigurasi.
+You can set the default number format in the config file.
 
-**Jika Anda tidak menggunakan Facade, tetapi menggunakan injeksi ketergantungan pada Pengontrol Anda (misalnya), Anda juga bisa mendapatkan total properti `$ cart-> tax`**
+**If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the tax property `$cart->tax`**
 
 ### Cart::subtotal()
 
-Maka `subtotal ()` dapat digunakan untuk mendapatkan total semua item dalam troli, dikurangi jumlah total pajak. 
+The `subtotal()` method can be used to get the total of all items in the cart, minus the total amount of tax. 
 
 ```php
 Cart::subtotal();
 ```
 
-Metode ini akan memformat hasilnya secara otomatis, yang dapat Anda atur menggunakan tiga parameter opsional
+The method will automatically format the result, which you can tweak using the three optional parameters
 
 ```php
 Cart::subtotal($decimals, $decimalSeparator, $thousandSeparator);
 ```
 
-Anda dapat mengatur format angka default dalam file konfigurasi.
+You can set the default number format in the config file.
 
-**Jika Anda tidak menggunakan Facade, tetapi menggunakan injeksi ketergantungan pada Pengontrol Anda (misalnya), Anda juga bisa mendapatkan total properti `$ cart-> subtotal`**
+**If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the subtotal property `$cart->subtotal`**
 
 ### Cart::discount()
 
-Maka `diskon ()` dapat digunakan untuk mendapatkan diskon total semua item di troli.
+The `discount()` method can be used to get the total discount of all items in the cart. 
 
 ```php
 Cart::discount();
 ```
 
-Metode ini akan memformat hasilnya secara otomatis, yang dapat Anda atur menggunakan tiga parameter opsional
+The method will automatically format the result, which you can tweak using the three optional parameters
 
 ```php
 Cart::discount($decimals, $decimalSeparator, $thousandSeparator);
 ```
 
-Anda dapat mengatur format angka default dalam file konfigurasi.
+You can set the default number format in the config file.
 
-**Jika Anda tidak menggunakan Facade, tetapi menggunakan injeksi ketergantungan pada Pengontrol Anda (misalnya), Anda juga bisa mendapatkan total properti `$ cart-> discount`**
+**If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the subtotal property `$cart->discount`**
 
 ### Cart::initial()
 
-maka `initial ()` dapat digunakan untuk mendapatkan harga total semua item di troli sebelum diskon.
+The `initial()` method can be used to get the total price of all items in the cart before discount. 
 
 ```php
 Cart::initial();
 ```
 
-Metode ini akan memformat hasilnya secara otomatis, yang dapat Anda atur menggunakan tiga parameter opsional
+The method will automatically format the result, which you can tweak using the three optional parameters
 
 ```php
 Cart::initial($decimals, $decimalSeparator, $thousandSeparator);
 ```
 
-Anda dapat mengatur format angka default dalam file konfigurasi.
+You can set the default number format in the config file.
 
-**Jika Anda tidak menggunakan Facade, tetapi menggunakan injeksi ketergantungan pada Pengontrol Anda (misalnya), Anda juga bisa mendapatkan total properti `$ cart-> initial`**
+**If you're not using the Facade, but use dependency injection in your (for instance) Controller, you can also simply get the subtotal property `$cart->initial`**
 
 ### Cart::count()
 
-Jika Anda ingin tahu berapa banyak item yang ada di troli Anda, Anda dapat menggunakan metode `count ()`. Metode ini akan mengembalikan jumlah total barang dalam kereta. Jadi, jika Anda telah menambahkan 2 buku dan 1 kemeja, itu akan mengembalikan 3 item.
+If you want to know how many items there are in your cart, you can use the `count()` method. This method will return the total number of items in the cart. So if you've added 2 books and 1 shirt, it will return 3 items.
 
 ```php
 Cart::count();
@@ -272,13 +272,13 @@ $cart->count();
 
 ### Cart::search()
 
-Untuk menemukan item di troli, Anda dapat menggunakan metode `search ()`.
+To find an item in the cart, you can use the `search()` method.
 
-**Metode ini diubah pada versi 2**
+**This method was changed on version 2**
 
-Di belakang layar, metode ini hanya menggunakan metode filter dari kelas Laravel Collection. Ini berarti Anda harus memberikannya suatu Penutupan di mana Anda akan menentukan istilah pencarian Anda.
+Behind the scenes, the method simply uses the filter method of the Laravel Collection class. This means you must pass it a Closure in which you'll specify you search terms.
 
-Jika Anda misalnya ingin menemukan semua item dengan id 1:
+If you for instance want to find all items with an id of 1:
 
 ```php
 $cart->search(function ($cartItem, $rowId) {
@@ -286,15 +286,15 @@ $cart->search(function ($cartItem, $rowId) {
 });
 ```
 
-Seperti yang Anda lihat, Penutupan akan menerima dua parameter. Yang pertama adalah Item Keranjang untuk melakukan pemeriksaan terhadap. Parameter kedua adalah rowId dari CartItem ini.
+As you can see the Closure will receive two parameters. The first is the CartItem to perform the check against. The second parameter is the rowId of this CartItem.
 
-** Metode ini akan mengembalikan Koleksi yang berisi semua CartItems yang ditemukan **
+**The method will return a Collection containing all CartItems that where found**
 
-Cara pencarian ini memberi Anda kontrol total atas proses pencarian dan memberi Anda kemampuan untuk membuat pencarian yang sangat tepat dan spesifik.
+This way of searching gives you total control over the search process and gives you the ability to create very precise and specific searches.
 
-### Cart :: setTax ($ rowId, $ taxRate)
+### Cart::setTax($rowId, $taxRate)
 
-Anda dapat menggunakan metode `setTax ()` untuk mengubah tarif pajak yang berlaku untuk CartItem. Ini akan menimpa nilai yang ditetapkan dalam file konfigurasi.
+You can use the `setTax()` method to change the tax rate that applies to the CartItem. This will overwrite the value set in the config file.
 
 ```php
 Cart::setTax($rowId, 21);
@@ -303,7 +303,7 @@ $cart->setTax($rowId, 21);
 
 ### Cart::setGlobalTax($taxRate)
 
-Anda dapat menggunakan metode `setGlobalTax ()` untuk mengubah tarif pajak untuk semua item di troli. Item baru juga akan menerima setGlobalTax.
+You can use the `setGlobalTax()` method to change the tax rate for all items in the cart. New items will receive the setGlobalTax as well.
 
 ```php
 Cart::setGlobalTax(21);
@@ -312,7 +312,7 @@ $cart->setGlobalTax(21);
 
 ### Cart::setGlobalDiscount($discountRate)
 
-Anda dapat menggunakan metode `setGlobalDiscount ()` untuk mengubah tingkat diskonto untuk semua item di troli. Barang baru akan menerima diskon juga.
+You can use the `setGlobalDiscount()` method to change the discount rate for all items in the cart. New items will receive the discount as well.
 
 ```php
 Cart::setGlobalDiscount(50);
@@ -321,7 +321,7 @@ $cart->setGlobalDiscount(50);
 
 ### Cart::setDiscount($rowId, $taxRate)
 
-Anda dapat menggunakan metode `setDiscount ()` untuk mengubah tingkat diskonto yang menerapkan CartItem. Perlu diingat bahwa nilai ini akan berubah jika Anda menetapkan diskon global untuk Keranjang sesudahnya.
+You can use the `setDiscount()` method to change the discount rate that applies a CartItem. Keep in mind that this value will be changed if you set the global discount for the Cart afterwards.
 
 ```php
 Cart::setDiscount($rowId, 21);
@@ -330,8 +330,7 @@ $cart->setDiscount($rowId, 21);
 
 ### Buyable
 
-Untuk kenyamanan menambahkan item yang lebih cepat ke troli dan asosiasi otomatisnya, model Anda harus mengimplementasikan antarmuka `Dapat Dibeli` Anda dapat menggunakan sifat `CanBeBought` untuk mengimplementasikan metode yang diperlukan tetapi perlu diingat bahwa ini akan menggunakan bidang yang telah ditentukan pada model Anda untuk nilai yang diperlukan.
-
+For the convenience of faster adding items to cart and their automatic association, your model has to implement the `Buyable` interface. You can use the `CanBeBought` trait to implement the required methods but keep in mind that these will use predefined fields on your model for the required values.
 ```php
 <?php
 namespace App\Models;
@@ -344,7 +343,7 @@ class Product extends Model implements Buyable {
 }
 ```
 
-Jika sifat tidak berfungsi pada model atau Anda tidak dapat memetakan bidang secara manual model harus menerapkan metode antarmuka `Buy Able`. Untuk melakukannya, ia harus mengimplementasikan fungsi-fungsi tersebut:
+If the trait does not work for on the model or you wan't to map the fields manually the model has to implement the `Buyable` interface methods. To do so, it must implement such functions:
 
 ```php
     public function getBuyableIdentifier(){
@@ -361,7 +360,7 @@ Jika sifat tidak berfungsi pada model atau Anda tidak dapat memetakan bidang sec
     }
 ```
 
-Contoh:
+Example:
 
 ```php
 <?php
@@ -385,15 +384,15 @@ class Product extends Model implements Buyable {
 
 ## Collections
 
-Dalam beberapa kasus, Keranjang akan mengembalikan kepada Anda Koleksi. Ini hanya Koleksi Laravel sederhana, sehingga semua metode yang dapat Anda panggil pada Koleksi Laravel juga tersedia pada hasilnya.
+On multiple instances the Cart will return to you a Collection. This is just a simple Laravel Collection, so all methods you can call on a Laravel Collection are also available on the result.
 
-Sebagai contoh, Anda dapat dengan cepat mendapatkan jumlah produk unik dalam keranjang:
+As an example, you can quicky get the number of unique products in a cart:
 
 ```php
 Cart::content()->count();
 ```
 
-Atau Anda dapat mengelompokkan konten berdasarkan id produk:
+Or you can group the content by the id of the products:
 
 ```php
 Cart::content()->groupBy('id');
@@ -401,12 +400,12 @@ Cart::content()->groupBy('id');
 
 ## Instances
 
-Paket-paket mendukung beberapa instance dari kereta. Cara kerjanya seperti ini:
+The packages supports multiple instances of the cart. The way this works is like this:
 
-Anda dapat mengatur instance keranjang saat ini dengan memanggil `Cart :: instance ('newInstance')`. Mulai saat ini, instance aktif dari cart adalah `newInstance`, jadi ketika Anda menambah, menghapus, atau mendapatkan konten dari cart, Anda bekerja dengan instance` newInstance` dari cart.
-Jika Anda ingin mengganti instance, Anda cukup memanggil `Cart :: instance ('otherInstance')` lagi, dan Anda bekerja dengan `otherInstance` lagi.
+You can set the current instance of the cart by calling `Cart::instance('newInstance')`. From this moment, the active instance of the cart will be `newInstance`, so when you add, remove or get the content of the cart, you're work with the `newInstance` instance of the cart.
+If you want to switch instances, you just call `Cart::instance('otherInstance')` again, and you're working with the `otherInstance` again.
 
-Contoh Kecil:
+So a little example:
 
 ```php
 Cart::instance('shopping')->add('192ao12', 'Product 1', 1, 9.99, 550);
@@ -426,7 +425,7 @@ Cart::instance('shopping')->content();
 Cart::instance('wishlist')->count();
 ```
 
-Anda juga dapat menggunakan Kontrak `InstanceIdentifier` untuk memperpanjang Model yang diinginkan untuk menetapkan / membuat instance Cart untuknya. Ini juga memungkinkan untuk secara langsung mengatur diskon global.
+You can also use the `InstanceIdentifier` Contract to extend a desired Model to assign / create a Cart instance for it. This also allows to directly set the global discount.
 ```
 <?php
 
@@ -468,21 +467,21 @@ $cart = Cart::instance($user);
 
 ```
 
-**N.B. Ingatlah bahwa troli tetap berada di set instance terakhir selama Anda tidak menyetel yang berbeda selama eksekusi skrip.**
+**N.B. Keep in mind that the cart stays in the last set instance for as long as you don't set a different one during script execution.**
 
-**N.B.2 Contoh cart default disebut `default`, jadi ketika Anda tidak menggunakan instance,` Cart :: konten (); `sama dengan` Cart :: instance ('default') -> konten () `.**
+**N.B.2 The default cart instance is called `default`, so when you're not using instances,`Cart::content();` is the same as `Cart::instance('default')->content()`.**
 
 ## Models
 
-Karena sangat nyaman untuk dapat secara langsung mengakses model dari CartItem, apakah mungkin untuk mengaitkan model dengan barang-barang di dalam kereta. Katakanlah Anda memiliki model `Produk` di aplikasi Anda. Dengan metode `associate ()`, Anda dapat memberi tahu troli bahwa item di troli, terkait dengan model `Product`. 
+Because it can be very convenient to be able to directly access a model from a CartItem is it possible to associate a model with the items in the cart. Let's say you have a `Product` model in your application. With the `associate()` method, you can tell the cart that an item in the cart, is associated to the `Product` model. 
 
-Dengan begitu Anda dapat mengakses model Anda langsung dari `CartItem`!
+That way you can access your model right from the `CartItem`!
 
-Model ini dapat diakses melalui properti `model` di CartItem.
+The model can be accessed via the `model` property on the CartItem.
 
-**Jika model Anda mengimplementasikan antarmuka `Buy Able` dan Anda menggunakan model Anda untuk menambahkan item ke troli, itu akan dikaitkan secara otomatis.**
+**If your model implements the `Buyable` interface and you used your model to add the item to the cart, it will associate automatically.**
 
-Berikut adalah contoh:
+Here is an example:
 
 ```php
 
@@ -509,76 +508,76 @@ foreach(Cart::content() as $row) {
 - [Storing the cart](#storing-the-cart)
 - [Restoring the cart](#restoring-the-cart)
 
-### Konfigurasi
-Untuk menyimpan keranjang ke dalam basis data sehingga Anda dapat mengambilnya nanti, paket perlu mengetahui koneksi basis data yang digunakan dan apa nama tabelnya.
-Secara default paket akan menggunakan koneksi database default dan menggunakan tabel bernama `shoppingcart`.
-Jika Anda ingin mengubah opsi ini, Anda harus menerbitkan file `config`.
+### Configuration
+To save cart into the database so you can retrieve it later, the package needs to know which database connection to use and what the name of the table is.
+By default the package will use the default database connection and use a table named `shoppingcart`.
+If you want to change these options, you'll have to publish the `config` file.
 
     php artisan vendor:publish --provider="Gloudemans\Shoppingcart\ShoppingcartServiceProvider" --tag="config"
 
-Ini akan memberi Anda file konfigurasi `cart.php` di mana Anda dapat melakukan perubahan.
+This will give you a `cart.php` config file in which you can make the changes.
 
-Untuk memudahkan hidup Anda, paket ini juga menyertakan `migration` yang siap digunakan yang dapat Anda terbitkan dengan menjalankan:
+To make your life easy, the package also includes a ready to use `migration` which you can publish by running:
 
     php artisan vendor:publish --provider="Gloudemans\Shoppingcart\ShoppingcartServiceProvider" --tag="migrations"
     
-Ini akan menempatkan file migrasi tabel `shoppingcart` ke direktori` database / migrations`. Sekarang yang harus Anda lakukan adalah menjalankan `php artisan migrate` untuk memigrasi basis data Anda.
+This will place a `shoppingcart` table's migration file into `database/migrations` directory. Now all you have to do is run `php artisan migrate` to migrate your database.
 
-### Menyimpan ke Troli    
-Untuk menyimpan instance kereta ke dalam database, Anda harus memanggil metode `store ($ identifier)`. Di mana `$ identifier` adalah kunci acak, misalnya id atau nama pengguna pengguna.
+### Storing the cart    
+To store your cart instance into the database, you have to call the `store($identifier) ` method. Where `$identifier` is a random key, for instance the id or username of the user.
 
     Cart::store('username');
     
     // To store a cart instance named 'wishlist'
     Cart::instance('wishlist')->store('username');
 
-### Mengembalikan ke Troli
-Jika Anda ingin mengambil keranjang dari database dan mengembalikannya, yang harus Anda lakukan adalah memanggil `restore ($ identifier)` di mana `$ identifier` adalah kunci yang Anda tentukan untuk metode` store`.
+### Restoring the cart
+If you want to retrieve the cart from the database and restore it, all you have to do is call the  `restore($identifier)` where `$identifier` is the key you specified for the `store` method.
  
     Cart::restore('username');
     
     // To restore a cart instance named 'wishlist'
     Cart::instance('wishlist')->restore('username');
 
-### Menggabungkan Troli
-Jika Anda ingin menggabungkan keranjang dengan keranjang lain dari basis data, yang harus Anda lakukan adalah memanggil `gabungan ($ identifier)` di mana `$ identifier` adalah kunci yang Anda tentukan untuk metode` store`. Anda juga dapat menentukan apakah Anda ingin mempertahankan potongan harga dan tarif pajak item.
+### Merge the cart
+If you want to merge the cart with another one from the database, all you have to do is call the  `merge($identifier)` where `$identifier` is the key you specified for the `store` method. You can also define if you want to keep the discount and tax rates of the items.
      
     // Merge the contents of 'savedcart' into 'username'.
     Cart::instance('username')->merge('savedcart', $keepDiscount, $keepTaxrate);
 
-## Pengecualian
+## Exceptions
 
-Paket Cart akan mengeluarkan pengecualian jika terjadi kesalahan. Dengan cara ini lebih mudah untuk men-debug kode Anda menggunakan paket Cart atau untuk menangani kesalahan berdasarkan pada jenis pengecualian. Paket-paket Cart dapat membuang pengecualian berikut:
+The Cart package will throw exceptions if something goes wrong. This way it's easier to debug your code using the Cart package or to handle the error based on the type of exceptions. The Cart packages can throw the following exceptions:
 
 | Exception                    | Reason                                                                             |
 | ---------------------------- | ---------------------------------------------------------------------------------- |
-| *CartAlreadyStoredException* | Saat mencoba menyimpan keranjang yang sudah disimpan menggunakan pengenal yang ditentukan |
-| *InvalidRowIDException*      | Ketika rowId yang diteruskan tidak ada dalam instance troli saat ini         |
-| *UnknownModelException*      | Saat Anda mencoba mengaitkan model yang tidak ada dengan Item Keranjang.                    |
+| *CartAlreadyStoredException* | When trying to store a cart that was already stored using the specified identifier |
+| *InvalidRowIDException*      | When the rowId that got passed doesn't exists in the current cart instance         |
+| *UnknownModelException*      | When you try to associate an none existing model to a CartItem.                    |
 
 ## Events
 
-Troli juga memiliki event. Ada lima event yang bisa Anda lakukan.
+The cart also has events build in. There are five events available for you to listen for.
 
 | Event         | Fired                                    | Parameter                        |
 | ------------- | ---------------------------------------- | -------------------------------- |
-| cart.added    | Saat item ditambahkan ke troli.          | The `CartItem` that was added.   |
-| cart.updated  | Ketika item dalam troli diperbarui.      | The `CartItem` that was updated. |
-| cart.removed  | Ketika item dalam troli dihapus.         | The `CartItem` that was removed. |
-| cart.stored   | Ketika isi trol disimpan.                | -                                |
-| cart.restored | Ketika konten keranjang Dikembalikan.    | -                                |
+| cart.added    | When an item was added to the cart.      | The `CartItem` that was added.   |
+| cart.updated  | When an item in the cart was updated.    | The `CartItem` that was updated. |
+| cart.removed  | When an item is removed from the cart.   | The `CartItem` that was removed. |
+| cart.stored   | When the content of a cart was stored.   | -                                |
+| cart.restored | When the content of a cart was restored. | -                                |
 
-## Contoh
+## Example
 
-Di bawah ini adalah sedikit contoh cara membuat daftar isi keranjang dalam sebuah tabel:
+Below is a little example of how to list the cart content in a table:
 
 ```php
 
-// Tambahkan beberapa item di Kontroler Anda.
+// Add some items in your Controller.
 Cart::add('192ao12', 'Product 1', 1, 9.99);
 Cart::add('1239ad0', 'Product 2', 2, 5.95, ['size' => 'large']);
 
-// Tampilkan konten dalam Tampilan.
+// Display the content in a View.
 <table>
    	<thead>
        	<tr>
