@@ -195,8 +195,7 @@ class Cart
 
             return;
         } else {
-            if (isset($itemOldIndex))
-            {
+            if (isset($itemOldIndex)) {
                 $content = $content->slice(0, $itemOldIndex)
                     ->merge([$cartItem->rowId => $cartItem])
                     ->merge($content->slice($itemOldIndex));
