@@ -629,6 +629,29 @@ class Cart
     }
 
     /**
+     * Erase the cart with the given identifier.
+     *
+     * @param mixed $identifier
+     *
+     * @return void
+     */
+    public function erase($identifier)
+    {
+        if ($identifier instanceof InstanceIdentifier) {
+            $identifier = $identifier->getInstanceIdentifier();
+        }
+
+        if (!$this->storedCartWithIdentifierExists($identifier)) {
+            return;
+        }
+
+        $this->getConnection()->table($this->getTableName())
+            ->where('identifier', $identifier)->delete();
+
+        $this->events->dispatch('cart.erased');
+    }
+    
+    /**
      * Merges the contents of another cart into this cart.
      *
      * @param mixed $identifier   Identifier of the Cart to merge with.

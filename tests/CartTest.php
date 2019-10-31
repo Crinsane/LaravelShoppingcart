@@ -1189,6 +1189,28 @@ class CartTest extends TestCase
         $this->assertEquals('large', $cartItem->options->size);
     }
 
+    /** @test */
+    public function it_can_erase_a_cart_from_the_database()
+    {
+        $this->artisan('migrate', [
+            '--database' => 'testing',
+        ]);
+
+        Event::fake();
+
+        $cart = $this->getCart();
+
+        $cart->add(new BuyableProduct());
+
+        $cart->store($identifier = 123);
+
+        $cart->erase($identifier);
+
+        $this->assertDatabaseMissing('shoppingcart', ['identifier' => $identifier, 'instance' => 'default']);
+
+        Event::assertDispatched('cart.erased');
+    }
+
     /**
      * Get an instance of the cart.
      *
