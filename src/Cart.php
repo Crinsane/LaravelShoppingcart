@@ -180,6 +180,8 @@ class Cart
         $content = $this->getContent();
 
         if ($rowId !== $cartItem->rowId) {
+            $itemOldIndex = $content->keys()->search($rowId);
+
             $content->pull($rowId);
 
             if ($content->has($cartItem->rowId)) {
@@ -193,7 +195,13 @@ class Cart
 
             return;
         } else {
-            $content->put($cartItem->rowId, $cartItem);
+            if (isset($itemOldIndex)) {
+                $content = $content->slice(0, $itemOldIndex)
+                    ->merge([$cartItem->rowId => $cartItem])
+                    ->merge($content->slice($itemOldIndex));
+            } else {
+                $content->put($cartItem->rowId, $cartItem);
+            }
         }
 
         $this->events->dispatch('cart.updated', $cartItem);
