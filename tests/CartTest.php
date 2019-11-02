@@ -400,6 +400,21 @@ class CartTest extends TestCase
     }
 
     /** @test */
+    public function it_will_keep_items_sequence_if_the_options_changed()
+    {
+        $cart = $this->getCart();
+
+        $cart->add(new BuyableProduct(), 1, ['color' => 'red']);
+        $cart->add(new BuyableProduct(), 1, ['color' => 'green']);
+        $cart->add(new BuyableProduct(), 1, ['color' => 'blue']);
+
+        $cart->update($cart->content()->values()[1]->rowId, ['options' => ['color' => 'yellow']]);
+
+        $this->assertRowsInCart(3, $cart);
+        $this->assertEquals('yellow', $cart->content()->values()[1]->options->color);
+    }
+
+    /** @test */
     public function it_can_remove_an_item_from_the_cart()
     {
         Event::fake();
