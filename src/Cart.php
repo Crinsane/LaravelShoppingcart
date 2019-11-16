@@ -650,7 +650,7 @@ class Cart
 
         $this->events->dispatch('cart.erased');
     }
-    
+
     /**
      * Merges the contents of another cart into this cart.
      *
