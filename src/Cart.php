@@ -46,7 +46,7 @@ class Cart
     private $discount = 0;
 
     /**
-     * Defines the tax rate
+     * Defines the tax rate.
      *
      * @var float
      */
@@ -126,10 +126,10 @@ class Cart
     /**
      * Add an item to the cart.
      *
-     * @param \Gloudemans\Shoppingcart\CartItem $item Item to add to the Cart
-     * @param bool $keepDiscount Keep the discount rate of the Item
-     * @param bool $keepTax Keep the Tax rate of the Item
-     * @param bool $dispatchEvent
+     * @param \Gloudemans\Shoppingcart\CartItem $item          Item to add to the Cart
+     * @param bool                              $keepDiscount  Keep the discount rate of the Item
+     * @param bool                              $keepTax       Keep the Tax rate of the Item
+     * @param bool                              $dispatchEvent
      *
      * @return \Gloudemans\Shoppingcart\CartItem The CartItem
      */
