@@ -1204,6 +1204,65 @@ class CartTest extends TestCase
         $this->assertEquals('large', $cartItem->options->size);
     }
 
+    /** @test */
+    public function it_can_merge_without_dispatching_add_events()
+    {
+        $this->artisan('migrate', [
+            '--database' => 'testing',
+        ]);
+
+        $cart = $this->getCartDiscount(50);
+        $cart->add(new BuyableProduct(1, 'Item', 10.00), 1);
+        $cart->add(new BuyableProduct(2, 'Item 2', 10.00), 1);
+        $cart->store('test');
+
+        Event::fakeFor(function () {
+            $cart2 = $this->getCart();
+            $cart2->instance('test2');
+            $cart2->setGlobalTax(0);
+            $cart2->setGlobalDiscount(0);
+
+            $this->assertEquals('0', $cart2->countInstances());
+
+            $cart2->merge('test', null, null, false);
+
+            Event::assertNotDispatched('cart.added');
+            Event::assertDispatched('cart.merged');
+
+            $this->assertEquals('2', $cart2->countInstances());
+            $this->assertEquals(20, $cart2->totalFloat());
+        });
+    }
+
+    /** @test */
+    public function it_can_merge_dispatching_add_events()
+    {
+        $this->artisan('migrate', [
+            '--database' => 'testing',
+        ]);
+
+        $cart = $this->getCartDiscount(50);
+        $cart->add(new BuyableProduct(1, 'Item', 10.00), 1);
+        $cart->add(new BuyableProduct(2, 'Item 2', 10.00), 1);
+        $cart->store('test');
+
+        Event::fakeFor(function () {
+            $cart2 = $this->getCart();
+            $cart2->instance('test2');
+            $cart2->setGlobalTax(0);
+            $cart2->setGlobalDiscount(0);
+
+            $this->assertEquals('0', $cart2->countInstances());
+
+            $cart2->merge('test');
+
+            Event::assertDispatched('cart.added', 2);
+            Event::assertDispatched('cart.merged');
+            $this->assertEquals('2', $cart2->countInstances());
+            $this->assertEquals(20, $cart2->totalFloat());
+        });
+    }
+
     /**
      * Get an instance of the cart.
      *
