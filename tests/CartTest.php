@@ -1224,7 +1224,7 @@ class CartTest extends TestCase
 
             $this->assertEquals('0', $cart2->countInstances());
 
-            $cart2->merge('test',null,null,false);
+            $cart2->merge('test', null, null, false);
 
             Event::assertNotDispatched('cart.added');
             Event::assertDispatched('cart.merged');
@@ -1256,7 +1256,7 @@ class CartTest extends TestCase
 
             $cart2->merge('test');
 
-            Event::assertDispatched('cart.added',2);
+            Event::assertDispatched('cart.added', 2);
             Event::assertDispatched('cart.merged');
             $this->assertEquals('2', $cart2->countInstances());
             $this->assertEquals(20, $cart2->totalFloat());
