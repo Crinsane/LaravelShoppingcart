@@ -7,7 +7,7 @@
 [![Latest Unstable Version](https://poser.pugx.org/bumbummen99/shoppingcart/v/unstable)](https://packagist.org/packages/bumbummen99/shoppingcart)
 [![License](https://poser.pugx.org/bumbummen99/shoppingcart/license)](https://packagist.org/packages/bumbummen99/shoppingcart)
 
-Ini adalah percabangan dari [Crisane's LaravelShoppingcart] (https://github.com/Crinsane/LaravelShoppingcart) dikembangkan dengan fitur-fitur minor yang kompatibel dengan Laravel 6
+Ini adalah percabangan dari [Crisane's LaravelShoppingcart](https://github.com/Crinsane/LaravelShoppingcart) dikembangkan dengan fitur-fitur minor yang kompatibel dengan Laravel 6
 
 ## Instalasi
 
