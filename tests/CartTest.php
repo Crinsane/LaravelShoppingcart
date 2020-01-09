@@ -400,6 +400,21 @@ class CartTest extends TestCase
     }
 
     /** @test */
+    public function it_will_keep_items_sequence_if_the_options_changed()
+    {
+        $cart = $this->getCart();
+
+        $cart->add(new BuyableProduct(), 1, ['color' => 'red']);
+        $cart->add(new BuyableProduct(), 1, ['color' => 'green']);
+        $cart->add(new BuyableProduct(), 1, ['color' => 'blue']);
+
+        $cart->update($cart->content()->values()[1]->rowId, ['options' => ['color' => 'yellow']]);
+
+        $this->assertRowsInCart(3, $cart);
+        $this->assertEquals('yellow', $cart->content()->values()[1]->options->color);
+    }
+
+    /** @test */
     public function it_can_remove_an_item_from_the_cart()
     {
         Event::fake();
@@ -1190,25 +1205,62 @@ class CartTest extends TestCase
     }
 
     /** @test */
-    public function it_can_erase_a_cart_from_the_database()
+    public function it_can_merge_without_dispatching_add_events()
     {
         $this->artisan('migrate', [
             '--database' => 'testing',
         ]);
 
-        Event::fake();
+        $cart = $this->getCartDiscount(50);
+        $cart->add(new BuyableProduct(1, 'Item', 10.00), 1);
+        $cart->add(new BuyableProduct(2, 'Item 2', 10.00), 1);
+        $cart->store('test');
 
-        $cart = $this->getCart();
+        Event::fakeFor(function () {
+            $cart2 = $this->getCart();
+            $cart2->instance('test2');
+            $cart2->setGlobalTax(0);
+            $cart2->setGlobalDiscount(0);
 
-        $cart->add(new BuyableProduct());
+            $this->assertEquals('0', $cart2->countInstances());
 
-        $cart->store($identifier = 123);
+            $cart2->merge('test', null, null, false);
 
-        $cart->erase($identifier);
+            Event::assertNotDispatched('cart.added');
+            Event::assertDispatched('cart.merged');
 
-        $this->assertDatabaseMissing('shoppingcart', ['identifier' => $identifier, 'instance' => 'default']);
+            $this->assertEquals('2', $cart2->countInstances());
+            $this->assertEquals(20, $cart2->totalFloat());
+        });
+    }
 
-        Event::assertDispatched('cart.erased');
+    /** @test */
+    public function it_can_merge_dispatching_add_events()
+    {
+        $this->artisan('migrate', [
+            '--database' => 'testing',
+        ]);
+
+        $cart = $this->getCartDiscount(50);
+        $cart->add(new BuyableProduct(1, 'Item', 10.00), 1);
+        $cart->add(new BuyableProduct(2, 'Item 2', 10.00), 1);
+        $cart->store('test');
+
+        Event::fakeFor(function () {
+            $cart2 = $this->getCart();
+            $cart2->instance('test2');
+            $cart2->setGlobalTax(0);
+            $cart2->setGlobalDiscount(0);
+
+            $this->assertEquals('0', $cart2->countInstances());
+
+            $cart2->merge('test');
+
+            Event::assertDispatched('cart.added', 2);
+            Event::assertDispatched('cart.merged');
+            $this->assertEquals('2', $cart2->countInstances());
+            $this->assertEquals(20, $cart2->totalFloat());
+        });
     }
 
     /**

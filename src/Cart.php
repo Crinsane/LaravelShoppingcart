@@ -46,7 +46,7 @@ class Cart
     private $discount = 0;
 
     /**
-     * Defines the discount percentage.
+     * Defines the tax rate.
      *
      * @var float
      */
@@ -126,13 +126,14 @@ class Cart
     /**
      * Add an item to the cart.
      *
-     * @param \Gloudemans\Shoppingcart\CartItem $item         Item to add to the Cart
-     * @param bool                              $keepDiscount Keep the discount rate of the Item
-     * @param bool                              $keepTax      Keep the Tax rate of the Item
+     * @param \Gloudemans\Shoppingcart\CartItem $item          Item to add to the Cart
+     * @param bool                              $keepDiscount  Keep the discount rate of the Item
+     * @param bool                              $keepTax       Keep the Tax rate of the Item
+     * @param bool                              $dispatchEvent
      *
      * @return \Gloudemans\Shoppingcart\CartItem The CartItem
      */
-    public function addCartItem($item, $keepDiscount = false, $keepTax = false)
+    public function addCartItem($item, $keepDiscount = false, $keepTax = false, $dispatchEvent = true)
     {
         if (!$keepDiscount) {
             $item->setDiscountRate($this->discount);
@@ -150,7 +151,9 @@ class Cart
 
         $content->put($item->rowId, $item);
 
-        $this->events->dispatch('cart.added', $item);
+        if ($dispatchEvent) {
+            $this->events->dispatch('cart.added', $item);
+        }
 
         $this->session->put($this->instance, $content);
 
@@ -180,6 +183,8 @@ class Cart
         $content = $this->getContent();
 
         if ($rowId !== $cartItem->rowId) {
+            $itemOldIndex = $content->keys()->search($rowId);
+
             $content->pull($rowId);
 
             if ($content->has($cartItem->rowId)) {
@@ -193,7 +198,13 @@ class Cart
 
             return;
         } else {
-            $content->put($cartItem->rowId, $cartItem);
+            if (isset($itemOldIndex)) {
+                $content = $content->slice(0, $itemOldIndex)
+                    ->merge([$cartItem->rowId => $cartItem])
+                    ->merge($content->slice($itemOldIndex));
+            } else {
+                $content->put($cartItem->rowId, $cartItem);
+            }
         }
 
         $this->events->dispatch('cart.updated', $cartItem);
@@ -624,8 +635,7 @@ class Cart
 
         $this->instance($currentInstance);
 
-        $this->getConnection()->table($this->getTableName())
-            ->where('identifier', $identifier)->delete();
+        $this->getConnection()->table($this->getTableName())->where('identifier', $identifier)->delete();
     }
 
     /**
@@ -656,10 +666,11 @@ class Cart
      * @param mixed $identifier   Identifier of the Cart to merge with.
      * @param bool  $keepDiscount Keep the discount of the CartItems.
      * @param bool  $keepTax      Keep the tax of the CartItems.
+     * @param bool  $dispatchAdd  Flag to dispatch the add events.
      *
      * @return bool
      */
-    public function merge($identifier, $keepDiscount = false, $keepTax = false)
+    public function merge($identifier, $keepDiscount = false, $keepTax = false, $dispatchAdd = true)
     {
         if (!$this->storedCartWithIdentifierExists($identifier)) {
             return false;
@@ -671,8 +682,10 @@ class Cart
         $storedContent = unserialize($stored->content);
 
         foreach ($storedContent as $cartItem) {
-            $this->addCartItem($cartItem, $keepDiscount, $keepTax);
+            $this->addCartItem($cartItem, $keepDiscount, $keepTax, $dispatchAdd);
         }
+
+        $this->events->dispatch('cart.merged');
 
         return true;
     }
