@@ -545,6 +545,14 @@ If you want to merge the cart with another one from the database, all you have t
     // Merge the contents of 'savedcart' into 'username'.
     Cart::instance('username')->merge('savedcart', $keepDiscount, $keepTaxrate, $dispatchAdd);
 
+### Erasing the cart
+If you want to erase the cart from the database, all you have to do is call the  `erase($identifier)` where `$identifier` is the key you specified for the `store` method.
+ 
+    Cart::erase('username');
+    
+    // To erase a cart switching to an instance named 'wishlist'
+    Cart::instance('wishlist')->erase('username');
+
 ## Exceptions
 
 The Cart package will throw exceptions if something goes wrong. This way it's easier to debug your code using the Cart package or to handle the error based on the type of exceptions. The Cart packages can throw the following exceptions:
@@ -567,6 +575,7 @@ The cart also has events build in. There are five events available for you to li
 | cart.merged   | When the content of a cart is merged     | -                                |
 | cart.stored   | When the content of a cart was stored.   | -                                |
 | cart.restored | When the content of a cart was restored. | -                                |
+| cart.erased   | When the content of a cart was erased.   | -                                |
 
 ## Example
 
