@@ -960,6 +960,52 @@ class CartTest extends TestCase
     }
 
     /** @test */
+    public function it_can_calculate_all_values_after_updating_from_array()
+    {
+        $cart = $this->getCartDiscount(50);
+        $cart->add(new BuyableProduct(1, 'First item', 10.00), 1);
+
+        $cart->update('027c91341fd5cf4d2579b49c4b6a90da', ['qty'=>2]);
+
+        $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
+
+        $cart->setTax('027c91341fd5cf4d2579b49c4b6a90da', 19);
+
+        $this->assertEquals(10.00, $cartItem->price(2));
+        $this->assertEquals(5.00, $cartItem->discount(2));
+        $this->assertEquals(10.00, $cartItem->discountTotal(2));
+        $this->assertEquals(5.00, $cartItem->priceTarget(2));
+        $this->assertEquals(10.00, $cartItem->subtotal(2));
+        $this->assertEquals(0.95, $cartItem->tax(2));
+        $this->assertEquals(1.90, $cartItem->taxTotal(2));
+        $this->assertEquals(5.95, $cartItem->priceTax(2));
+        $this->assertEquals(11.90, $cartItem->total(2));
+    }
+
+    /** @test */
+    public function it_can_calculate_all_values_after_updating_from_buyable()
+    {
+        $cart = $this->getCartDiscount(50);
+        $cart->add(new BuyableProduct(1, 'First item', 5.00), 2);
+
+        $cart->update('027c91341fd5cf4d2579b49c4b6a90da', new BuyableProduct(1, 'First item', 10.00));
+
+        $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
+
+        $cart->setTax('027c91341fd5cf4d2579b49c4b6a90da', 19);
+
+        $this->assertEquals(10.00, $cartItem->price(2));
+        $this->assertEquals(5.00, $cartItem->discount(2));
+        $this->assertEquals(10.00, $cartItem->discountTotal(2));
+        $this->assertEquals(5.00, $cartItem->priceTarget(2));
+        $this->assertEquals(10.00, $cartItem->subtotal(2));
+        $this->assertEquals(0.95, $cartItem->tax(2));
+        $this->assertEquals(1.90, $cartItem->taxTotal(2));
+        $this->assertEquals(5.95, $cartItem->priceTax(2));
+        $this->assertEquals(11.90, $cartItem->total(2));
+    }
+
+    /** @test */
     public function it_will_destroy_the_cart_when_the_user_logs_out_and_the_config_setting_was_set_to_true()
     {
         $this->app['config']->set('cart.destroy_on_logout', true);
