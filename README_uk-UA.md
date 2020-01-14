@@ -7,7 +7,7 @@
 [![Latest Unstable Version](https://poser.pugx.org/bumbummen99/shoppingcart/v/unstable)](https://packagist.org/packages/bumbummen99/shoppingcart)
 [![License](https://poser.pugx.org/bumbummen99/shoppingcart/license)](https://packagist.org/packages/bumbummen99/shoppingcart)
 
-Цей репозиторій є відгалуженням [Crisane's LaravelShoppingcart](https://github.com/Crinsane/LaravelShoppingcart) та містить додаткові незначні доповнення, сумісні з Laravel 6.
+Цей репозиторій є відгалуженням [Crinsane's LaravelShoppingcart](https://github.com/Crinsane/LaravelShoppingcart) та містить додаткові незначні доповнення, сумісні з Laravel 6.
 
 ## Встановлення
 
