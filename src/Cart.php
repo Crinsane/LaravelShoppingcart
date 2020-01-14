@@ -375,7 +375,7 @@ class Cart
     }
 
     /**
-     * Get the subtotal (total - tax) of the items in the cart.
+     * Get the discount of the items in the cart.
      *
      * @return float
      */
@@ -387,7 +387,7 @@ class Cart
     }
 
     /**
-     * Get the subtotal (total - tax) of the items in the cart as formatted string.
+     * Get the discount of the items in the cart as formatted string.
      *
      * @param int    $decimals
      * @param string $decimalPoint
@@ -401,11 +401,11 @@ class Cart
     }
 
     /**
-     * Get the subtotal (total - tax) of the items in the cart.
+     * Get the price of the items in the cart.
      *
      * @return float
      */
-    public function initialFloat()
+    public function initialFloat() // TODO: rename and use priceTotal
     {
         return $this->getContent()->reduce(function ($initial, CartItem $cartItem) {
             return $initial + ($cartItem->qty * $cartItem->price);
@@ -413,7 +413,7 @@ class Cart
     }
 
     /**
-     * Get the subtotal (total - tax) of the items in the cart as formatted string.
+     * Get the price of the items in the cart as formatted string.
      *
      * @param int    $decimals
      * @param string $decimalPoint
