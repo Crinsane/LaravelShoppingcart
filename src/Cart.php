@@ -401,11 +401,11 @@ class Cart
     }
 
     /**
-     * Get the price of the items in the cart.
+     * Get the price of the items in the cart (not rounded).
      *
      * @return float
      */
-    public function initialFloat() // TODO: rename and use priceTotal
+    public function initialFloat()
     {
         return $this->getContent()->reduce(function ($initial, CartItem $cartItem) {
             return $initial + ($cartItem->qty * $cartItem->price);
@@ -424,6 +424,32 @@ class Cart
     public function initial($decimals = null, $decimalPoint = null, $thousandSeperator = null)
     {
         return $this->numberFormat($this->initialFloat(), $decimals, $decimalPoint, $thousandSeperator);
+    }
+
+    /**
+     * Get the price of the items in the cart (previously rounded).
+     *
+     * @return float
+     */
+    public function priceTotalFloat()
+    {
+        return $this->getContent()->reduce(function ($initial, CartItem $cartItem) {
+            return $initial + $cartItem->priceTotal;
+        }, 0);
+    }
+
+    /**
+     * Get the price of the items in the cart as formatted string.
+     *
+     * @param int    $decimals
+     * @param string $decimalPoint
+     * @param string $thousandSeperator
+     *
+     * @return string
+     */
+    public function priceTotal($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+    {
+        return $this->numberFormat($this->priceTotalFloat(), $decimals, $decimalPoint, $thousandSeperator);
     }
 
     /**
