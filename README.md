@@ -155,7 +155,7 @@ Cart::destroy();
 
 ### Cart::weight()
 
-The `weight()` method can be used to get the weight total of all items in the cart, given there weight and quantity.
+The `weight()` method can be used to get the weight total of all items in the cart, given their weight and quantity.
 
 ```php
 Cart::weight();
