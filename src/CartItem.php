@@ -378,7 +378,7 @@ class CartItem implements Arrayable, Jsonable
             case 'priceTax':
                 return round($this->priceTarget + $this->tax, $decimals);
             case 'discountTotal':
-                return round ($this->discount * $this->qty, $decimals);
+                return round($this->discount * $this->qty, $decimals);
             case 'weightTotal':
                 return round($this->weight * $this->qty, $decimals);
             case 'priceTotal':
@@ -388,7 +388,7 @@ class CartItem implements Arrayable, Jsonable
             case 'priceTarget':
                 return round(($this->priceTotal - $this->discountTotal) / $this->qty, $decimals);
             case 'taxTotal':
-                return round($this->subtotal * ($this->taxRate / 100) , $decimals);
+                return round($this->subtotal * ($this->taxRate / 100), $decimals);
             case 'total':
                 return round($this->subtotal + $this->taxTotal, $decimals);
 

@@ -1310,8 +1310,8 @@ class CartTest extends TestCase
     }
 
     /** @test */
-    public function it_use_correctly_rounded_values_for_totals_and_cart_summary() {
-
+    public function it_use_correctly_rounded_values_for_totals_and_cart_summary()
+    {
         $this->setConfigFormat(2, ',', '');
 
         $cart = $this->getCartDiscount(6);
@@ -1346,6 +1346,7 @@ class CartTest extends TestCase
      * Get an instance of the cart with discount.
      *
      * @param int $discount
+     *
      * @return \Gloudemans\Shoppingcart\Cart
      */
     private function getCartDiscount($discount = 50)
