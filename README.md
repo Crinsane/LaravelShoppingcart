@@ -24,7 +24,7 @@ Now you're ready to start using the shoppingcart in your application.
 ## Overview
 Look at one of the following topics to learn more about LaravelShoppingcart
 
-* [Important note](#Important note)
+* [Important note](#important-note)
 * [Usage](#usage)
 * [Collections](#collections)
 * [Instances](#instances)
