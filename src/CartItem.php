@@ -254,6 +254,20 @@ class CartItem implements Arrayable, Jsonable
     }
 
     /**
+     * Returns the formatted total price for this cart item.
+     *
+     * @param int    $decimals
+     * @param string $decimalPoint
+     * @param string $thousandSeperator
+     *
+     * @return string
+     */
+    public function priceTotal($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+    {
+        return $this->numberFormat($this->priceTotal, $decimals, $decimalPoint, $thousandSeperator);
+    }
+
+    /**
      * Set the quantity for this cart item.
      *
      * @param int|float $qty
@@ -354,26 +368,29 @@ class CartItem implements Arrayable, Jsonable
         if (property_exists($this, $attribute)) {
             return $this->{$attribute};
         }
+        $decimals = config('cart.format.decimals', 2);
 
         switch ($attribute) {
             case 'discount':
                 return $this->price * ($this->discountRate / 100);
-            case 'priceTarget':
-                return $this->price - $this->discount;
-            case 'subtotal':
-                return $this->priceTarget * $this->qty;
             case 'tax':
-                return $this->priceTarget * ($this->taxRate / 100);
+                return round($this->priceTarget * ($this->taxRate / 100), $decimals);
             case 'priceTax':
-                return $this->priceTarget + $this->tax;
-            case 'total':
-                return $this->priceTax * $this->qty;
-            case 'taxTotal':
-                return $this->tax * $this->qty;
+                return round($this->priceTarget + $this->tax, $decimals);
             case 'discountTotal':
-                return $this->discount * $this->qty;
+                return round($this->discount * $this->qty, $decimals);
             case 'weightTotal':
-                return $this->weight * $this->qty;
+                return round($this->weight * $this->qty, $decimals);
+            case 'priceTotal':
+                return round($this->price * $this->qty, $decimals);
+            case 'subtotal':
+                return round($this->priceTotal - $this->discountTotal, $decimals);
+            case 'priceTarget':
+                return round(($this->priceTotal - $this->discountTotal) / $this->qty, $decimals);
+            case 'taxTotal':
+                return round($this->subtotal * ($this->taxRate / 100), $decimals);
+            case 'total':
+                return round($this->subtotal + $this->taxTotal, $decimals);
 
             case 'model':
                 if (isset($this->associatedModel)) {

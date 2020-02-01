@@ -1049,7 +1049,7 @@ class CartTest extends TestCase
     }
 
     /** @test */
-    public function cart_hast_no_rounding_errors()
+    public function cart_has_no_rounding_errors()
     {
         $cart = $this->getCart();
 
@@ -1309,6 +1309,26 @@ class CartTest extends TestCase
         });
     }
 
+    /** @test */
+    public function it_use_correctly_rounded_values_for_totals_and_cart_summary()
+    {
+        $this->setConfigFormat(2, ',', '');
+
+        $cart = $this->getCartDiscount(6);
+
+        $cartItem = $cart->add(new BuyableProduct(1, 'First item', 0.18929), 1000);
+        $cart->add(new BuyableProduct(2, 'Second item', 4.41632), 5);
+        $cart->add(new BuyableProduct(3, 'Third item', 0.37995), 25);
+
+        $cart->setGlobalTax(22);
+
+        // check total
+        $this->assertEquals('253,29', $cart->total());
+
+        // check that the sum of cart subvalues matches the total (in order to avoid cart summary to looks wrong)
+        $this->assertEquals($cart->totalFloat(), $cart->subtotalFloat() + $cart->taxFloat());
+    }
+
     /**
      * Get an instance of the cart.
      *
@@ -1325,12 +1345,14 @@ class CartTest extends TestCase
     /**
      * Get an instance of the cart with discount.
      *
+     * @param int $discount
+     *
      * @return \Gloudemans\Shoppingcart\Cart
      */
-    private function getCartDiscount($discount = 0)
+    private function getCartDiscount($discount = 50)
     {
         $cart = $this->getCart();
-        $cart->setGlobalDiscount(50);
+        $cart->setGlobalDiscount($discount);
 
         return $cart;
     }
