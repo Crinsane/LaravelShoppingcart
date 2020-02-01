@@ -24,6 +24,7 @@ Now you're ready to start using the shoppingcart in your application.
 ## Overview
 Look at one of the following topics to learn more about LaravelShoppingcart
 
+* [Important note](#important-note)
 * [Usage](#usage)
 * [Collections](#collections)
 * [Instances](#instances)
@@ -32,6 +33,14 @@ Look at one of the following topics to learn more about LaravelShoppingcart
 * [Exceptions](#exceptions)
 * [Events](#events)
 * [Example](#example)
+
+## Important note
+
+As all the shopping cart that calculate prices including taxes and discount, also this module could be affected by the "totals rounding issue" ([*](https://stackoverflow.com/questions/13529580/magento-tax-rounding-issue)) due to the decimal precision used for prices and for the results.
+In order to avoid (or at least minimize) this issue, in the Laravel shoppingcart package the totals are calculated using the method **"per Row"** and returned already rounded based on the number format set as default in the config file (cart.php).
+Due to this **WE DISCOURAGE TO SET HIGH PRECISION AS DEFAULT AND TO FORMAT THE OUTPUT RESULT USING LESS DECIMAL** Doing this can lead to the rounding issue.
+
+The base price (product price) is left not rounded.
 
 ## Usage
 
@@ -245,16 +254,34 @@ You can set the default number format in the config file.
 
 ### Cart::initial()
 
-The `initial()` method can be used to get the total price of all items in the cart before discount. 
+The `initial()` method can be used to get the total price of all items in the cart before applying discount and taxes. 
+
+It could be deprecated in the future. **When rounded could be affected by the rounding issue**, use it carefully or use [Cart::priceTotal()](#Cart::priceTotal())
 
 ```php
 Cart::initial();
 ```
 
-The method will automatically format the result, which you can tweak using the three optional parameters
+The method will automatically format the result, which you can tweak using the three optional parameters. 
 
 ```php
 Cart::initial($decimals, $decimalSeparator, $thousandSeparator);
+```
+
+You can set the default number format in the config file.
+
+### Cart::priceTotal()
+
+The `priceTotal()` method can be used to get the total price of all items in the cart before applying discount and taxes. 
+
+```php
+Cart::priceTotal();
+```
+
+The method return the result rounded based on the default number format, but you can tweak using the three optional parameters
+
+```php
+Cart::priceTotal($decimals, $decimalSeparator, $thousandSeparator);
 ```
 
 You can set the default number format in the config file.
