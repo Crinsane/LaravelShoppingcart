@@ -1340,7 +1340,7 @@ class CartTest extends TestCase
         $cart->setGlobalTax(22);
 
         // check net price
-        $this->assertEquals(81.97, round($cartItem->priceNet,2));
+        $this->assertEquals(81.97, round($cartItem->priceNet, 2));
     }
 
     /** @test */
@@ -1365,7 +1365,6 @@ class CartTest extends TestCase
         // check that the sum of cart subvalues matches the total (in order to avoid cart summary to looks wrong)
         $this->assertEquals($cart->totalFloat(), $cart->subtotalFloat() + $cart->taxFloat());
     }
-
 
     /**
      * Get an instance of the cart.
