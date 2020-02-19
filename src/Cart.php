@@ -358,6 +358,7 @@ class Cart
         $this->getConnection()
              ->table($this->getTableName())
              ->where('identifier', $identifier)
+             ->where('instance', $this->currentInstance())
              ->delete();
 
 
@@ -384,6 +385,7 @@ class Cart
         }
 
         $stored = $this->getConnection()->table($this->getTableName())
+            ->where('instance', $this->currentInstance())
             ->where('identifier', $identifier)->first();
 
         $storedContent = unserialize($stored->content);
@@ -507,7 +509,7 @@ class Cart
      */
     protected function storedCartWithIdentifierExists($identifier)
     {
-        return $this->getConnection()->table($this->getTableName())->where('identifier', $identifier)->exists();
+        return $this->getConnection()->table($this->getTableName())->where('identifier', $identifier)->where('instance', $this->currentInstance())->exists();
     }
 
     /**
