@@ -1,8 +1,8 @@
 ## LaravelShoppingcart
-[![Build Status](https://travis-ci.org/Crinsane/LaravelShoppingcart.png?branch=master)](https://travis-ci.org/Crinsane/LaravelShoppingcart)
-[![Total Downloads](https://poser.pugx.org/gloudemans/shoppingcart/downloads.png)](https://packagist.org/packages/gloudemans/shoppingcart)
-[![Latest Stable Version](https://poser.pugx.org/gloudemans/shoppingcart/v/stable)](https://packagist.org/packages/gloudemans/shoppingcart)
-[![Latest Unstable Version](https://poser.pugx.org/gloudemans/shoppingcart/v/unstable)](https://packagist.org/packages/gloudemans/shoppingcart)
+[![Build Status](https://travis-ci.org/hardevine/LaravelShoppingcart.png?branch=master)](https://travis-ci.org/hardevine/LaravelShoppingcart)
+[![Total Downloads](https://poser.pugx.org/hardevine/shoppingcart/downloads.png)](https://packagist.org/packages/hardevine/shoppingcart)
+[![Latest Stable Version](https://poser.pugx.org/hardevine/shoppingcart/v/stable)](https://packagist.org/packages/hardevine/shoppingcart)
+[![Latest Unstable Version](https://poser.pugx.org/hardevine/shoppingcart/v/unstable)](https://packagist.org/packages/hardevine/shoppingcart)
 [![License](https://poser.pugx.org/gloudemans/shoppingcart/license)](https://packagist.org/packages/gloudemans/shoppingcart)
 
 A simple shoppingcart implementation for Laravel.
@@ -13,7 +13,7 @@ Install the package through [Composer](http://getcomposer.org/).
 
 Run the Composer require command from the Terminal:
 
-    composer require gloudemans/shoppingcart
+    composer require hardevine/shoppingcart
     
 If you're using Laravel 5.5, this is all there is to do. 
 
@@ -71,8 +71,12 @@ Maybe you prefer to add the item using an array? As long as the array contains t
 Cart::add(['id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 9.99, 'options' => ['size' => 'large']]);
 ```
 
-New in version 2 of the package is the possibility to work with the `Buyable` interface. The way this works is that you have a model implement the `Buyable` interface, which will make you implement a few methods so the package knows how to get the id, name and price from your model. 
+New in version 2 of the package is the possibility to work with the [Buyable](#buyable) interface. The way this works is that you have a model implement the `Buyable` interface, which will make you implement a few methods so the package knows how to get the id, name and price from your model. 
 This way you can just pass the `add()` method a model and the quantity and it will automatically add it to the cart. 
+
+The path to the `Buyable` interface is:
+
+    Gloudemans\Shoppingcart\Contracts\Buyable;
 
 **As an added bonus it will automatically associate the model with the CartItem**
 
@@ -325,11 +329,56 @@ foreach(Cart::content() as $row) {
 	echo 'You have ' . $row->qty . ' items of ' . $row->model->name . ' with description: "' . $row->model->description . '" in your cart.';
 }
 ```
+
+### Buyable
+
+For the convenience of faster adding items to cart and their automatic association, your model can implement `Buyable` interface. To do so, it must implement such functions:
+
+```php
+    public function getBuyableIdentifier(){
+        return $this->id;
+    }
+
+    public function getBuyableDescription(){
+        return $this->name;
+    }
+
+    public function getBuyablePrice(){
+        return $this->price;
+    }
+```
+
+Example:
+
+```php
+<?php
+
+namespace App\Models;
+
+use Gloudemans\Shoppingcart\Contracts\Buyable;
+use Illuminate\Database\Eloquent\Model;
+
+class Product exends Model implements Buyable {
+    public function getBuyableIdentifier($options = null) {
+        return $this->id;
+    }
+
+    public function getBuyableDescription($options = null) {
+        return $this->name;
+    }
+
+    public function getBuyablePrice($options = null) {
+        return $this->price;
+    }
+}
+```
+
+
 ## Database
 
 - [Config](#configuration)
-- [Storing the cart](#save-cart-to-database)
-- [Restoring the cart](#retrieve-cart-from-database)
+- [Storing the cart](#storing-the-cart)
+- [Restoring the cart](#restoring-the-cart)
 
 ### Configuration
 To save cart into the database so you can retrieve it later, the package needs to know which database connection to use and what the name of the table is.
