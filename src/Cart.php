@@ -6,11 +6,11 @@ use Closure;
 use Illuminate\Support\Collection;
 use Illuminate\Session\SessionManager;
 use Illuminate\Database\DatabaseManager;
-use Illuminate\Contracts\Events\Dispatcher;
 use Gloudemans\Shoppingcart\Contracts\Buyable;
 use Gloudemans\Shoppingcart\Exceptions\UnknownModelException;
 use Gloudemans\Shoppingcart\Exceptions\InvalidRowIDException;
 use Gloudemans\Shoppingcart\Exceptions\CartAlreadyStoredException;
+use Illuminate\Events\Dispatcher;
 
 class Cart
 {
@@ -22,11 +22,9 @@ class Cart
      * @var \Illuminate\Session\SessionManager
      */
     private $session;
-
+    
     /**
-     * Instance of the event dispatcher.
-     * 
-     * @var \Illuminate\Contracts\Events\Dispatcher
+     * @var \Illuminate\Support\Facades\Event
      */
     private $events;
 
@@ -36,14 +34,13 @@ class Cart
      * @var string
      */
     private $instance;
-
+    
     /**
      * Cart constructor.
-     *
-     * @param \Illuminate\Session\SessionManager      $session
-     * @param \Illuminate\Contracts\Events\Dispatcher $events
+     * @param  \Illuminate\Session\SessionManager  $session
+     * @param  \Illuminate\Events\Dispatcher       $events
      */
-    public function __construct(SessionManager $session, Dispatcher $events)
+    public function __construct(SessionManager $session, Dispatcher$events)
     {
         $this->session = $session;
         $this->events = $events;
@@ -104,8 +101,9 @@ class Cart
 
         $content->put($cartItem->rowId, $cartItem);
         
-        $this->events->fire('cart.added', $cartItem);
-
+//        $this->events->fire('cart.added', $cartItem);
+        $this->events->dispatch('cart.added', $cartItem);
+        
         $this->session->put($this->instance, $content);
 
         return $cartItem;
@@ -148,8 +146,9 @@ class Cart
             $content->put($cartItem->rowId, $cartItem);
         }
 
-        $this->events->fire('cart.updated', $cartItem);
-
+//        $this->events->fire('cart.updated', $cartItem);
+        $this->events->dispatch('cart.updated', $cartItem);
+        
         $this->session->put($this->instance, $content);
 
         return $cartItem;
@@ -169,7 +168,8 @@ class Cart
 
         $content->pull($cartItem->rowId);
 
-        $this->events->fire('cart.removed', $cartItem);
+//        $this->events->fire('cart.removed', $cartItem);
+        $this->events->dispatch('cart.removed', $cartItem);
 
         $this->session->put($this->instance, $content);
     }
@@ -359,8 +359,9 @@ class Cart
             'instance' => $this->currentInstance(),
             'content' => serialize($content)
         ]);
-
-        $this->events->fire('cart.stored');
+        
+//        $this->events->fire('cart.stored');
+        $this->events->dispatch('cart.stored');
     }
 
     /**
@@ -389,9 +390,10 @@ class Cart
         foreach ($storedContent as $cartItem) {
             $content->put($cartItem->rowId, $cartItem);
         }
-
-        $this->events->fire('cart.restored');
-
+        
+//        $this->events->fire('cart.restored');
+        $this->events->dispatch('cart.restored');
+    
         $this->session->put($this->instance, $content);
 
         $this->instance($currentInstance);
