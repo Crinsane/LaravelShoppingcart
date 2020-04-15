@@ -384,6 +384,9 @@ class CartItem implements Arrayable, Jsonable
      */
     public function toJson($options = 0)
     {
+        if(isset($this->associatedModel){
+           return json_encode(array_merge($this->toArray(), ['model' => $this->model]), $options);
+        }
         return json_encode($this->toArray(), $options);
     }
 
