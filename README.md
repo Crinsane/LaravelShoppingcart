@@ -111,6 +111,16 @@ $rowId = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
 Cart::update($rowId, 2); // Will update the quantity
 ```
 
+If you would like to update options of an item inside the cart, 
+
+```php
+$rowId = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
+
+Cart::update($rowId, ['options'  => ['size' => 'small']]); // Will update the size option with new value
+```
+
+
+
 If you want to update more attributes of the item, you can either pass the update method an array or a `Buyable` as the second parameter. This way you can update all information of the item with the given rowId.
 
 ```php
