@@ -5,7 +5,20 @@ namespace Gloudemans\Shoppingcart;
 use Gloudemans\Shoppingcart\Contracts\Buyable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Support\Arr;
 
+/**
+ * @property-read mixed discount
+ * @property-read float discountTotal
+ * @property-read float priceTarget
+ * @property-read float priceNet
+ * @property-read float priceTotal
+ * @property-read float subtotal
+ * @property-read float taxTotal
+ * @property-read float tax
+ * @property-read float total
+ * @property-read float priceTax
+ */
 class CartItem implements Arrayable, Jsonable
 {
     /**
@@ -58,18 +71,18 @@ class CartItem implements Arrayable, Jsonable
     public $options;
 
     /**
+     * The tax rate for the cart item.
+     *
+     * @var int|float
+     */
+    public $taxRate = 0;
+
+    /**
      * The FQN of the associated model.
      *
      * @var string|null
      */
     private $associatedModel = null;
-
-    /**
-     * The tax rate for the cart item.
-     *
-     * @var int|float
-     */
-    private $taxRate = 0;
 
     /**
      * The discount rate for the cart item.
@@ -84,6 +97,7 @@ class CartItem implements Arrayable, Jsonable
      * @param int|string $id
      * @param string     $name
      * @param float      $price
+     * @param float      $weight
      * @param array      $options
      */
     public function __construct($id, $name, $price, $weight = 0, array $options = [])
@@ -96,6 +110,9 @@ class CartItem implements Arrayable, Jsonable
         }
         if (strlen($price) < 0 || !is_numeric($price)) {
             throw new \InvalidArgumentException('Please supply a valid price.');
+        }
+        if (strlen($weight) < 0 || !is_numeric($weight)) {
+            throw new \InvalidArgumentException('Please supply a valid weight.');
         }
 
         $this->id = $id;
@@ -249,6 +266,20 @@ class CartItem implements Arrayable, Jsonable
     }
 
     /**
+     * Returns the formatted total price for this cart item.
+     *
+     * @param int    $decimals
+     * @param string $decimalPoint
+     * @param string $thousandSeperator
+     *
+     * @return string
+     */
+    public function priceTotal($decimals = null, $decimalPoint = null, $thousandSeperator = null)
+    {
+        return $this->numberFormat($this->priceTotal, $decimals, $decimalPoint, $thousandSeperator);
+    }
+
+    /**
      * Set the quantity for this cart item.
      *
      * @param int|float $qty
@@ -274,7 +305,6 @@ class CartItem implements Arrayable, Jsonable
         $this->id = $item->getBuyableIdentifier($this->options);
         $this->name = $item->getBuyableDescription($this->options);
         $this->price = $item->getBuyablePrice($this->options);
-        $this->priceTax = $this->price + $this->tax;
     }
 
     /**
@@ -286,13 +316,12 @@ class CartItem implements Arrayable, Jsonable
      */
     public function updateFromArray(array $attributes)
     {
-        $this->id = array_get($attributes, 'id', $this->id);
-        $this->qty = array_get($attributes, 'qty', $this->qty);
-        $this->name = array_get($attributes, 'name', $this->name);
-        $this->price = array_get($attributes, 'price', $this->price);
-        $this->weight = array_get($attributes, 'weight', $this->weight);
-        $this->priceTax = $this->price + $this->tax;
-        $this->options = new CartItemOptions(array_get($attributes, 'options', $this->options));
+        $this->id = Arr::get($attributes, 'id', $this->id);
+        $this->qty = Arr::get($attributes, 'qty', $this->qty);
+        $this->name = Arr::get($attributes, 'name', $this->name);
+        $this->price = Arr::get($attributes, 'price', $this->price);
+        $this->weight = Arr::get($attributes, 'weight', $this->weight);
+        $this->options = new CartItemOptions(Arr::get($attributes, 'options', $this->options));
 
         $this->rowId = $this->generateRowId($this->id, $this->options->all());
     }
@@ -351,39 +380,69 @@ class CartItem implements Arrayable, Jsonable
         if (property_exists($this, $attribute)) {
             return $this->{$attribute};
         }
+        $decimals = config('cart.format.decimals', 2);
 
         switch ($attribute) {
-            case 'discount':
-                return $this->price * ($this->discountRate / 100);
-            case 'priceTarget':
-                return $this->price - $this->discount;
-            case 'subtotal':
-                return $this->priceTarget * $this->qty;
-            case 'tax':
-                return $this->priceTarget * ($this->taxRate / 100);
-            case 'priceTax':
-                return $this->priceTarget + $this->tax;
-            case 'total':
-                return $this->priceTax * $this->qty;
-            case 'taxTotal':
-                return $this->tax * $this->qty;
-            case 'discountTotal':
-                return $this->discount * $this->qty;
-            case 'weightTotal':
-                return $this->weight * $this->qty;
-
             case 'model':
                 if (isset($this->associatedModel)) {
                     return with(new $this->associatedModel())->find($this->id);
                 }
-
             case 'modelFQCN':
                 if (isset($this->associatedModel)) {
                     return $this->associatedModel;
                 }
+            case 'weightTotal':
+                return round($this->weight * $this->qty, $decimals);
+        }
 
-            default:
-                return;
+        if (config('cart.gross_price')) {
+            switch ($attribute) {
+                case 'priceNet':
+                    return round($this->price / (1 + ($this->taxRate / 100)), $decimals);
+                case 'discount':
+                    return $this->priceNet * ($this->discountRate / 100);
+                case 'tax':
+                    return round($this->priceTarget * ($this->taxRate / 100), $decimals);
+                case 'priceTax':
+                    return round($this->priceTarget + $this->tax, $decimals);
+                case 'discountTotal':
+                    return round($this->discount * $this->qty, $decimals);
+                case 'priceTotal':
+                    return round($this->priceNet * $this->qty, $decimals);
+                case 'subtotal':
+                    return round($this->priceTotal - $this->discountTotal, $decimals);
+                case 'priceTarget':
+                    return round(($this->priceTotal - $this->discountTotal) / $this->qty, $decimals);
+                case 'taxTotal':
+                    return round($this->subtotal * ($this->taxRate / 100), $decimals);
+                case 'total':
+                    return round($this->subtotal + $this->taxTotal, $decimals);
+                default:
+                    return;
+            }
+        } else {
+            switch ($attribute) {
+                case 'discount':
+                    return $this->price * ($this->discountRate / 100);
+                case 'tax':
+                    return round($this->priceTarget * ($this->taxRate / 100), $decimals);
+                case 'priceTax':
+                    return round($this->priceTarget + $this->tax, $decimals);
+                case 'discountTotal':
+                    return round($this->discount * $this->qty, $decimals);
+                case 'priceTotal':
+                    return round($this->price * $this->qty, $decimals);
+                case 'subtotal':
+                    return round($this->priceTotal - $this->discountTotal, $decimals);
+                case 'priceTarget':
+                    return round(($this->priceTotal - $this->discountTotal) / $this->qty, $decimals);
+                case 'taxTotal':
+                    return round($this->subtotal * ($this->taxRate / 100), $decimals);
+                case 'total':
+                    return round($this->subtotal + $this->taxTotal, $decimals);
+                default:
+                    return;
+            }
         }
     }
 
@@ -409,7 +468,7 @@ class CartItem implements Arrayable, Jsonable
      */
     public static function fromArray(array $attributes)
     {
-        $options = array_get($attributes, 'options', []);
+        $options = Arr::get($attributes, 'options', []);
 
         return new self($attributes['id'], $attributes['name'], $attributes['price'], $attributes['weight'], $options);
     }

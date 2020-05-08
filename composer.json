@@ -6,18 +6,20 @@
     "authors": [
         {
             "name": "Rob Gloudemans",
-            "email": "info@robgloudemans.nl"
+            "email": "info@robgloudemans.nl",
+            "homepage": "http://robgloudemans.nl/"
         },
         {
             "name": "Patrick Henninger",
-            "email": "privat@skyraptor.eu"
+            "email": "privat@skyraptor.eu",
+            "homepage": "https://skyraptor.eu/"
         }
     ],
     "require": {
-        "illuminate/support": "5.1.*|5.2.*|5.3.*|5.4.*|5.5.*|5.6.*|5.7.*",
-        "illuminate/session": "5.1.*|5.2.*|5.3.*|5.4.*|5.5.*|5.6.*|5.7.*",
-        "illuminate/events": "5.1.*|5.2.*|5.3.*|5.4.*|5.5.*|5.6.*|5.7.*",
-        "nesbot/carbon": "^1.26.3 || ^2.0"
+        "illuminate/support": "5.4.*||5.5.*||5.6.*||5.7.*||5.8.*||^6.0||^7.0",
+        "illuminate/session": "5.4.*||5.5.*||5.6.*||5.7.*||5.8.*||^6.0||^7.0",
+        "illuminate/events": "5.4.*||5.5.*||5.6.*||5.7.*||5.8.*||^6.0||^7.0",
+        "nesbot/carbon": "~1.20||^1.26.3||^2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~5.0||~6.0||~7.0||~8.0",
