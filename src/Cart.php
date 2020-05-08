@@ -902,6 +902,6 @@ class Cart
      */
     public function updatedAt()
     {
-        return $this->createdAt;
+        return $this->updatedAt;
     }
 }

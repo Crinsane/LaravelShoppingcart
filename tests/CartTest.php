@@ -884,21 +884,33 @@ class CartTest extends TestCase
 
         $cart->add(new BuyableProduct());
 
-        $beforeStore = Carbon::now();
-
         /* Sleep as database does not store ms */
+        $beforeStore = Carbon::now();
         sleep(1);
 
         $cart->store($identifier = 123);
 
         sleep(1);
-
         $afterStore = Carbon::now();
 
         $cart->restore($identifier);
 
         $this->assertTrue($beforeStore->lessThanOrEqualTo($cart->createdAt()) && $afterStore->greaterThanOrEqualTo($cart->createdAt()));
         $this->assertTrue($beforeStore->lessThanOrEqualTo($cart->updatedAt()) && $afterStore->greaterThanOrEqualTo($cart->updatedAt()));
+
+        /* Sleep as database does not store ms */
+        $beforeSecondStore = Carbon::now();
+        sleep(1);
+
+        $cart->store($identifier);
+
+        sleep(1);
+        $afterSecondStore = Carbon::now();
+
+        $cart->restore($identifier);
+
+        $this->assertTrue($beforeStore->lessThanOrEqualTo($cart->createdAt()) && $afterStore->greaterThanOrEqualTo($cart->createdAt()));
+        $this->assertTrue($beforeSecondStore->lessThanOrEqualTo($cart->updatedAt()) && $afterSecondStore->greaterThanOrEqualTo($cart->updatedAt()));
 
         Event::assertDispatched('cart.stored');
     }
