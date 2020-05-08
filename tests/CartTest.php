@@ -2,6 +2,7 @@
 
 namespace Gloudemans\Tests\Shoppingcart;
 
+use Carbon\Carbon;
 use Gloudemans\Shoppingcart\Cart;
 use Gloudemans\Shoppingcart\CartItem;
 use Gloudemans\Shoppingcart\ShoppingcartServiceProvider;
@@ -866,6 +867,40 @@ class CartTest extends TestCase
         $serialized = serialize($cart->content());
 
         $this->assertDatabaseHas('shoppingcart', ['identifier' => $identifier, 'instance' => 'default', 'content' => $serialized]);
+
+        Event::assertDispatched('cart.stored');
+    }
+
+    /** @test */
+    public function it_can_store_and_retrieve_cart_from_the_database_with_correct_timestamps()
+    {
+        $this->artisan('migrate', [
+            '--database' => 'testing',
+        ]);
+
+        Event::fake();
+
+        $cart = $this->getCart();
+
+        
+
+        $cart->add(new BuyableProduct());
+        
+        $beforeStore = Carbon::now();
+
+        /* Sleep as database does not store ms */
+        sleep(1);
+
+        $cart->store($identifier = 123);
+
+        sleep(1);
+
+        $afterStore = Carbon::now();
+
+        $cart->restore($identifier);
+
+        $this->assertTrue($beforeStore->lessThanOrEqualTo($cart->createdAt()) && $afterStore->greaterThanOrEqualTo($cart->createdAt()));
+        $this->assertTrue($beforeStore->lessThanOrEqualTo($cart->updatedAt()) && $afterStore->greaterThanOrEqualTo($cart->updatedAt()));
 
         Event::assertDispatched('cart.stored');
     }

@@ -890,7 +890,7 @@ class Cart
      *
      * @return \Carbon\Carbon|null
      */
-    private function createdAt()
+    public function createdAt()
     {
         return $this->createdAt;
     }
@@ -900,7 +900,7 @@ class Cart
      *
      * @return \Carbon\Carbon|null
      */
-    private function updatedAt()
+    public function updatedAt()
     {
         return $this->createdAt;
     }
