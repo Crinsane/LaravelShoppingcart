@@ -633,8 +633,8 @@ class Cart
             'identifier' => $identifier,
             'instance'   => $this->currentInstance(),
             'content'    => serialize($content),
-            'created_at' => $this->createdAt ?: date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
+            'created_at' => $this->createdAt ?: Carbon::now(),
+            'updated_at' => Carbon::now(),
         ]);
 
         $this->events->dispatch('cart.stored');
