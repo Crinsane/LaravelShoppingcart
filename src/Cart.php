@@ -2,6 +2,7 @@
 
 namespace Gloudemans\Shoppingcart;
 
+use Carbon\Carbon;
 use Closure;
 use Gloudemans\Shoppingcart\Contracts\Buyable;
 use Gloudemans\Shoppingcart\Contracts\InstanceIdentifier;
@@ -37,6 +38,20 @@ class Cart
      * @var string
      */
     private $instance;
+
+    /**
+     * Holds the creation date of the cart.
+     *
+     * @var mixed
+     */
+    private $createdAt;
+
+    /**
+     * Holds the update date of the cart.
+     *
+     * @var mixed
+     */
+    private $updatedAt;
 
     /**
      * Defines the discount percentage.
@@ -618,6 +633,8 @@ class Cart
             'identifier' => $identifier,
             'instance'   => $this->currentInstance(),
             'content'    => serialize($content),
+            'created_at' => $this->createdAt ?: Carbon::now(),
+            'updated_at' => Carbon::now(),
         ]);
 
         $this->events->dispatch('cart.stored');
@@ -660,6 +677,9 @@ class Cart
         $this->session->put($this->instance, $content);
 
         $this->instance($currentInstance);
+
+        $this->createdAt = Carbon::parse(data_get($stored, 'created_at'));
+        $this->updatedAt = Carbon::parse(data_get($stored, 'updated_at'));
 
         $this->getConnection()->table($this->getTableName())->where('identifier', $identifier)->delete();
     }
@@ -863,5 +883,25 @@ class Cart
         }
 
         return number_format($value, $decimals, $decimalPoint, $thousandSeperator);
+    }
+
+    /**
+     * Get the creation date of the cart (db context).
+     *
+     * @return \Carbon\Carbon|null
+     */
+    public function createdAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * Get the lats update date of the cart (db context).
+     *
+     * @return \Carbon\Carbon|null
+     */
+    public function updatedAt()
+    {
+        return $this->updatedAt;
     }
 }
