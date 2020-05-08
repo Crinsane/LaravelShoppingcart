@@ -882,10 +882,8 @@ class CartTest extends TestCase
 
         $cart = $this->getCart();
 
-        
-
         $cart->add(new BuyableProduct());
-        
+
         $beforeStore = Carbon::now();
 
         /* Sleep as database does not store ms */
