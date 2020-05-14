@@ -244,6 +244,8 @@ class CartItem implements Arrayable, Jsonable
     public function setTaxRate($taxRate)
     {
         $this->taxRate = $taxRate;
+
+        $this->priceTax = $this->price + $this->tax;
         
         return $this;
     }
