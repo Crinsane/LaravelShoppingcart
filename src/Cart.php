@@ -141,7 +141,7 @@ class Cart
             }
         }
 
-        if ($cartItem->qty <= 0) {
+        if ($cartItem->qty <= 0) {dsfs
             $this->remove($cartItem->rowId);
             return;
         } else {
