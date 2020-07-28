@@ -387,10 +387,12 @@ class CartItem implements Arrayable, Jsonable
                 if (isset($this->associatedModel)) {
                     return with(new $this->associatedModel())->find($this->id);
                 }
+                // no break
             case 'modelFQCN':
                 if (isset($this->associatedModel)) {
                     return $this->associatedModel;
                 }
+                // no break
             case 'weightTotal':
                 return round($this->weight * $this->qty, $decimals);
         }
