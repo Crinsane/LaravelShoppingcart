@@ -90,7 +90,7 @@ class CartItem implements Arrayable, Jsonable
      *
      * @var float
      */
-    private float $discountRate = 0;
+    private $discountRate = 0;
 
     /**
      * CartItem constructor.
