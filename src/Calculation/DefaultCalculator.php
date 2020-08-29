@@ -4,10 +4,12 @@ namespace Gloudemans\Shoppingcart\Calculation;
 
 use Gloudemans\Shoppingcart\CartItem;
 
-class DefaultCalculator {
-    static function getAttribute(string $attribute, CartItem $cartItem) {
+class DefaultCalculator
+{
+    public static function getAttribute(string $attribute, CartItem $cartItem)
+    {
         $decimals = config('cart.format.decimals', 2);
-        
+
         switch ($attribute) {
             case 'discount':
                 return $cartItem->price * ($cartItem->getDiscountRate() / 100);

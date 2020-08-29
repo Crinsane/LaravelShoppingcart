@@ -397,8 +397,8 @@ class CartItem implements Arrayable, Jsonable
             case 'weightTotal':
                 return round($this->weight * $this->qty, $decimals);
         }
-        
-        return call_user_func(config('cart.calculator', DefaultCalculator::class) . '::getAttribute', $attribute, $this);
+
+        return call_user_func(config('cart.calculator', DefaultCalculator::class).'::getAttribute', $attribute, $this);
     }
 
     /**

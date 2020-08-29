@@ -4,10 +4,12 @@ namespace Gloudemans\Shoppingcart\Calculation;
 
 use Gloudemans\Shoppingcart\CartItem;
 
-class GrossPrice {
-    static function getAttribute(string $attribute, CartItem $cartItem) {
+class GrossPrice
+{
+    public static function getAttribute(string $attribute, CartItem $cartItem)
+    {
         $decimals = config('cart.format.decimals', 2);
-        
+
         switch ($attribute) {
             case 'priceNet':
                 return round($cartItem->price / (1 + ($cartItem->taxRate / 100)), $decimals);
