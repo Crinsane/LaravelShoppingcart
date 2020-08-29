@@ -3,10 +3,11 @@
 namespace Gloudemans\Shoppingcart\Calculation;
 
 use Gloudemans\Shoppingcart\CartItem;
+use Gloudemans\Shoppingcart\Contracts\Calculator;
 
-class GrossPrice
+class GrossPrice implements Calculator
 {
-    public static function getAttribute(string $attribute, CartItem $cartItem)
+    static function getAttribute(string $attribute, CartItem $cartItem)
     {
         $decimals = config('cart.format.decimals', 2);
 

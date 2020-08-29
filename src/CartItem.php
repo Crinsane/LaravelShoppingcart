@@ -4,9 +4,12 @@ namespace Gloudemans\Shoppingcart;
 
 use Gloudemans\Shoppingcart\Calculation\DefaultCalculator;
 use Gloudemans\Shoppingcart\Contracts\Buyable;
+use Gloudemans\Shoppingcart\Contracts\Calculator;
+use Gloudemans\Shoppingcart\Exceptions\InvalidCalculatorException;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Arr;
+use ReflectionClass;
 
 /**
  * @property-read mixed discount
@@ -398,7 +401,14 @@ class CartItem implements Arrayable, Jsonable
                 return round($this->weight * $this->qty, $decimals);
         }
 
-        return call_user_func(config('cart.calculator', DefaultCalculator::class).'::getAttribute', $attribute, $this);
+        $class = new ReflectionClass(config('cart.calculator', DefaultCalculator::class));
+        if (!$class->implementsInterface(Calculator::class))
+        {
+            throw new InvalidCalculatorException('The configured Calculator seems to be invalid. Calculators have to implement the Calculator Contract.');
+        }
+
+        return call_user_func($class->getName().'::getAttribute', $attribute, $this);
+        
     }
 
     /**
