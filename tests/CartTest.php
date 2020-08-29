@@ -3,6 +3,7 @@
 namespace Gloudemans\Tests\Shoppingcart;
 
 use Carbon\Carbon;
+use Gloudemans\Shoppingcart\Calculation\GrossPrice;
 use Gloudemans\Shoppingcart\Cart;
 use Gloudemans\Shoppingcart\CartItem;
 use Gloudemans\Shoppingcart\ShoppingcartServiceProvider;
@@ -1378,7 +1379,7 @@ class CartTest extends TestCase
     public function it_use_gross_price_as_base_price()
     {
         $cart = $this->getCartDiscount(0);
-        config(['cart.gross_price' => true]);
+        config(['cart.calculator' => GrossPrice::class]);
 
         $cartItem = $cart->add(new BuyableProduct(1, 'First item', 100), 2);
 
@@ -1392,7 +1393,7 @@ class CartTest extends TestCase
     public function it_use_gross_price_and_it_use_correctly_rounded_values_for_totals_and_cart_summary()
     {
         $this->setConfigFormat(2, ',', '');
-        config(['cart.gross_price' => true]);
+        config(['cart.calculator' => GrossPrice::class]);
 
         $cart = $this->getCartDiscount(6);
 

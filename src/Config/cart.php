@@ -12,7 +12,7 @@ return [
     |
     */
 
-    'gross_price' => false,
+    'calculator' => \Gloudemans\Shoppingcart\Calculation\DefaultCalculator::class,
 
     /*
     |--------------------------------------------------------------------------
