@@ -55,4 +55,13 @@ class CartItemTest extends TestCase
 
         $this->assertEquals($json, $cartItem->toJson());
     }
+
+    /** @test */
+    public function it_formats_price_total_correctly()
+    {
+        $cartItem = new CartItem(1, 'Some item', 10.00, 550, ['size' => 'XL', 'color' => 'red']);
+        $cartItem->setQuantity(2);
+
+        $this->assertSame('20.00', $cartItem->priceTotal());
+    }
 }
