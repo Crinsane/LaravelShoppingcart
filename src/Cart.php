@@ -98,7 +98,7 @@ class Cart
             $instance = $instance->getInstanceIdentifier();
         }
 
-        $this->instance = sprintf('%s.%s', 'cart', $instance);
+        $this->instance = 'cart.' . $instance;
 
         return $this;
     }
