@@ -98,7 +98,7 @@ class Cart
             $instance = $instance->getInstanceIdentifier();
         }
 
-        $this->instance = 'cart.' . $instance;
+        $this->instance = 'cart.'.$instance;
 
         return $this;
     }
