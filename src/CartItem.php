@@ -402,13 +402,11 @@ class CartItem implements Arrayable, Jsonable
         }
 
         $class = new ReflectionClass(config('cart.calculator', DefaultCalculator::class));
-        if (!$class->implementsInterface(Calculator::class))
-        {
+        if (!$class->implementsInterface(Calculator::class)) {
             throw new InvalidCalculatorException('The configured Calculator seems to be invalid. Calculators have to implement the Calculator Contract.');
         }
 
         return call_user_func($class->getName().'::getAttribute', $attribute, $this);
-        
     }
 
     /**

@@ -6,5 +6,5 @@ use Gloudemans\Shoppingcart\CartItem;
 
 interface Calculator
 {
-    static function getAttribute(string $attribute, CartItem $cartItem);
+    public static function getAttribute(string $attribute, CartItem $cartItem);
 }

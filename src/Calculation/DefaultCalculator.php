@@ -7,7 +7,7 @@ use Gloudemans\Shoppingcart\Contracts\Calculator;
 
 class DefaultCalculator implements Calculator
 {
-    static function getAttribute(string $attribute, CartItem $cartItem)
+    public static function getAttribute(string $attribute, CartItem $cartItem)
     {
         $decimals = config('cart.format.decimals', 2);
 
