@@ -416,6 +416,9 @@ class Product extends Model implements Buyable {
     public function getBuyablePrice($options = null) {
         return $this->price;
     }
+    public function getBuyableWeight($options = null) {
+        return $this->weight;
+    }
 }
 ```
 
