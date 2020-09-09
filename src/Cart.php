@@ -127,7 +127,7 @@ class Cart
         } elseif (is_array($qty)) {
             $cartItem->updateFromArray($qty);
         } else {
-            $cartItem->qty = $qty;
+            $cartItem->qty += $qty;
         }
 
         $content = $this->getContent();
