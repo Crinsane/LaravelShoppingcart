@@ -21,6 +21,12 @@ Now you're ready to start using the shoppingcart in your application.
 
 **As of version 2 of this package it's possibly to use dependency injection to inject an instance of the Cart class into your controller or other class**
 
+You definitely should publish the `config` file and take a look at it.
+
+    php artisan vendor:publish --provider="Gloudemans\Shoppingcart\ShoppingcartServiceProvider" --tag="config"
+
+This will give you a `cart.php` config file in which you can make changes to the packages behaivor.
+
 ## Table of Contents
 Look at one of the following topics to learn more about LaravelShoppingcart
 
@@ -30,6 +36,7 @@ Look at one of the following topics to learn more about LaravelShoppingcart
 * [Instances](#instances)
 * [Models](#models)
 * [Database](#database)
+* [Calculators](#calculators)
 * [Exceptions](#exceptions)
 * [Events](#events)
 * [Example](#example)
@@ -550,12 +557,7 @@ foreach(Cart::content() as $row) {
 
 ### Configuration
 To save cart into the database so you can retrieve it later, the package needs to know which database connection to use and what the name of the table is.
-By default the package will use the default database connection and use a table named `shoppingcart`.
-If you want to change these options, you'll have to publish the `config` file.
-
-    php artisan vendor:publish --provider="Gloudemans\Shoppingcart\ShoppingcartServiceProvider" --tag="config"
-
-This will give you a `cart.php` config file in which you can make the changes.
+By default the package will use the default database connection and use a table named `shoppingcart`. You can change that in the configuration.
 
 To make your life easy, the package also includes a ready to use `migration` which you can publish by running:
 
@@ -592,6 +594,50 @@ If you want to erase the cart from the database, all you have to do is call the 
     
     // To erase a cart switching to an instance named 'wishlist'
     Cart::instance('wishlist')->erase('username');
+
+## Calculators
+
+The calculation logic for the package is implemented and defined in `Calculator` classes. These implement the `Gloudemans\Shoppingcart\Contracts\Calculator` Contract and and determine how the prices are calculated and rounded. The calculators can be configured in the confugration file. This is the default calculator:
+```php
+<?php
+
+namespace Gloudemans\Shoppingcart\Calculation;
+
+use Gloudemans\Shoppingcart\CartItem;
+use Gloudemans\Shoppingcart\Contracts\Calculator;
+
+class DefaultCalculator implements Calculator
+{
+    public static function getAttribute(string $attribute, CartItem $cartItem)
+    {
+        $decimals = config('cart.format.decimals', 2);
+
+        switch ($attribute) {
+            case 'discount':
+                return $cartItem->price * ($cartItem->getDiscountRate() / 100);
+            case 'tax':
+                return round($cartItem->priceTarget * ($cartItem->taxRate / 100), $decimals);
+            case 'priceTax':
+                return round($cartItem->priceTarget + $cartItem->tax, $decimals);
+            case 'discountTotal':
+                return round($cartItem->discount * $cartItem->qty, $decimals);
+            case 'priceTotal':
+                return round($cartItem->price * $cartItem->qty, $decimals);
+            case 'subtotal':
+                return max(round($cartItem->priceTotal - $cartItem->discountTotal, $decimals), 0);
+            case 'priceTarget':
+                return round(($cartItem->priceTotal - $cartItem->discountTotal) / $cartItem->qty, $decimals);
+            case 'taxTotal':
+                return round($cartItem->subtotal * ($cartItem->taxRate / 100), $decimals);
+            case 'total':
+                return round($cartItem->subtotal + $cartItem->taxTotal, $decimals);
+            default:
+                return;
+        }
+    }
+}
+
+```
 
 ## Exceptions
 
