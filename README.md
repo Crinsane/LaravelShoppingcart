@@ -653,15 +653,18 @@ The Cart package will throw exceptions if something goes wrong. This way it's ea
 
 The cart also has events build in. There are five events available for you to listen for.
 
-| Event         | Fired                                    | Parameter                        |
-| ------------- | ---------------------------------------- | -------------------------------- |
-| cart.added    | When an item was added to the cart.      | The `CartItem` that was added.   |
-| cart.updated  | When an item in the cart was updated.    | The `CartItem` that was updated. |
-| cart.removed  | When an item is removed from the cart.   | The `CartItem` that was removed. |
-| cart.merged   | When the content of a cart is merged     | -                                |
-| cart.stored   | When the content of a cart was stored.   | -                                |
-| cart.restored | When the content of a cart was restored. | -                                |
-| cart.erased   | When the content of a cart was erased.   | -                                |
+| Event         | Fired                                    | Parameter                             |
+| ------------- | ---------------------------------------- | ------------------------------------- |
+| cart.adding   | When adding an item to the cart.         | The `CartItem` that is being added.   |
+| cart.updating | When updating an item to the cart.       | The `CartItem` that is being updated. |
+| cart.removing | When removing an item to the cart.       | The `CartItem` that is being removed. |
+| cart.added    | When an item was added to the cart.      | The `CartItem` that was added.        |
+| cart.updated  | When an item was updated to the cart.    | The `CartItem` that was updated.      |
+| cart.removed  | When an item was removed from the cart.  | The `CartItem` that was removed.      |
+| cart.merged   | When the content of a cart is merged     | -                                     |
+| cart.stored   | When the content of a cart was stored.   | -                                     |
+| cart.restored | When the content of a cart was restored. | -                                     |
+| cart.erased   | When the content of a cart was erased.   | -                                     |
 
 ## Example
 
