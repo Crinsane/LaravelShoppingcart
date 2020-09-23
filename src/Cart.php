@@ -171,7 +171,7 @@ class Cart
         }
 
         $this->session->put($this->instance, $content);
-        
+
         if ($dispatchEvent) {
             $this->events->dispatch('cart.added', $item);
         }
@@ -229,7 +229,7 @@ class Cart
         $this->events->dispatch('cart.updating', $cartItem);
 
         $this->session->put($this->instance, $content);
-        
+
         $this->events->dispatch('cart.updated', $cartItem);
 
         return $cartItem;
@@ -253,7 +253,7 @@ class Cart
         $this->events->dispatch('cart.removing', $cartItem);
 
         $this->session->put($this->instance, $content);
-        
+
         $this->events->dispatch('cart.removed', $cartItem);
     }
 
