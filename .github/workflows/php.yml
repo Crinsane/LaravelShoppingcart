@@ -27,17 +27,20 @@ jobs:
       - name: Validate composer.json and composer.lock
         run: composer validate
 
-      - name: Install composer packages
-        run: composer install --prefer-source --no-interaction
+      - name: Get composer cache directory
+        id: composercache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
 
       - name: Cache Composer packages
         id: composer-cache
         uses: actions/cache@v2
         with:
-          path: vendor
-          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-php-
+          path: ${{ steps.composercache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install composer packages
+          run: composer install --prefer-dist --no-interaction
 
       - name: Tests Coverage
         run: vendor/bin/phpunit --coverage-clover=coverage.xml
