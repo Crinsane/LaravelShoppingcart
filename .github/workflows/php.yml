@@ -1,17 +1,17 @@
-name: Code Checks
+name: CI Code Checks
 
 on:
-  push:
-    branches: [ master ]
   pull_request:
+  push:
     branches: [ master ]
 
 jobs:
   run:
     runs-on: ubuntu-18.04
     strategy:
+      fail-fast: false
       matrix:
-        php-versions: ['7.1', '7.2']
+        php-versions: ['7.1', '7.2', '7.3', '7.4']
     name: PHP ${{ matrix.php-versions }}
     steps:
       - name: Checkout
@@ -44,3 +44,10 @@ jobs:
 
       - name: Tests Coverage
         run: vendor/bin/phpunit --coverage-clover=coverage.xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          fail_ci_if_error: true
