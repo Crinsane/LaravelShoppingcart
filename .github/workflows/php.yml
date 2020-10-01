@@ -27,6 +27,9 @@ jobs:
       - name: Validate composer.json and composer.lock
         run: composer validate
 
+      - name: Install composer packages
+        run: composer install --prefer-source --no-interaction
+
       - name: Cache Composer packages
         id: composer-cache
         uses: actions/cache@v2
