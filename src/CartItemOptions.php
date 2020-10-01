@@ -3,7 +3,7 @@
 namespace Gloudemans\Shoppingcart;
 
 use Illuminate\Support\Collection;
-use App\Model\Cart;
+
 class CartItemOptions extends Collection
 {
     /**
