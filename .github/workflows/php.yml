@@ -12,8 +12,8 @@ jobs:
       fail-fast: false
       matrix:
         php-versions: ['7.1', '7.2', '7.3', '7.4']
-      env:
-        PHP_VERSION: ${{ matrix.php-versions }}
+    env:
+      PHP_VERSION: ${{ matrix.php-versions }}
     name: PHP ${{ matrix.php-versions }}
     steps:
       - name: Checkout
