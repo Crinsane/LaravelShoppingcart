@@ -25,7 +25,7 @@ class CartItemTest extends TestCase
         $cartItem = new CartItem(1, 'Some item', 10.00, ['size' => 'XL', 'color' => 'red']);
         $cartItem->setQuantity(2);
 
-        $this->assertEquals([
+        $this->assertSame([
             'id' => 1,
             'name' => 'Some item',
             'price' => 10.00,
@@ -50,6 +50,6 @@ class CartItemTest extends TestCase
 
         $json = '{"rowId":"07d5da5550494c62daf9993cf954303f","id":1,"name":"Some item","qty":2,"price":10,"options":{"size":"XL","color":"red"},"tax":0,"subtotal":20}';
 
-        $this->assertEquals($json, $cartItem->toJson());
+        $this->assertSame($json, $cartItem->toJson());
     }
 }
