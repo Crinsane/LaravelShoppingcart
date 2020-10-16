@@ -603,10 +603,13 @@ class CartTest extends TestCase
         $cart = $this->getCart();
 
         $cart->add(new BuyableProduct);
+        //var_dump($cart);
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
-        $this->assertContains(BuyableProduct::class, Assert::readAttribute($cartItem, 'associatedModel'));
+        //var_dump($cartItem->associatedModel);
+
+        $this->assertEquals(BuyableProduct::class, $cartItem->associatedModel);
     }
 
     /** @test */
@@ -620,7 +623,7 @@ class CartTest extends TestCase
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
-        $this->assertEquals(ProductModel::class, Assert::readAttribute($cartItem, 'associatedModel'));
+        $this->assertEquals(ProductModel::class, $cartItem->associatedModel);
     }
 
     /**
