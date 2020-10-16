@@ -4,6 +4,10 @@ namespace Gloudemans\Shoppingcart;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Gloudemans\Shoppingcart\Contracts\Buyable;
+use Gloudemans\Shoppingcart\Exceptions\InvalidRowIDException;
+use Gloudemans\Shoppingcart\Exceptions\ValidateNameException;
+use Gloudemans\Shoppingcart\Exceptions\ValidatePriceException;
+use Gloudemans\Shoppingcart\Exceptions\ValidateQuantityException;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Arr;
 
@@ -76,13 +80,13 @@ class CartItem implements Arrayable, Jsonable
     public function __construct($id, $name, $price, array $options = [])
     {
         if(empty($id)) {
-            throw new \InvalidArgumentException('Please supply a valid identifier.');
+            throw new InvalidRowIDException('Please supply a valid identifier.');
         }
         if(empty($name)) {
-            throw new \InvalidArgumentException('Please supply a valid name.');
+            throw new ValidateNameException('Please supply a valid name.');
         }
         if(strlen($price) < 0 || ! is_numeric($price)) {
-            throw new \InvalidArgumentException('Please supply a valid price.');
+            throw new ValidatePriceException('Please supply a valid price.');
         }
 
         $this->id       = $id;
@@ -180,7 +184,7 @@ class CartItem implements Arrayable, Jsonable
     public function setQuantity($qty)
     {
         if(empty($qty) || ! is_numeric($qty))
-            throw new \InvalidArgumentException('Please supply a valid quantity.');
+            throw new ValidateQuantityException('Please supply a valid quantity.');
 
         $this->qty = $qty;
     }

@@ -218,6 +218,7 @@ class CartTest extends TestCase
     public function it_will_validate_the_identifier()
     {
         $cart = $this->getCart();
+        $this->expectException(\Gloudemans\Shoppingcart\Exceptions\InvalidRowIDException::class);
 
         $cart->add(null, 'Some title', 1, 10.00);
     }
@@ -230,6 +231,7 @@ class CartTest extends TestCase
     public function it_will_validate_the_name()
     {
         $cart = $this->getCart();
+        $this->expectException(\Gloudemans\Shoppingcart\Exceptions\ValidateNameException::class);
 
         $cart->add(1, null, 1, 10.00);
     }
@@ -242,6 +244,7 @@ class CartTest extends TestCase
     public function it_will_validate_the_quantity()
     {
         $cart = $this->getCart();
+        $this->expectException(\Gloudemans\Shoppingcart\Exceptions\ValidateQuantityException::class);
 
         $cart->add(1, 'Some title', 'invalid', 10.00);
     }
@@ -254,6 +257,7 @@ class CartTest extends TestCase
     public function it_will_validate_the_price()
     {
         $cart = $this->getCart();
+        $this->expectException(\Gloudemans\Shoppingcart\Exceptions\ValidatePriceException::class);
 
         $cart->add(1, 'Some title', 1, 'invalid');
     }
@@ -345,6 +349,7 @@ class CartTest extends TestCase
     public function it_will_throw_an_exception_if_a_rowid_was_not_found()
     {
         $cart = $this->getCart();
+        $this->expectException(\Gloudemans\Shoppingcart\Exceptions\InvalidRowIDException::class);
 
         $cart->add(new BuyableProduct);
 
@@ -626,6 +631,7 @@ class CartTest extends TestCase
     public function it_will_throw_an_exception_when_a_non_existing_model_is_being_associated()
     {
         $cart = $this->getCart();
+        $this->expectException(\Gloudemans\Shoppingcart\Exceptions\UnknownModelException::class);
 
         $cart->add(1, 'Test item', 1, 10.00);
 
@@ -823,6 +829,7 @@ class CartTest extends TestCase
         $this->artisan('migrate', [
             '--database' => 'testing',
         ]);
+        $this->expectException(\Gloudemans\Shoppingcart\Exceptions\CartAlreadyStoredException::class);
 
         Event::fake();
 
