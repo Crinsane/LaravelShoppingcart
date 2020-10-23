@@ -1,10 +1,10 @@
 <?php
 
-namespace Gloudemans\Tests\Shoppingcart;
+namespace Amalikov\Tests\Shoppingcart;
 
 use Orchestra\Testbench\TestCase;
-use Gloudemans\Shoppingcart\CartItem;
-use Gloudemans\Shoppingcart\ShoppingcartServiceProvider;
+use Amalikov\Shoppingcart\CartItem;
+use Amalikov\Shoppingcart\ShoppingcartServiceProvider;
 
 class CartItemTest extends TestCase
 {

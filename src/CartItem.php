@@ -1,13 +1,13 @@
 <?php
 
-namespace Gloudemans\Shoppingcart;
+namespace Amalikov\Shoppingcart;
 
 use Illuminate\Contracts\Support\Arrayable;
-use Gloudemans\Shoppingcart\Contracts\Buyable;
-use Gloudemans\Shoppingcart\Exceptions\InvalidRowIDException;
-use Gloudemans\Shoppingcart\Exceptions\ValidateNameException;
-use Gloudemans\Shoppingcart\Exceptions\ValidatePriceException;
-use Gloudemans\Shoppingcart\Exceptions\ValidateQuantityException;
+use Amalikov\Shoppingcart\Contracts\Buyable;
+use Amalikov\Shoppingcart\Exceptions\InvalidRowIDException;
+use Amalikov\Shoppingcart\Exceptions\ValidateNameException;
+use Amalikov\Shoppingcart\Exceptions\ValidatePriceException;
+use Amalikov\Shoppingcart\Exceptions\ValidateQuantityException;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Arr;
 

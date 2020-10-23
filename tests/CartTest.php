@@ -1,20 +1,20 @@
 <?php
 
-namespace Gloudemans\Tests\Shoppingcart;
+namespace Amalikov\Tests\Shoppingcart;
 
 use Mockery;
 use PHPUnit\Framework\Assert;
-use Gloudemans\Shoppingcart\Cart;
+use Amalikov\Shoppingcart\Cart;
 use Orchestra\Testbench\TestCase;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Collection;
-use Gloudemans\Shoppingcart\CartItem;
+use Amalikov\Shoppingcart\CartItem;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Session\SessionManager;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Gloudemans\Shoppingcart\ShoppingcartServiceProvider;
-use Gloudemans\Tests\Shoppingcart\Fixtures\ProductModel;
-use Gloudemans\Tests\Shoppingcart\Fixtures\BuyableProduct;
+use Amalikov\Shoppingcart\ShoppingcartServiceProvider;
+use Amalikov\Tests\Shoppingcart\Fixtures\ProductModel;
+use Amalikov\Tests\Shoppingcart\Fixtures\BuyableProduct;
 
 class CartTest extends TestCase
 {
@@ -218,7 +218,7 @@ class CartTest extends TestCase
     public function it_will_validate_the_identifier()
     {
         $cart = $this->getCart();
-        $this->expectException(\Gloudemans\Shoppingcart\Exceptions\InvalidRowIDException::class);
+        $this->expectException(\Amalikov\Shoppingcart\Exceptions\InvalidRowIDException::class);
 
         $cart->add(null, 'Some title', 1, 10.00);
     }
@@ -231,7 +231,7 @@ class CartTest extends TestCase
     public function it_will_validate_the_name()
     {
         $cart = $this->getCart();
-        $this->expectException(\Gloudemans\Shoppingcart\Exceptions\ValidateNameException::class);
+        $this->expectException(\Amalikov\Shoppingcart\Exceptions\ValidateNameException::class);
 
         $cart->add(1, null, 1, 10.00);
     }
@@ -244,7 +244,7 @@ class CartTest extends TestCase
     public function it_will_validate_the_quantity()
     {
         $cart = $this->getCart();
-        $this->expectException(\Gloudemans\Shoppingcart\Exceptions\ValidateQuantityException::class);
+        $this->expectException(\Amalikov\Shoppingcart\Exceptions\ValidateQuantityException::class);
 
         $cart->add(1, 'Some title', 'invalid', 10.00);
     }
@@ -257,7 +257,7 @@ class CartTest extends TestCase
     public function it_will_validate_the_price()
     {
         $cart = $this->getCart();
-        $this->expectException(\Gloudemans\Shoppingcart\Exceptions\ValidatePriceException::class);
+        $this->expectException(\Amalikov\Shoppingcart\Exceptions\ValidatePriceException::class);
 
         $cart->add(1, 'Some title', 1, 'invalid');
     }
@@ -349,7 +349,7 @@ class CartTest extends TestCase
     public function it_will_throw_an_exception_if_a_rowid_was_not_found()
     {
         $cart = $this->getCart();
-        $this->expectException(\Gloudemans\Shoppingcart\Exceptions\InvalidRowIDException::class);
+        $this->expectException(\Amalikov\Shoppingcart\Exceptions\InvalidRowIDException::class);
 
         $cart->add(new BuyableProduct);
 
@@ -634,7 +634,7 @@ class CartTest extends TestCase
     public function it_will_throw_an_exception_when_a_non_existing_model_is_being_associated()
     {
         $cart = $this->getCart();
-        $this->expectException(\Gloudemans\Shoppingcart\Exceptions\UnknownModelException::class);
+        $this->expectException(\Amalikov\Shoppingcart\Exceptions\UnknownModelException::class);
 
         $cart->add(1, 'Test item', 1, 10.00);
 
@@ -832,7 +832,7 @@ class CartTest extends TestCase
         $this->artisan('migrate', [
             '--database' => 'testing',
         ]);
-        $this->expectException(\Gloudemans\Shoppingcart\Exceptions\CartAlreadyStoredException::class);
+        $this->expectException(\Amalikov\Shoppingcart\Exceptions\CartAlreadyStoredException::class);
 
         Event::fake();
 
