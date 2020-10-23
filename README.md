@@ -21,11 +21,11 @@ Should you still be on version 5.4 of Laravel, the final steps for you are to ad
 
 Add a new line to the `providers` array:
 
-	Gloudemans\Shoppingcart\ShoppingcartServiceProvider::class
+	Amalikov\Shoppingcart\ShoppingcartServiceProvider::class
 
 And optionally add a new line to the `aliases` array:
 
-	'Cart' => Gloudemans\Shoppingcart\Facades\Cart::class,
+	'Cart' => Amalikov\Shoppingcart\Facades\Cart::class,
 
 Now you're ready to start using the shoppingcart in your application.
 
