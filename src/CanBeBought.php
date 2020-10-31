@@ -6,6 +6,7 @@ trait CanBeBought
 {
 
     /**
+    * Author : Anjali Rani
      * Get the identifier of the Buyable item.
      *
      * @return int|string
