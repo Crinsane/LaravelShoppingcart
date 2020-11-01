@@ -12,6 +12,9 @@
     <testsuites>
         <testsuite name="Package Test Suite">
             <directory suffix=".php">./tests/</directory>
+            <?php 
+            $name = "Hello Anjali!";
+            echo $name;
         </testsuite>
     </testsuites>
 </phpunit>
