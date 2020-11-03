@@ -45,7 +45,13 @@ Look at one of the following topics to learn more about LaravelShoppingcart
 * [Example](#example)
 
 ## Usage
-
+My name is Anjali Rani. Currently, I am residing with my parents .
+Here i Agra. I have completed my BCA graduation from Bangalore University in 2019.
+I have completed 6 months Manual testing (Quality Assurance ) course at QSpider from Noida.
+My hobbies are listening to music and playing sports.
+In my leisure time I would love to talk with family members and also helping to mom in work like house work.
+My father works in IAF. 
+   
 The shoppingcart gives you the following methods to use:
 
 ### Cart::add()
