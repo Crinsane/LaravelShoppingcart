@@ -835,7 +835,7 @@ class Cart
         if ($this->countInstances() > 1) {
             $data['instance'] = $this->currentInstance();
         }
-        
+
         return $this->getConnection()->table($this->getTableName())->where($data)->exists();
     }
 
