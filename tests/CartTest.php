@@ -65,7 +65,7 @@ class CartTest extends TestCase
         parent::setUp();
 
         $this->app->afterResolving('migrator', function ($migrator) {
-            $migrator->path(realpath(__DIR__ . '/../src/Database/migrations'));
+            $migrator->path(realpath(__DIR__.'/../src/Database/migrations'));
         });
     }
 
@@ -1476,8 +1476,6 @@ class CartTest extends TestCase
         $newInstance->add(new BuyableProduct());
         $newInstance->store($newIdentifier = 456);
         $newInstanceSerialized = serialize($newInstance->content());
-
-        $this->assertDatabaseCount('shoppingcart', 2);
 
         $this->assertDatabaseHas('shoppingcart', ['identifier' => $identifier, 'instance' => 'default', 'content' => $serialized]);
 
