@@ -65,7 +65,7 @@ class CartTest extends TestCase
         parent::setUp();
 
         $this->app->afterResolving('migrator', function ($migrator) {
-            $migrator->path(realpath(__DIR__.'/../src/Database/migrations'));
+            $migrator->path(realpath(__DIR__ . '/../src/Database/migrations'));
         });
     }
 
@@ -1011,7 +1011,7 @@ class CartTest extends TestCase
         $cart = $this->getCartDiscount(50);
         $cart->add(new BuyableProduct(1, 'First item', 10.00), 1);
 
-        $cart->update('027c91341fd5cf4d2579b49c4b6a90da', ['qty'=>2]);
+        $cart->update('027c91341fd5cf4d2579b49c4b6a90da', ['qty' => 2]);
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
@@ -1452,5 +1452,37 @@ class CartTest extends TestCase
         $this->app['config']->set('cart.format.decimals', $decimals);
         $this->app['config']->set('cart.format.decimal_point', $decimalPoint);
         $this->app['config']->set('cart.format.thousand_separator', $thousandSeperator);
+    }
+
+    /** @test */
+    public function it_can_store__mutiple_instances_of_the_cart_in_a_database()
+    {
+        $this->artisan('migrate', [
+            '--database' => 'testing',
+        ]);
+
+        Event::fake();
+
+        $cart = $this->getCart();
+
+        $cart->add(new BuyableProduct());
+
+        $cart->store($identifier = 123);
+
+        $serialized = serialize($cart->content());
+
+        $newInstance = $this->getCart();
+        $newInstance->instance($instanceName = 'someinstance');
+        $newInstance->add(new BuyableProduct());
+        $newInstance->store($newIdentifier = 456);
+        $newInstanceSerialized = serialize($newInstance->content());
+
+        $this->assertDatabaseCount('shoppingcart', 2);
+
+        $this->assertDatabaseHas('shoppingcart', ['identifier' => $identifier, 'instance' => 'default', 'content' => $serialized]);
+
+        $this->assertDatabaseHas('shoppingcart', ['identifier' => $newIdentifier, 'instance' => $instanceName, 'content' => $newInstanceSerialized]);
+
+        Event::assertDispatched('cart.stored');
     }
 }

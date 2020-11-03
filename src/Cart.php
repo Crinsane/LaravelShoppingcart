@@ -98,7 +98,7 @@ class Cart
             $instance = $instance->getInstanceIdentifier();
         }
 
-        $this->instance = 'cart.'.$instance;
+        $this->instance = 'cart.' . $instance;
 
         return $this;
     }
@@ -831,7 +831,11 @@ class Cart
      */
     private function storedCartWithIdentifierExists($identifier)
     {
-        return $this->getConnection()->table($this->getTableName())->where('identifier', $identifier)->where('instance', $this->currentInstance())->exists();
+        $data = ['identifier' => $identifier];
+        if ($this->countInstances() > 1) {
+            $data['instance'] = $this->currentInstance();
+        }
+        return $this->getConnection()->table($this->getTableName())->where($data)->exists();
     }
 
     /**
