@@ -156,18 +156,18 @@ class Cart
     }
 
     /**
-     * Remove the cart item with the given rowId from the cart.
+     * Remove the cart item with the given rowNum from the cart.
      *
-     * @param string $rowId
+     * @param string $rowNum
      * @return void
      */
-    public function remove($rowId)
+    public function remove($rowNum)
     {
-        $cartItem = $this->get($rowId);
+        $cartItem = $this->get($rowNum);
 
         $content = $this->getContent();
 
-        $content->pull($cartItem->rowId);
+        $content->pull($cartItem->rowNum);
 
         $this->events->fire('cart.removed', $cartItem);
 
