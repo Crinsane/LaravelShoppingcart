@@ -735,7 +735,7 @@ class Cart
         }
 
         $stored = $this->getConnection()->table($this->getTableName())
-            ->where(['identifier'=> $identifier,'instance'=>$instance])->first();
+            ->where(['identifier'=> $identifier, 'instance'=> $instance])->first();
 
         $storedContent = unserialize($stored->content);
 
