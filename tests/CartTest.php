@@ -1482,8 +1482,46 @@ class CartTest extends TestCase
 
         $newInstanceSerialized = serialize($newInstance->content());
 
-        $this->assertDatabaseHas('shoppingcart', ['identifier' => $identifier, 'instance' => 'default', 'content' => $serialized]);
+        $this->assertDatabaseHas('shoppingcart', ['identifier' => $identifier, 'instance' => Cart::DEFAULT_INSTANCE, 'content' => $serialized]);
 
         $this->assertDatabaseHas('shoppingcart', ['identifier' => $identifier, 'instance' => $instanceName, 'content' => $newInstanceSerialized]);
+    }
+
+    /** @test */
+    public function it_can_calculate_the_total_price_of_the_items_in_cart()
+    {
+        $cart = $this->getCart();
+
+        $cart->add(new BuyableProduct(1, 'first item', $price = 1000), $qty = 5);
+        $this->assertEquals(5000, $cart->priceTotalFloat());
+    }
+
+    /** @test */
+    public function it_can_format_the_total_price_of_the_items_in_cart()
+    {
+        $cart = $this->getCart();
+
+        $cart->add(new BuyableProduct(1, 'first item', 1000), 5);
+        $this->assertEquals("5,000.00", $cart->priceTotal());
+        $this->assertEquals("5,000.0000", $cart->priceTotal(4, ".", ","));
+    }
+
+    /** @test */
+    public function it_can_erase_saved_cart_from_the_database()
+    {
+        $this->artisan('migrate', [
+            '--database' => 'testing',
+        ]);
+
+        Event::fake();
+
+        $cart = $this->getCart();
+        $cart->add(new BuyableProduct(1, 'Item', 10.00), 1);
+        $cart->add(new BuyableProduct(2, 'Item 2', 10.00), 1);
+        $cart->store($identifier = 'test');
+        $cart->erase($identifier);
+        Event::assertDispatched('cart.erased');
+        $this->assertDatabaseMissing('shoppingcart', ['identifier' => $identifier, 'instance' => Cart::DEFAULT_INSTANCE]);
+
     }
 }
