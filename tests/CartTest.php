@@ -1502,8 +1502,8 @@ class CartTest extends TestCase
         $cart = $this->getCart();
 
         $cart->add(new BuyableProduct(1, 'first item', 1000), 5);
-        $this->assertEquals("5,000.00", $cart->priceTotal());
-        $this->assertEquals("5,000.0000", $cart->priceTotal(4, ".", ","));
+        $this->assertEquals('5,000.00', $cart->priceTotal());
+        $this->assertEquals('5,000.0000', $cart->priceTotal(4, '.', ','));
     }
 
     /** @test */
@@ -1522,6 +1522,5 @@ class CartTest extends TestCase
         $cart->erase($identifier);
         Event::assertDispatched('cart.erased');
         $this->assertDatabaseMissing('shoppingcart', ['identifier' => $identifier, 'instance' => Cart::DEFAULT_INSTANCE]);
-
     }
 }
