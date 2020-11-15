@@ -670,7 +670,7 @@ class Cart
         }
 
         $stored = $this->getConnection()->table($this->getTableName())
-            ->where(['identifier'=> $identifier,'instance' => $currentInstance])->first();
+            ->where(['identifier'=> $identifier, 'instance' => $currentInstance])->first();
 
         $storedContent = unserialize(data_get($stored, 'content'));
 
@@ -728,7 +728,7 @@ class Cart
      *
      * @return bool
      */
-    public function merge($identifier, $keepDiscount = false, $keepTax = false, $dispatchAdd = true, $instance = SELF::DEFAULT_INSTANCE)
+    public function merge($identifier, $keepDiscount = false, $keepTax = false, $dispatchAdd = true, $instance = self::DEFAULT_INSTANCE)
     {
         if (!$this->storedCartInstanceWithIdentifierExists($instance, $identifier)) {
             return false;
