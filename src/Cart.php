@@ -633,13 +633,15 @@ class Cart
             $identifier = $identifier->getInstanceIdentifier();
         }
 
-        if ($this->storedCartWithIdentifierExists($identifier)) {
+        $instance = $this->currentInstance();
+
+        if ($this->storedCartInstanceWithIdentifierExists($instance, $identifier)) {
             throw new CartAlreadyStoredException("A cart with identifier {$identifier} was already stored.");
         }
 
         $this->getConnection()->table($this->getTableName())->insert([
             'identifier' => $identifier,
-            'instance'   => $this->currentInstance(),
+            'instance'   => $instance,
             'content'    => serialize($content),
             'created_at' => $this->createdAt ?: Carbon::now(),
             'updated_at' => Carbon::now(),
@@ -661,16 +663,16 @@ class Cart
             $identifier = $identifier->getInstanceIdentifier();
         }
 
-        if (!$this->storedCartWithIdentifierExists($identifier)) {
+        $currentInstance = $this->currentInstance();
+
+        if (!$this->storedCartInstanceWithIdentifierExists($currentInstance, $identifier)) {
             return;
         }
 
         $stored = $this->getConnection()->table($this->getTableName())
-            ->where('identifier', $identifier)->first();
+            ->where(['identifier'=> $identifier,'instance' => $currentInstance])->first();
 
         $storedContent = unserialize(data_get($stored, 'content'));
-
-        $currentInstance = $this->currentInstance();
 
         $this->instance(data_get($stored, 'instance'));
 
@@ -689,7 +691,7 @@ class Cart
         $this->createdAt = Carbon::parse(data_get($stored, 'created_at'));
         $this->updatedAt = Carbon::parse(data_get($stored, 'updated_at'));
 
-        $this->getConnection()->table($this->getTableName())->where('identifier', $identifier)->delete();
+        $this->getConnection()->table($this->getTableName())->where(['identifier' => $identifier, 'instance' => $currentInstance])->delete();
     }
 
     /**
@@ -705,11 +707,13 @@ class Cart
             $identifier = $identifier->getInstanceIdentifier();
         }
 
-        if (!$this->storedCartWithIdentifierExists($identifier)) {
+        $instance = $this->currentInstance();
+
+        if (!$this->storedCartInstanceWithIdentifierExists($instance, $identifier)) {
             return;
         }
 
-        $this->getConnection()->table($this->getTableName())->where('identifier', $identifier)->delete();
+        $this->getConnection()->table($this->getTableName())->where(['identifier' => $identifier, 'instance' => $instance])->delete();
 
         $this->events->dispatch('cart.erased');
     }
@@ -724,14 +728,14 @@ class Cart
      *
      * @return bool
      */
-    public function merge($identifier, $keepDiscount = false, $keepTax = false, $dispatchAdd = true)
+    public function merge($identifier, $keepDiscount = false, $keepTax = false, $dispatchAdd = true, $instance = SELF::DEFAULT_INSTANCE)
     {
-        if (!$this->storedCartWithIdentifierExists($identifier)) {
+        if (!$this->storedCartInstanceWithIdentifierExists($instance, $identifier)) {
             return false;
         }
 
         $stored = $this->getConnection()->table($this->getTableName())
-            ->where('identifier', $identifier)->first();
+            ->where(['identifier'=> $identifier,'instance'=>$instance])->first();
 
         $storedContent = unserialize($stored->content);
 
@@ -829,14 +833,9 @@ class Cart
      *
      * @return bool
      */
-    private function storedCartWithIdentifierExists($identifier)
+    private function storedCartInstanceWithIdentifierExists($instance, $identifier)
     {
-        $data = ['identifier' => $identifier];
-        if ($this->countInstances() > 1) {
-            $data['instance'] = $this->currentInstance();
-        }
-
-        return $this->getConnection()->table($this->getTableName())->where($data)->exists();
+        return $this->getConnection()->table($this->getTableName())->where(['identifier' => $identifier, 'instance'=> $instance])->exists();
     }
 
     /**

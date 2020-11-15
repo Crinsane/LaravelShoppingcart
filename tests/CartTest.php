@@ -865,11 +865,11 @@ class CartTest extends TestCase
 
         $cart->store($identifier = 123);
 
+        Event::assertDispatched('cart.stored');
+
         $serialized = serialize($cart->content());
 
         $this->assertDatabaseHas('shoppingcart', ['identifier' => $identifier, 'instance' => 'default', 'content' => $serialized]);
-
-        Event::assertDispatched('cart.stored');
     }
 
     /** @test */
@@ -905,6 +905,8 @@ class CartTest extends TestCase
 
         $cart->store($identifier);
 
+        Event::assertDispatched('cart.stored');
+
         sleep(1);
         $afterSecondStore = Carbon::now();
 
@@ -912,8 +914,6 @@ class CartTest extends TestCase
 
         $this->assertTrue($beforeStore->lessThanOrEqualTo($cart->createdAt()) && $afterStore->greaterThanOrEqualTo($cart->createdAt()));
         $this->assertTrue($beforeSecondStore->lessThanOrEqualTo($cart->updatedAt()) && $afterSecondStore->greaterThanOrEqualTo($cart->updatedAt()));
-
-        Event::assertDispatched('cart.stored');
     }
 
     /**
@@ -936,9 +936,9 @@ class CartTest extends TestCase
 
         $cart->store($identifier = 123);
 
-        $cart->store($identifier);
-
         Event::assertDispatched('cart.stored');
+
+        $cart->store($identifier);
     }
 
     /** @test */
@@ -962,11 +962,11 @@ class CartTest extends TestCase
 
         $cart->restore($identifier);
 
+        Event::assertDispatched('cart.restored');
+
         $this->assertItemsInCart(1, $cart);
 
         $this->assertDatabaseMissing('shoppingcart', ['identifier' => $identifier, 'instance' => 'default']);
-
-        Event::assertDispatched('cart.restored');
     }
 
     /** @test */
@@ -1469,18 +1469,21 @@ class CartTest extends TestCase
 
         $cart->store($identifier = 123);
 
+        Event::assertDispatched('cart.stored');
+
         $serialized = serialize($cart->content());
 
         $newInstance = $this->getCart();
         $newInstance->instance($instanceName = 'someinstance');
         $newInstance->add(new BuyableProduct());
-        $newInstance->store($newIdentifier = 456);
+        $newInstance->store($identifier);
+
+        Event::assertDispatched('cart.stored');
+
         $newInstanceSerialized = serialize($newInstance->content());
 
         $this->assertDatabaseHas('shoppingcart', ['identifier' => $identifier, 'instance' => 'default', 'content' => $serialized]);
 
-        $this->assertDatabaseHas('shoppingcart', ['identifier' => $newIdentifier, 'instance' => $instanceName, 'content' => $newInstanceSerialized]);
-
-        Event::assertDispatched('cart.stored');
+        $this->assertDatabaseHas('shoppingcart', ['identifier' => $identifier, 'instance' => $instanceName, 'content' => $newInstanceSerialized]);
     }
 }
