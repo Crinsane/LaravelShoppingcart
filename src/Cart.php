@@ -13,9 +13,12 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Session\SessionManager;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Traits\Macroable;
 
 class Cart
 {
+    use Macroable;
+
     const DEFAULT_INSTANCE = 'default';
 
     /**
