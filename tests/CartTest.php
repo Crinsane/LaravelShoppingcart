@@ -913,7 +913,7 @@ class CartTest extends TestCase
 
         $user = Mockery::mock(Authenticatable::class);
 
-        event(new Logout($user));
+        event(new Logout("LogOut", $user));
     }
 
     /**
