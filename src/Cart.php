@@ -303,7 +303,7 @@ class Cart
     }
 
     /**
-     * Get the number of items in the cart.
+     * Get the total quantity of all CartItems in the cart.
      *
      * @return int|float
      */
@@ -313,11 +313,12 @@ class Cart
     }
 
     /**
-     * Get the number of items instances in the cart.
+     * Get the amount of CartItems in the Cart.
+     * Keep in mind that this does NOT count quantity.
      *
      * @return int|float
      */
-    public function countInstances()
+    public function countItems()
     {
         return $this->getContent()->count();
     }
