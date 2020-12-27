@@ -542,7 +542,7 @@ foreach(Cart::content() as $row) {
 Якщо ви хочете злити кошик із іншим кошиком, збереженим у базі даних, вам знадобиться викликати метод `merge($identifier)`, де `$identifier` - це ключ, який ви зазначили у методі`store`. Ви також можете визначити чи хочете ви зберегти знижку і ставку оподаткування для товарів.
      
     // Merge the contents of 'savedcart' into 'username'.
-    Cart::instance('username')->merge('savedcart', $keepDiscount, $keepTaxrate);
+    Cart::instance('username')->merge('savedcart', $keepDiscount, $keepTaxrate, 'savedcartinstance');
 
 ## Перехоплення
 

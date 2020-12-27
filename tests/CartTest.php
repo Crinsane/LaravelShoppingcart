@@ -865,11 +865,11 @@ class CartTest extends TestCase
 
         $cart->store($identifier = 123);
 
+        Event::assertDispatched('cart.stored');
+
         $serialized = serialize($cart->content());
 
         $this->assertDatabaseHas('shoppingcart', ['identifier' => $identifier, 'instance' => 'default', 'content' => $serialized]);
-
-        Event::assertDispatched('cart.stored');
     }
 
     /** @test */
@@ -905,6 +905,8 @@ class CartTest extends TestCase
 
         $cart->store($identifier);
 
+        Event::assertDispatched('cart.stored');
+
         sleep(1);
         $afterSecondStore = Carbon::now();
 
@@ -912,8 +914,6 @@ class CartTest extends TestCase
 
         $this->assertTrue($beforeStore->lessThanOrEqualTo($cart->createdAt()) && $afterStore->greaterThanOrEqualTo($cart->createdAt()));
         $this->assertTrue($beforeSecondStore->lessThanOrEqualTo($cart->updatedAt()) && $afterSecondStore->greaterThanOrEqualTo($cart->updatedAt()));
-
-        Event::assertDispatched('cart.stored');
     }
 
     /**
@@ -936,9 +936,9 @@ class CartTest extends TestCase
 
         $cart->store($identifier = 123);
 
-        $cart->store($identifier);
-
         Event::assertDispatched('cart.stored');
+
+        $cart->store($identifier);
     }
 
     /** @test */
@@ -962,11 +962,11 @@ class CartTest extends TestCase
 
         $cart->restore($identifier);
 
+        Event::assertDispatched('cart.restored');
+
         $this->assertItemsInCart(1, $cart);
 
         $this->assertDatabaseMissing('shoppingcart', ['identifier' => $identifier, 'instance' => 'default']);
-
-        Event::assertDispatched('cart.restored');
     }
 
     /** @test */
@@ -1011,7 +1011,7 @@ class CartTest extends TestCase
         $cart = $this->getCartDiscount(50);
         $cart->add(new BuyableProduct(1, 'First item', 10.00), 1);
 
-        $cart->update('027c91341fd5cf4d2579b49c4b6a90da', ['qty'=>2]);
+        $cart->update('027c91341fd5cf4d2579b49c4b6a90da', ['qty' => 2]);
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
 
@@ -1452,5 +1452,75 @@ class CartTest extends TestCase
         $this->app['config']->set('cart.format.decimals', $decimals);
         $this->app['config']->set('cart.format.decimal_point', $decimalPoint);
         $this->app['config']->set('cart.format.thousand_separator', $thousandSeperator);
+    }
+
+    /** @test */
+    public function it_can_store__mutiple_instances_of_the_cart_in_a_database()
+    {
+        $this->artisan('migrate', [
+            '--database' => 'testing',
+        ]);
+
+        Event::fake();
+
+        $cart = $this->getCart();
+
+        $cart->add(new BuyableProduct());
+
+        $cart->store($identifier = 123);
+
+        Event::assertDispatched('cart.stored');
+
+        $serialized = serialize($cart->content());
+
+        $newInstance = $this->getCart();
+        $newInstance->instance($instanceName = 'someinstance');
+        $newInstance->add(new BuyableProduct());
+        $newInstance->store($identifier);
+
+        Event::assertDispatched('cart.stored');
+
+        $newInstanceSerialized = serialize($newInstance->content());
+
+        $this->assertDatabaseHas('shoppingcart', ['identifier' => $identifier, 'instance' => Cart::DEFAULT_INSTANCE, 'content' => $serialized]);
+
+        $this->assertDatabaseHas('shoppingcart', ['identifier' => $identifier, 'instance' => $instanceName, 'content' => $newInstanceSerialized]);
+    }
+
+    /** @test */
+    public function it_can_calculate_the_total_price_of_the_items_in_cart()
+    {
+        $cart = $this->getCart();
+
+        $cart->add(new BuyableProduct(1, 'first item', $price = 1000), $qty = 5);
+        $this->assertEquals(5000, $cart->priceTotalFloat());
+    }
+
+    /** @test */
+    public function it_can_format_the_total_price_of_the_items_in_cart()
+    {
+        $cart = $this->getCart();
+
+        $cart->add(new BuyableProduct(1, 'first item', 1000), 5);
+        $this->assertEquals('5,000.00', $cart->priceTotal());
+        $this->assertEquals('5,000.0000', $cart->priceTotal(4, '.', ','));
+    }
+
+    /** @test */
+    public function it_can_erase_saved_cart_from_the_database()
+    {
+        $this->artisan('migrate', [
+            '--database' => 'testing',
+        ]);
+
+        Event::fake();
+
+        $cart = $this->getCart();
+        $cart->add(new BuyableProduct(1, 'Item', 10.00), 1);
+        $cart->add(new BuyableProduct(2, 'Item 2', 10.00), 1);
+        $cart->store($identifier = 'test');
+        $cart->erase($identifier);
+        Event::assertDispatched('cart.erased');
+        $this->assertDatabaseMissing('shoppingcart', ['identifier' => $identifier, 'instance' => Cart::DEFAULT_INSTANCE]);
     }
 }
