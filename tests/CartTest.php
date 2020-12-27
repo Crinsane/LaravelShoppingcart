@@ -1125,11 +1125,11 @@ class CartTest extends TestCase
         $cart2->setGlobalTax(0);
         $cart2->setGlobalDiscount(0);
 
-        $this->assertEquals('0', $cart2->countInstances());
+        $this->assertEquals('0', $cart2->countItems());
 
         $cart2->merge('test');
 
-        $this->assertEquals('2', $cart2->countInstances());
+        $this->assertEquals('2', $cart2->countItems());
         $this->assertEquals(20, $cart2->totalFloat());
 
         $cart3 = $this->getCart();
@@ -1153,7 +1153,7 @@ class CartTest extends TestCase
         $cart->add(new BuyableProduct(1, 'Item', 10.00), 1);
         $cart->add(new BuyableProduct(2, 'Item 2', 10.00), 1);
         $this->assertEquals(false, $cart->merge('doesNotExist'));
-        $this->assertEquals(2, $cart->countInstances());
+        $this->assertEquals(2, $cart->countItems());
     }
 
     /** @test */
@@ -1314,14 +1314,14 @@ class CartTest extends TestCase
             $cart2->setGlobalTax(0);
             $cart2->setGlobalDiscount(0);
 
-            $this->assertEquals('0', $cart2->countInstances());
+            $this->assertEquals('0', $cart2->countItems());
 
             $cart2->merge('test', null, null, false);
 
             Event::assertNotDispatched('cart.added');
             Event::assertDispatched('cart.merged');
 
-            $this->assertEquals('2', $cart2->countInstances());
+            $this->assertEquals('2', $cart2->countItems());
             $this->assertEquals(20, $cart2->totalFloat());
         });
     }
@@ -1344,13 +1344,13 @@ class CartTest extends TestCase
             $cart2->setGlobalTax(0);
             $cart2->setGlobalDiscount(0);
 
-            $this->assertEquals('0', $cart2->countInstances());
+            $this->assertEquals('0', $cart2->countItems());
 
             $cart2->merge('test');
 
             Event::assertDispatched('cart.added', 2);
             Event::assertDispatched('cart.merged');
-            $this->assertEquals('2', $cart2->countInstances());
+            $this->assertEquals('2', $cart2->countItems());
             $this->assertEquals(20, $cart2->totalFloat());
         });
     }
