@@ -21,15 +21,15 @@ trait CanBeBought
      */
     public function getBuyableDescription($options = null)
     {
-        if (property_exists($this, 'name')) {
+        if (isset($this->name)) {
             return $this->name;
         }
 
-        if (property_exists($this, 'title')) {
+        if (isset($this->title)) {
             return $this->title;
         }
 
-        if (property_exists($this, 'description')) {
+        if (isset($this->description)) {
             return $this->description;
         }
     }
@@ -41,7 +41,7 @@ trait CanBeBought
      */
     public function getBuyablePrice($options = null)
     {
-        if (property_exists($this, 'price')) {
+        if (isset($this->price)) {
             return $this->price;
         }
     }
@@ -53,7 +53,7 @@ trait CanBeBought
      */
     public function getBuyableWeight($options = null)
     {
-        if (property_exists($this, 'weight')) {
+        if (isset($this->weight)) {
             return $this->weight;
         }
 
