@@ -29,7 +29,7 @@ trait CanBeBought
             return $ttle;
         }
 
-        if (($description = $this->getAttribute('description')) {
+        if (($description = $this->getAttribute('description'))) {
             return $description;
         }
     }
