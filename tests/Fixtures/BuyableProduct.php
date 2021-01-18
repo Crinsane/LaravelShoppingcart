@@ -27,7 +27,7 @@ class BuyableProduct extends Model implements Buyable
         'price'  => 10.00,
         'weight' => 0,
     ];
-    
+
     /**
      * Get the identifier of the Buyable item.
      *
