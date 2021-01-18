@@ -22,7 +22,7 @@ class BuyableProductTrait extends Model implements Buyable
         'price',
         'weight'
     ];
-    
+
     protected $attributes = [
         'id'     => 1,
         'name'   => 'Item name',
