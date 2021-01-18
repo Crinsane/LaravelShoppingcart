@@ -353,7 +353,7 @@ class CartTest extends TestCase
         ]));
 
         $this->assertItemsInCart(1, $cart);
-        $this->assertEquals('Different description', $cart->get('027c91341fd5cf4d2579b49c4b6a90da')->name);
+        $this->assertEquals('Different description', $cart->get('027c91341fd5cf4d2579b49c4b6a90da')->description);
 
         Event::assertDispatched('cart.updated');
     }
@@ -373,7 +373,7 @@ class CartTest extends TestCase
         $cart->update('027c91341fd5cf4d2579b49c4b6a90da', ['description' => 'Different description']);
 
         $this->assertItemsInCart(1, $cart);
-        $this->assertEquals('Different description', $cart->get('027c91341fd5cf4d2579b49c4b6a90da')->name);
+        $this->assertEquals('Different description', $cart->get('027c91341fd5cf4d2579b49c4b6a90da')->description);
 
         Event::assertDispatched('cart.updated');
     }
