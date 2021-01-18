@@ -3,8 +3,9 @@
 namespace Gloudemans\Tests\Shoppingcart\Fixtures;
 
 use Gloudemans\Shoppingcart\Contracts\Buyable;
+use Illuminate\Database\Eloquent\Model;
 
-class BuyableProductTrait implements Buyable
+class BuyableProductTrait extends Model implements Buyable
 {
     use \Gloudemans\Shoppingcart\CanBeBought;
 
