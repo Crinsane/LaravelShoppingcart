@@ -347,7 +347,7 @@ class CartTest extends TestCase
         $cart = $this->getCart();
 
         $cart->add(new BuyableProduct([
-            'description' => 'Description'
+            'description' => 'Description',
         ]));
 
         $cart->update('027c91341fd5cf4d2579b49c4b6a90da', new BuyableProduct([
@@ -368,7 +368,7 @@ class CartTest extends TestCase
         $cart = $this->getCart();
 
         $cart->add(new BuyableProduct([
-            'description' => 'Description'
+            'description' => 'Description',
         ]));
 
         $cart->update('027c91341fd5cf4d2579b49c4b6a90da', ['description' => 'Different description']);
