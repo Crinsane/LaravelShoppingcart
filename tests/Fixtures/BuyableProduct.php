@@ -3,8 +3,9 @@
 namespace Gloudemans\Tests\Shoppingcart\Fixtures;
 
 use Gloudemans\Shoppingcart\Contracts\Buyable;
+use Illuminate\Database\Eloquent\Model;
 
-class BuyableProduct implements Buyable
+class BuyableProduct extends Model implements Buyable
 {
     /**
      * @var int|string
