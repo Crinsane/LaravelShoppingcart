@@ -7,6 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class BuyableProduct extends Model implements Buyable
 {
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'id',
+        'name',
+        'price',
+        'weight'
+    ];
+    
     protected $attributes = [
         'id'     => 1,
         'name'   => 'Item name',
