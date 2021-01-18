@@ -350,7 +350,8 @@ class CartTest extends TestCase
             'description' => 'Description',
         ]));
 
-        $cart->update('027c91341fd5cf4d2579b49c4b6a90da', new BuyableProduct([
+        $cart->update('027c91341fd5cf4d2579b49c4b6a90da', new BuyableProductTrait([
+            'name' => '',
             'description' => 'Different description',
         ]));
 
