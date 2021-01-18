@@ -132,7 +132,9 @@ class CartTest extends TestCase
 
         $cart = $this->getCart();
 
-        $cart->add([new BuyableProduct(1), new BuyableProduct([
+        $cart->add([new BuyableProduct([
+            'id' => 1
+        ]), new BuyableProduct([
             'id' => 2
         ])]);
 
@@ -148,7 +150,9 @@ class CartTest extends TestCase
 
         $cart = $this->getCart();
 
-        $cartItems = $cart->add([new BuyableProduct(1), new BuyableProduct([
+        $cartItems = $cart->add([new BuyableProduct([
+            'id' => 1
+        ]), new BuyableProduct([
             'id' => 2
         ])]);
 
