@@ -20,7 +20,7 @@ class BuyableProductTrait extends Model implements Buyable
         'title',
         'description',
         'price',
-        'weight'
+        'weight',
     ];
 
     protected $attributes = [
