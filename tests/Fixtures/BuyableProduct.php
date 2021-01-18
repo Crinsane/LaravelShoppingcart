@@ -18,9 +18,9 @@ class BuyableProduct extends Model implements Buyable
         'title',
         'description',
         'price',
-        'weight'
+        'weight',
     ];
-    
+
     protected $attributes = [
         'id'     => 1,
         'name'   => 'Item name',
