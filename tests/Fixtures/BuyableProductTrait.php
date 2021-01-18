@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class BuyableProductTrait extends Model implements Buyable
 {
     use \Gloudemans\Shoppingcart\CanBeBought;
-    
+
     /**
      * The attributes that are mass assignable.
      *
