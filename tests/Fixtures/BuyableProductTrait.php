@@ -17,6 +17,8 @@ class BuyableProductTrait extends Model implements Buyable
     protected $fillable = [
         'id',
         'name',
+        'title',
+        'description',
         'price',
         'weight'
     ];
