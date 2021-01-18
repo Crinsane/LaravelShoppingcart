@@ -365,7 +365,10 @@ class CartTest extends TestCase
 
         $cart = $this->getCart();
 
-        $cart->add(new BuyableProduct());
+        $cart->add(new BuyableProduct([
+            'name' => null,
+            'title' => null
+        ));
 
         $cart->update('027c91341fd5cf4d2579b49c4b6a90da', ['description' => 'Different description']);
 
