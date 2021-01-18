@@ -9,6 +9,18 @@ class BuyableProductTrait extends Model implements Buyable
 {
     use \Gloudemans\Shoppingcart\CanBeBought;
     
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'id',
+        'name',
+        'price',
+        'weight'
+    ];
+    
     protected $attributes = [
         'id'     => 1,
         'name'   => 'Item name',
