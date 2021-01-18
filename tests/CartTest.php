@@ -1204,7 +1204,7 @@ class CartTest extends TestCase
 
         $cart->add(new BuyableProduct([
             'name' => 'Item',
-            'price' 10.004,
+            'price' => 10.004
         ]), 2);
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
@@ -1223,11 +1223,11 @@ class CartTest extends TestCase
 
         $cart = $this->getCartDiscount(50);
         $cart->add(new BuyableProduct([
-            'name' => 'Item',
+            'name' => 'Item'
         ]), 1);
         $cart->add(new BuyableProduct([
             'id' => 2,
-            'name' => 'Item 2',
+            'name' => 'Item 2'
         ]), 1);
         $cart->store('test');
 
@@ -1257,16 +1257,16 @@ class CartTest extends TestCase
     public function it_cant_merge_non_existing_cart()
     {
         $this->artisan('migrate', [
-            '--database' => 'testing',
+            '--database' => 'testing'
         ]);
         Event::fake();
         $cart = $this->getCartDiscount(50);
         $cart->add(new BuyableProduct([
-            'name' => 'Item',
+            'name' => 'Item'
         ]), 1);
         $cart->add(new BuyableProduct([
             'id' => 2,
-            'name' => 'Item 2',
+            'name' => 'Item 2'
         ]), 1);
         $this->assertEquals(false, $cart->merge('doesNotExist'));
         $this->assertEquals(2, $cart->countItems());
@@ -1348,7 +1348,7 @@ class CartTest extends TestCase
     public function cart_can_create_and_restore_from_instance_identifier()
     {
         $this->artisan('migrate', [
-            '--database' => 'testing',
+            '--database' => 'testing'
         ]);
 
         Event::fake();
@@ -1379,7 +1379,7 @@ class CartTest extends TestCase
         $cart = $this->getCartDiscount(50);
 
         $cart->add(new BuyableProductTrait([
-            'name' => 'First item',
+            'name' => 'First item'
         ]), 2);
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
@@ -1404,7 +1404,7 @@ class CartTest extends TestCase
         $cart = $this->getCart();
 
         $cart->add(new BuyableProductTrait([
-            'name' => 'First item',
+            'name' => 'First item'
         ]), 0.5);
 
         $cartItem = $cart->get('027c91341fd5cf4d2579b49c4b6a90da');
@@ -1434,7 +1434,7 @@ class CartTest extends TestCase
     public function it_can_merge_without_dispatching_add_events()
     {
         $this->artisan('migrate', [
-            '--database' => 'testing',
+            '--database' => 'testing'
         ]);
 
         $cart = $this->getCartDiscount(50);
