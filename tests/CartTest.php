@@ -759,7 +759,7 @@ class CartTest extends TestCase
         $cart = $this->getCart();
 
         $cart->add(new BuyableProduct([
-            'name' => 'Some title'
+            'name' => 'Some title',
             'price' => 500,
         ]), 3);
 
