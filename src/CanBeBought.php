@@ -25,7 +25,7 @@ trait CanBeBought
             return $name;
         }
 
-        if (($title $this->getAttribute('title'))) {
+        if (($title = $this->getAttribute('title'))) {
             return $ttle;
         }
 
