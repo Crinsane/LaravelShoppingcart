@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class BuyableProduct extends Model implements Buyable
 {
+    protected $attributes = [
+        'id'  => 1,
+        'name' => 'Item name',
+        'price' => 10.00,
+        'weight' => 0,
+    ];
+    
     /**
      * Get the identifier of the Buyable item.
      *
