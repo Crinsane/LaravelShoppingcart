@@ -1107,7 +1107,9 @@ class CartTest extends TestCase
     public function it_can_calculate_all_values_after_updating_from_array()
     {
         $cart = $this->getCartDiscount(50);
-        $cart->add(new BuyableProduct(1, 'First item', 10.00), 1);
+        $cart->add(new BuyableProduct([
+            'name' => 'First item'
+        ]), 1);
 
         $cart->update('027c91341fd5cf4d2579b49c4b6a90da', ['qty' => 2]);
 
