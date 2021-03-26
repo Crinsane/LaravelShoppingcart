@@ -726,6 +726,11 @@ Cart::add('1239ad0', 'Product 2', 2, 5.95, ['size' => 'large']);
 </table>
 ```
 
+## Collaborators
+
+<!-- readme: collaborators -start -->
+<!-- readme: collaborators -end -->
+
 ## Contributors
 <!-- readme: contributors -start -->
 <!-- readme: contributors -end -->
