@@ -40,6 +40,7 @@ Look at one of the following topics to learn more about LaravelShoppingcart
 * [Exceptions](#exceptions)
 * [Events](#events)
 * [Example](#example)
+* [Contributors](#contributors)
 
 ## Important note
 
@@ -724,3 +725,7 @@ Cart::add('1239ad0', 'Product 2', 2, 5.95, ['size' => 'large']);
    	</tfoot>
 </table>
 ```
+
+## Contributors
+<!-- readme: contributors -start -->
+<!-- readme: contributors -end -->
