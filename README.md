@@ -15,7 +15,7 @@ Run the Composer require command from the Terminal:
 
     composer require hardevine/shoppingcart
     
-If you're using Laravel 5.5, this is all there is to do. 
+If you're using Laravel 5.5 or above, this is all there is to do. 
 
 Should you still be on version 5.4 of Laravel, the final steps for you are to add the service provider of the package and alias the package. To do this open your `config/app.php` file.
 
