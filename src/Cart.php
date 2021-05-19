@@ -416,7 +416,7 @@ class Cart
      *
      * @param mixed $identifier
      */
-    protected function deleteStoredCart($identifier) {
+    public function deleteStoredCart($identifier) {
         $this->getConnection()
              ->table($this->getTableName())
              ->where('identifier', $identifier)
