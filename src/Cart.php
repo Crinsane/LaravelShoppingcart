@@ -21,11 +21,11 @@ class Cart
      *
      * @var \Illuminate\Session\SessionManager
      */
-    private $session;
+    protected $session;
 
     /**
      * Instance of the event dispatcher.
-     * 
+     *
      * @var \Illuminate\Contracts\Events\Dispatcher
      */
     private $events;
@@ -84,9 +84,10 @@ class Cart
      * @param int|float $qty
      * @param float     $price
      * @param array     $options
+     * @param float     $taxrate
      * @return \Gloudemans\Shoppingcart\CartItem
      */
-    public function add($id, $name = null, $qty = null, $price = null, array $options = [])
+    public function add($id, $name = null, $qty = null, $price = null, array $options = [], $taxrate = null)
     {
         if ($this->isMulti($id)) {
             return array_map(function ($item) {
@@ -94,7 +95,11 @@ class Cart
             }, $id);
         }
 
-        $cartItem = $this->createCartItem($id, $name, $qty, $price, $options);
+        if ($id instanceof CartItem) {
+            $cartItem = $id;
+        } else {
+            $cartItem = $this->createCartItem($id, $name, $qty, $price, $options, $taxrate);
+        }
 
         $content = $this->getContent();
 
@@ -103,8 +108,8 @@ class Cart
         }
 
         $content->put($cartItem->rowId, $cartItem);
-        
-        $this->events->fire('cart.added', $cartItem);
+
+        $this->events->dispatch('cart.added', $cartItem);
 
         $this->session->put($this->instance, $content);
 
@@ -148,7 +153,7 @@ class Cart
             $content->put($cartItem->rowId, $cartItem);
         }
 
-        $this->events->fire('cart.updated', $cartItem);
+        $this->events->dispatch('cart.updated', $cartItem);
 
         $this->session->put($this->instance, $content);
 
@@ -169,7 +174,7 @@ class Cart
 
         $content->pull($cartItem->rowId);
 
-        $this->events->fire('cart.removed', $cartItem);
+        $this->events->dispatch('cart.removed', $cartItem);
 
         $this->session->put($this->instance, $content);
     }
@@ -350,17 +355,22 @@ class Cart
     {
         $content = $this->getContent();
 
-        if ($this->storedCartWithIdentifierExists($identifier)) {
-            throw new CartAlreadyStoredException("A cart with identifier {$identifier} was already stored.");
-        }
+
+        $this->getConnection()
+             ->table($this->getTableName())
+             ->where('identifier', $identifier)
+             ->where('instance', $this->currentInstance())
+             ->delete();
+
 
         $this->getConnection()->table($this->getTableName())->insert([
             'identifier' => $identifier,
             'instance' => $this->currentInstance(),
-            'content' => serialize($content)
+            'content' => serialize($content),
+            'created_at'=> new \DateTime()
         ]);
 
-        $this->events->fire('cart.stored');
+        $this->events->dispatch('cart.stored');
     }
 
     /**
@@ -376,13 +386,14 @@ class Cart
         }
 
         $stored = $this->getConnection()->table($this->getTableName())
+            ->where('instance', $this->currentInstance())
             ->where('identifier', $identifier)->first();
 
-        $storedContent = unserialize($stored->content);
+        $storedContent = unserialize(data_get($stored, 'content'));
 
         $currentInstance = $this->currentInstance();
 
-        $this->instance($stored->instance);
+        $this->instance(data_get($stored, 'instance'));
 
         $content = $this->getContent();
 
@@ -390,15 +401,29 @@ class Cart
             $content->put($cartItem->rowId, $cartItem);
         }
 
-        $this->events->fire('cart.restored');
+        $this->events->dispatch('cart.restored');
 
         $this->session->put($this->instance, $content);
 
         $this->instance($currentInstance);
 
-        $this->getConnection()->table($this->getTableName())
-            ->where('identifier', $identifier)->delete();
     }
+
+
+
+    /**
+     * Deletes the stored cart with given identifier
+     *
+     * @param mixed $identifier
+     */
+    public function deleteStoredCart($identifier) {
+        $this->getConnection()
+             ->table($this->getTableName())
+             ->where('identifier', $identifier)
+             ->delete();
+    }
+
+
 
     /**
      * Magic method to make accessing the total, tax and subtotal properties possible.
@@ -445,9 +470,10 @@ class Cart
      * @param int|float $qty
      * @param float     $price
      * @param array     $options
+     * @param float     $taxrate
      * @return \Gloudemans\Shoppingcart\CartItem
      */
-    private function createCartItem($id, $name, $qty, $price, array $options)
+    private function createCartItem($id, $name, $qty, $price, array $options, $taxrate)
     {
         if ($id instanceof Buyable) {
             $cartItem = CartItem::fromBuyable($id, $qty ?: []);
@@ -461,7 +487,11 @@ class Cart
             $cartItem->setQuantity($qty);
         }
 
-        $cartItem->setTaxRate(config('cart.tax'));
+        if(isset($taxrate) && is_numeric($taxrate)) {
+            $cartItem->setTaxRate($taxrate);
+        } else {
+            $cartItem->setTaxRate(config('cart.tax'));
+        }
 
         return $cartItem;
     }
@@ -483,9 +513,9 @@ class Cart
      * @param $identifier
      * @return bool
      */
-    private function storedCartWithIdentifierExists($identifier)
+    protected function storedCartWithIdentifierExists($identifier)
     {
-        return $this->getConnection()->table($this->getTableName())->where('identifier', $identifier)->exists();
+        return $this->getConnection()->table($this->getTableName())->where('identifier', $identifier)->where('instance', $this->currentInstance())->exists();
     }
 
     /**
@@ -493,7 +523,7 @@ class Cart
      *
      * @return \Illuminate\Database\Connection
      */
-    private function getConnection()
+    protected function getConnection()
     {
         $connectionName = $this->getConnectionName();
 
@@ -505,7 +535,7 @@ class Cart
      *
      * @return string
      */
-    private function getTableName()
+    protected function getTableName()
     {
         return config('cart.database.table', 'shoppingcart');
     }
