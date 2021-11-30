@@ -813,6 +813,8 @@ class Cart
             $cartItem->setQuantity($qty);
         }
 
+        $cartItem->setInstance($this->instance);
+
         return $cartItem;
     }
 
