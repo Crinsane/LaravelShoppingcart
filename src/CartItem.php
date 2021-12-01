@@ -380,7 +380,7 @@ class CartItem implements Arrayable, Jsonable
     }
 
     /**
-     * Set cart instance
+     * Set cart instance.
      *
      * @param string $instance
      *
