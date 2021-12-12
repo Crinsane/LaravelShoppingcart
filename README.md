@@ -824,20 +824,27 @@ Cart::add('1239ad0', 'Product 2', 2, 5.95, ['size' => 'large']);
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/macbookandrew">
+            <img src="https://avatars.githubusercontent.com/u/784333?v=4" width="100;" alt="macbookandrew"/>
+            <br />
+            <sub><b>Andrew Minion</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/dtwebuk">
             <img src="https://avatars.githubusercontent.com/u/6045378?v=4" width="100;" alt="dtwebuk"/>
             <br />
             <sub><b>Daniel Tomlinson</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/tkaw220">
             <img src="https://avatars.githubusercontent.com/u/694289?v=4" width="100;" alt="tkaw220"/>
             <br />
             <sub><b>Edwin Aw</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/manojo123">
             <img src="https://avatars.githubusercontent.com/u/20805943?v=4" width="100;" alt="manojo123"/>
@@ -872,15 +879,15 @@ Cart::add('1239ad0', 'Product 2', 2, 5.95, ['size' => 'large']);
             <br />
             <sub><b>Andrés</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/ganyicz">
             <img src="https://avatars.githubusercontent.com/u/3823354?v=4" width="100;" alt="ganyicz"/>
             <br />
             <sub><b>Filip Ganyicz</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/guysolamour">
             <img src="https://avatars.githubusercontent.com/u/22590722?v=4" width="100;" alt="guysolamour"/>
@@ -915,15 +922,15 @@ Cart::add('1239ad0', 'Product 2', 2, 5.95, ['size' => 'large']);
             <br />
             <sub><b>JT Smith</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/mrabbani">
             <img src="https://avatars.githubusercontent.com/u/4253979?v=4" width="100;" alt="mrabbani"/>
             <br />
             <sub><b>Mahbub Rabbani</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/xpundel">
             <img src="https://avatars.githubusercontent.com/u/1384653?v=4" width="100;" alt="xpundel"/>
@@ -957,13 +964,6 @@ Cart::add('1239ad0', 'Product 2', 2, 5.95, ['size' => 'large']);
             <img src="https://avatars.githubusercontent.com/u/1322192?v=4" width="100;" alt="PazkaL"/>
             <br />
             <sub><b>Pascal Kousbroek</b></sub>
-        </a>
-    </td>
-    <td align="center">
-        <a href="https://github.com/publiux">
-            <img src="https://avatars.githubusercontent.com/u/2847188?v=4" width="100;" alt="publiux"/>
-            <br />
-            <sub><b>Raul Ruiz</b></sub>
         </a>
     </td></tr>
 </table>
