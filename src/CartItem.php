@@ -70,7 +70,7 @@ class CartItem implements Arrayable, Jsonable
     /**
      * The options for this cart item.
      *
-     * @var array
+     * @var CartItemOptions|array
      */
     public $options;
 
@@ -501,7 +501,9 @@ class CartItem implements Arrayable, Jsonable
             'qty'      => $this->qty,
             'price'    => $this->price,
             'weight'   => $this->weight,
-            'options'  => $this->options->toArray(),
+            'options'  => is_object($this->options)
+                ? $this->options->toArray()
+                : $this->options,
             'discount' => $this->discount,
             'tax'      => $this->tax,
             'subtotal' => $this->subtotal,
