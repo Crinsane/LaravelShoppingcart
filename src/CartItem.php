@@ -98,9 +98,9 @@ class CartItem implements Arrayable, Jsonable
     /**
      * The cart instance of the cart item.
      *
-     * @var string
+     * @var null|string
      */
-    public $instance;
+    public $instance = null;
 
     /**
      * CartItem constructor.
@@ -382,7 +382,7 @@ class CartItem implements Arrayable, Jsonable
     /**
      * Set cart instance.
      *
-     * @param string $instance
+     * @param null|string $instance
      *
      * @return \Gloudemans\Shoppingcart\CartItem
      */
