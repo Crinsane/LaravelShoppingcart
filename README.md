@@ -1021,7 +1021,7 @@ Cart::add('1239ad0', 'Product 2', 2, 5.95, ['size' => 'large']);
         <a href="https://github.com/kekenec">
             <img src="https://avatars.githubusercontent.com/u/11806874?v=4" width="100;" alt="kekenec"/>
             <br />
-            <sub><b>kekenec</b></sub>
+            <sub><b>Kekenec</b></sub>
         </a>
     </td>
     <td align="center">
