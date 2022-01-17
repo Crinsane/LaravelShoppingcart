@@ -96,6 +96,13 @@ class CartItem implements Arrayable, Jsonable
     private $discountRate = 0;
 
     /**
+     * The cart instance of the cart item.
+     *
+     * @var null|string
+     */
+    public $instance = null;
+
+    /**
      * CartItem constructor.
      *
      * @param int|string $id
@@ -368,6 +375,20 @@ class CartItem implements Arrayable, Jsonable
     public function setDiscountRate($discountRate)
     {
         $this->discountRate = $discountRate;
+
+        return $this;
+    }
+
+    /**
+     * Set cart instance.
+     *
+     * @param null|string $instance
+     *
+     * @return \Gloudemans\Shoppingcart\CartItem
+     */
+    public function setInstance($instance)
+    {
+        $this->instance = $instance;
 
         return $this;
     }
