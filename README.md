@@ -975,6 +975,13 @@ Cart::add('1239ad0', 'Product 2', 2, 5.95, ['size' => 'large']);
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/quintenbuis">
+            <img src="https://avatars.githubusercontent.com/u/36452184?v=4" width="100;" alt="quintenbuis"/>
+            <br />
+            <sub><b>Quinten Buis</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/publiux">
             <img src="https://avatars.githubusercontent.com/u/2847188?v=4" width="100;" alt="publiux"/>
             <br />
@@ -1001,15 +1008,15 @@ Cart::add('1239ad0', 'Product 2', 2, 5.95, ['size' => 'large']);
             <br />
             <sub><b>Fukalov Sem</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/sobhanatar">
             <img src="https://avatars.githubusercontent.com/u/1507325?v=4" width="100;" alt="sobhanatar"/>
             <br />
             <sub><b>Sobhan Atar</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/mightyteja">
             <img src="https://avatars.githubusercontent.com/u/2662727?v=4" width="100;" alt="mightyteja"/>
