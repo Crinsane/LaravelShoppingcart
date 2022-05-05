@@ -968,7 +968,11 @@ class CartTest extends TestCase
 
         Event::assertDispatched('cart.stored');
 
-        $serialized = serialize($cart->content());
+        if (app('db')->getDriverName() === 'pgsql') {
+            $serialized = base64_encode(serialize($cart->content()));
+        } else {
+            $serialized = serialize($cart->content());
+        }
 
         $this->assertDatabaseHas('shoppingcart', ['identifier' => $identifier, 'instance' => 'default', 'content' => $serialized]);
     }
@@ -1651,7 +1655,11 @@ class CartTest extends TestCase
 
         Event::assertDispatched('cart.stored');
 
-        $serialized = serialize($cart->content());
+        if (app('db')->getDriverName() === 'pgsql') {
+            $serialized = base64_encode(serialize($cart->content()));
+        } else {
+            $serialized = serialize($cart->content());
+        }
 
         $newInstance = $this->getCart();
         $newInstance->instance($instanceName = 'someinstance');
@@ -1660,7 +1668,11 @@ class CartTest extends TestCase
 
         Event::assertDispatched('cart.stored');
 
-        $newInstanceSerialized = serialize($newInstance->content());
+        if (app('db')->getDriverName() === 'pgsql') {
+            $newInstanceSerialized = base64_encode(serialize($newInstance->content()));
+        } else {
+            $newInstanceSerialized = serialize($newInstance->content());
+        }
 
         $this->assertDatabaseHas('shoppingcart', ['identifier' => $identifier, 'instance' => Cart::DEFAULT_INSTANCE, 'content' => $serialized]);
 
