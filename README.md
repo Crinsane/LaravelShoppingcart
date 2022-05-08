@@ -939,6 +939,13 @@ Cart::add('1239ad0', 'Product 2', 2, 5.95, ['size' => 'large']);
         </a>
     </td>
     <td align="center">
+        <a href="https://github.com/mauriciv">
+            <img src="https://avatars.githubusercontent.com/u/12043163?v=4" width="100;" alt="mauriciv"/>
+            <br />
+            <sub><b>Mauricio Vera</b></sub>
+        </a>
+    </td>
+    <td align="center">
         <a href="https://github.com/xpundel">
             <img src="https://avatars.githubusercontent.com/u/1384653?v=4" width="100;" alt="xpundel"/>
             <br />
@@ -958,15 +965,15 @@ Cart::add('1239ad0', 'Product 2', 2, 5.95, ['size' => 'large']);
             <br />
             <sub><b>Niels Stampe</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/4ilo">
             <img src="https://avatars.githubusercontent.com/u/15938739?v=4" width="100;" alt="4ilo"/>
             <br />
             <sub><b>Olivier</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/PazkaL">
             <img src="https://avatars.githubusercontent.com/u/1322192?v=4" width="100;" alt="PazkaL"/>
@@ -1001,15 +1008,15 @@ Cart::add('1239ad0', 'Product 2', 2, 5.95, ['size' => 'large']);
             <br />
             <sub><b>Salim Djerbouh</b></sub>
         </a>
-    </td>
+    </td></tr>
+<tr>
     <td align="center">
         <a href="https://github.com/pendalff">
             <img src="https://avatars.githubusercontent.com/u/236587?v=4" width="100;" alt="pendalff"/>
             <br />
             <sub><b>Fukalov Sem</b></sub>
         </a>
-    </td></tr>
-<tr>
+    </td>
     <td align="center">
         <a href="https://github.com/sobhanatar">
             <img src="https://avatars.githubusercontent.com/u/1507325?v=4" width="100;" alt="sobhanatar"/>
