@@ -27,6 +27,10 @@ You definitely should publish the `config` file and take a look at it.
 
 This will give you a `cart.php` config file in which you can make changes to the packages behaivor.
 
+## Updates
+
+As of version **4.2.0** this package does, when being used with PostgreSQL, encode the cart content to base64 before storing into database due to an [issue with saving values including zero bytes](https://github.com/bumbummen99/LaravelShoppingcart/pull/167). Please consider clearing your cart table in case you are upgrading using PostgreSQL from a version **<4.2.0**.
+
 ## Table of Contents
 Look at one of the following topics to learn more about LaravelShoppingcart
 
