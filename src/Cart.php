@@ -84,7 +84,7 @@ class Cart
      * @param int|float $qty
      * @param float     $price
      * @param array     $options
-     * @return \Gloudemans\Shoppingcart\CartItem
+     * @return \Gloudemans\Shoppingcart\CartItem // done by komal
      */
     public function add($id, $name = null, $qty = null, $price = null, array $options = [])
     {
