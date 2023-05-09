@@ -11,7 +11,7 @@
     ],
     "require": {
         "illuminate/support": "~6.0 || ~7.0 || ~8.0",
-        "illuminate/session": "~6.0 || ~7.0 || ~8.0,
+        "illuminate/session": "~6.0 || ~7.0 || ~8.0",
         "illuminate/events": "~6.0 || ~7.0 || ~8.0"
     },
     "require-dev": {
