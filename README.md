@@ -1,8 +1,8 @@
 ## LaravelShoppingcart
-[![Build Status](https://travis-ci.org/Crinsane/LaravelShoppingcart.png?branch=master)](https://travis-ci.org/Crinsane/LaravelShoppingcart)
-[![Total Downloads](https://poser.pugx.org/gloudemans/shoppingcart/downloads.png)](https://packagist.org/packages/gloudemans/shoppingcart)
-[![Latest Stable Version](https://poser.pugx.org/gloudemans/shoppingcart/v/stable)](https://packagist.org/packages/gloudemans/shoppingcart)
-[![Latest Unstable Version](https://poser.pugx.org/gloudemans/shoppingcart/v/unstable)](https://packagist.org/packages/gloudemans/shoppingcart)
+[![Build Status](https://travis-ci.org/hardevine/LaravelShoppingcart.png?branch=master)](https://travis-ci.org/hardevine/LaravelShoppingcart)
+[![Total Downloads](https://poser.pugx.org/hardevine/shoppingcart/downloads.png)](https://packagist.org/packages/hardevine/shoppingcart)
+[![Latest Stable Version](https://poser.pugx.org/hardevine/shoppingcart/v/stable)](https://packagist.org/packages/hardevine/shoppingcart)
+[![Latest Unstable Version](https://poser.pugx.org/hardevine/shoppingcart/v/unstable)](https://packagist.org/packages/hardevine/shoppingcart)
 [![License](https://poser.pugx.org/gloudemans/shoppingcart/license)](https://packagist.org/packages/gloudemans/shoppingcart)
 
 A simple shoppingcart implementation for Laravel.
@@ -12,21 +12,21 @@ A simple shoppingcart implementation for Laravel.
 Install the package through [Composer](http://getcomposer.org/). 
 
 Run the Composer require command from the Terminal:
-
-    composer require gloudemans/shoppingcart
-    
-If you're using Laravel 5.5, this is all there is to do. 
+```bash
+composer require hardevine/shoppingcart
+```    
+If you're using Laravel 5.5 or above, this is all there is to do. 
 
 Should you still be on version 5.4 of Laravel, the final steps for you are to add the service provider of the package and alias the package. To do this open your `config/app.php` file.
 
 Add a new line to the `providers` array:
-
-	Gloudemans\Shoppingcart\ShoppingcartServiceProvider::class
-
+```php
+Gloudemans\Shoppingcart\ShoppingcartServiceProvider::class
+```
 And optionally add a new line to the `aliases` array:
-
-	'Cart' => Gloudemans\Shoppingcart\Facades\Cart::class,
-
+```php
+'Cart' => Gloudemans\Shoppingcart\Facades\Cart::class,
+```
 Now you're ready to start using the shoppingcart in your application.
 
 **As of version 2 of this package it's possibly to use dependency injection to inject an instance of the Cart class into your controller or other class**
@@ -63,6 +63,11 @@ As an optional fifth parameter you can pass it options, so you can add multiple 
 Cart::add('293ad', 'Product 1', 1, 9.99, ['size' => 'large']);
 ```
 
+You can optional pass different taxrates to the items.
+```php
+Cart::add('293ad', 'Product 1', 1, 9.99, ['size' => 'large'], 20);
+```
+
 **The `add()` method will return an CartItem instance of the item you just added to the cart.**
 
 Maybe you prefer to add the item using an array? As long as the array contains the required keys, you can pass it to the method. The options key is optional.
@@ -71,9 +76,13 @@ Maybe you prefer to add the item using an array? As long as the array contains t
 Cart::add(['id' => '293ad', 'name' => 'Product 1', 'qty' => 1, 'price' => 9.99, 'options' => ['size' => 'large']]);
 ```
 
-New in version 2 of the package is the possibility to work with the `Buyable` interface. The way this works is that you have a model implement the `Buyable` interface, which will make you implement a few methods so the package knows how to get the id, name and price from your model. 
+New in version 2 of the package is the possibility to work with the [Buyable](#buyable) interface. The way this works is that you have a model implement the `Buyable` interface, which will make you implement a few methods so the package knows how to get the id, name and price from your model. 
 This way you can just pass the `add()` method a model and the quantity and it will automatically add it to the cart. 
 
+The path to the `Buyable` interface is:
+```php
+Gloudemans\Shoppingcart\Contracts\Buyable;
+```
 **As an added bonus it will automatically associate the model with the CartItem**
 
 ```php
@@ -325,43 +334,89 @@ foreach(Cart::content() as $row) {
 	echo 'You have ' . $row->qty . ' items of ' . $row->model->name . ' with description: "' . $row->model->description . '" in your cart.';
 }
 ```
+
+### Buyable
+
+For the convenience of faster adding items to cart and their automatic association, your model can implement `Buyable` interface. To do so, it must implement such functions:
+
+```php
+    public function getBuyableIdentifier(){
+        return $this->id;
+    }
+
+    public function getBuyableDescription(){
+        return $this->name;
+    }
+
+    public function getBuyablePrice(){
+        return $this->price;
+    }
+```
+
+Example:
+
+```php
+<?php
+
+namespace App\Models;
+
+use Gloudemans\Shoppingcart\Contracts\Buyable;
+use Illuminate\Database\Eloquent\Model;
+
+class Product exends Model implements Buyable {
+    public function getBuyableIdentifier($options = null) {
+        return $this->id;
+    }
+
+    public function getBuyableDescription($options = null) {
+        return $this->name;
+    }
+
+    public function getBuyablePrice($options = null) {
+        return $this->price;
+    }
+}
+```
+
+
 ## Database
 
 - [Config](#configuration)
-- [Storing the cart](#save-cart-to-database)
-- [Restoring the cart](#retrieve-cart-from-database)
+- [Storing the cart](#storing-the-cart)
+- [Restoring the cart](#restoring-the-cart)
 
 ### Configuration
 To save cart into the database so you can retrieve it later, the package needs to know which database connection to use and what the name of the table is.
 By default the package will use the default database connection and use a table named `shoppingcart`.
 If you want to change these options, you'll have to publish the `config` file.
-
+```bash
     php artisan vendor:publish --provider="Gloudemans\Shoppingcart\ShoppingcartServiceProvider" --tag="config"
-
+```
 This will give you a `cart.php` config file in which you can make the changes.
 
 To make your life easy, the package also includes a ready to use `migration` which you can publish by running:
-
+```bash
     php artisan vendor:publish --provider="Gloudemans\Shoppingcart\ShoppingcartServiceProvider" --tag="migrations"
-    
+```
 This will place a `shoppingcart` table's migration file into `database/migrations` directory. Now all you have to do is run `php artisan migrate` to migrate your database.
 
 ### Storing the cart    
 To store your cart instance into the database, you have to call the `store($identifier) ` method. Where `$identifier` is a random key, for instance the id or username of the user.
 
+```php
     Cart::store('username');
     
     // To store a cart instance named 'wishlist'
     Cart::instance('wishlist')->store('username');
-
+```
 ### Restoring the cart
 If you want to retrieve the cart from the database and restore it, all you have to do is call the  `restore($identifier)` where `$identifier` is the key you specified for the `store` method.
- 
+ ```php
     Cart::restore('username');
     
     // To restore a cart instance named 'wishlist'
     Cart::instance('wishlist')->restore('username');
-
+```
 ## Exceptions
 
 The Cart package will throw exceptions if something goes wrong. This way it's easier to debug your code using the Cart package or to handle the error based on the type of exceptions. The Cart packages can throw the following exceptions:
