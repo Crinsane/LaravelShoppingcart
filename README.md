@@ -12,21 +12,21 @@ A simple shoppingcart implementation for Laravel.
 Install the package through [Composer](http://getcomposer.org/). 
 
 Run the Composer require command from the Terminal:
-
-    composer require hardevine/shoppingcart
-    
+```bash
+composer require hardevine/shoppingcart
+```    
 If you're using Laravel 5.5 or above, this is all there is to do. 
 
 Should you still be on version 5.4 of Laravel, the final steps for you are to add the service provider of the package and alias the package. To do this open your `config/app.php` file.
 
 Add a new line to the `providers` array:
-
-	Gloudemans\Shoppingcart\ShoppingcartServiceProvider::class
-
+```php
+Gloudemans\Shoppingcart\ShoppingcartServiceProvider::class
+```
 And optionally add a new line to the `aliases` array:
-
-	'Cart' => Gloudemans\Shoppingcart\Facades\Cart::class,
-
+```php
+'Cart' => Gloudemans\Shoppingcart\Facades\Cart::class,
+```
 Now you're ready to start using the shoppingcart in your application.
 
 **As of version 2 of this package it's possibly to use dependency injection to inject an instance of the Cart class into your controller or other class**
@@ -80,9 +80,9 @@ New in version 2 of the package is the possibility to work with the [Buyable](#b
 This way you can just pass the `add()` method a model and the quantity and it will automatically add it to the cart. 
 
 The path to the `Buyable` interface is:
-
-    Gloudemans\Shoppingcart\Contracts\Buyable;
-
+```php
+Gloudemans\Shoppingcart\Contracts\Buyable;
+```
 **As an added bonus it will automatically associate the model with the CartItem**
 
 ```php
@@ -389,33 +389,34 @@ class Product exends Model implements Buyable {
 To save cart into the database so you can retrieve it later, the package needs to know which database connection to use and what the name of the table is.
 By default the package will use the default database connection and use a table named `shoppingcart`.
 If you want to change these options, you'll have to publish the `config` file.
-
+```bash
     php artisan vendor:publish --provider="Gloudemans\Shoppingcart\ShoppingcartServiceProvider" --tag="config"
-
+```
 This will give you a `cart.php` config file in which you can make the changes.
 
 To make your life easy, the package also includes a ready to use `migration` which you can publish by running:
-
+```bash
     php artisan vendor:publish --provider="Gloudemans\Shoppingcart\ShoppingcartServiceProvider" --tag="migrations"
-    
+```
 This will place a `shoppingcart` table's migration file into `database/migrations` directory. Now all you have to do is run `php artisan migrate` to migrate your database.
 
 ### Storing the cart    
 To store your cart instance into the database, you have to call the `store($identifier) ` method. Where `$identifier` is a random key, for instance the id or username of the user.
 
+```php
     Cart::store('username');
     
     // To store a cart instance named 'wishlist'
     Cart::instance('wishlist')->store('username');
-
+```
 ### Restoring the cart
 If you want to retrieve the cart from the database and restore it, all you have to do is call the  `restore($identifier)` where `$identifier` is the key you specified for the `store` method.
- 
+ ```php
     Cart::restore('username');
     
     // To restore a cart instance named 'wishlist'
     Cart::instance('wishlist')->restore('username');
-
+```
 ## Exceptions
 
 The Cart package will throw exceptions if something goes wrong. This way it's easier to debug your code using the Cart package or to handle the error based on the type of exceptions. The Cart packages can throw the following exceptions:
